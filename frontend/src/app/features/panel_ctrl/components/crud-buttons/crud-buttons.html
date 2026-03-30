@@ -1,0 +1,20 @@
+<div class="crud-buttons">
+  <button
+    *ngFor="let btn of buttons"
+    [ngClass]="btn.class"
+    (click)="handleClick(btn)">
+    {{ btn.label }}
+  </button>
+</div>
+
+<!-- Modal de confirmación interno -->
+<div class="modal-overlay" *ngIf="showConfirmModal">
+  <div class="modal-content">
+    <p>{{ confirmMessage }} {{ actionToConfirm }}?</p>
+    <div class="modal-buttons">
+      <button class="cancel" (click)="cancelAction()">No</button>
+      <button class="confirm" (click)="confirmAction()">Sí</button>
+      
+    </div>
+  </div>
+</div>

@@ -1,0 +1,260 @@
+<div [ngClass]="getFormClasses()">
+  <!-- ─── Header ─────────────────────────────────────────────────── -->
+  @if (config.title || config.subtitle) {
+    <div class="form-header">
+      @if (config.title) {
+        <h3 class="form-title">{{ config.title }}</h3>
+      }
+      @if (config.subtitle) {
+        <p class="form-subtitle">{{ config.subtitle }}</p>
+      }
+    </div>
+  }
+
+  <!-- ─── Form ───────────────────────────────────────────────────── -->
+  <form (ngSubmit)="onSubmit(form)" #form="ngForm" class="form-body">
+    <div class="form-grid">
+      @for (field of visibleFields(); track trackByField($index, field)) {
+        <div [ngClass]="getFieldClasses(field)">
+          <!-- ─── Label ───────────────────────────────────────────── -->
+          <label [for]="field.name" class="form-label">
+            {{ field.label }}
+            @if (field.validations?.some(v => v.type === 'required')) {
+              <span class="required-indicator">*</span>
+            }
+          </label>
+
+          <!-- ─── Input Wrapper ───────────────────────────────────── -->
+          <div class="input-wrapper">
+            <!-- Prefix -->
+            @if (field.prefix) {
+              <span class="input-prefix">{{ field.prefix }}</span>
+            }
+
+            <!-- Icon -->
+            @if (field.icon) {
+              <span class="input-icon">{{ field.icon }}</span>
+            }
+
+            <!-- ─── Input por tipo ────────────────────────────────── -->
+            @switch (field.type) {
+              @case ('textarea') {
+                <textarea
+                  [id]="field.name"
+                  [name]="field.name"
+                  [(ngModel)]="model[field.name]"
+                  [placeholder]="field.placeholder || ''"
+                  [disabled]="!!field.disabled || !!config.disabled"
+                  [readonly]="!!field.readonly"
+                  [rows]="field.rows || 4"
+                  [autocomplete]="field.autocomplete || 'off'"
+                  class="form-input form-textarea"
+                  (input)="onFieldChange(field, $event)"
+                  (focus)="onFocus(field)"
+                  (blur)="onBlur(field)"
+                ></textarea>
+              }
+
+              @case ('select') {
+                <select
+                  [id]="field.name"
+                  [name]="field.name"
+                  [(ngModel)]="model[field.name]"
+                  [disabled]="!!field.disabled || !!config.disabled"
+                  [multiple]="!!field.multiple"
+                  class="form-input form-select"
+                  (change)="onFieldChange(field, $event)"
+                  (focus)="onFocus(field)"
+                  (blur)="onBlur(field)"
+                >
+                  @if (!field.multiple) {
+                    <option value="" disabled selected>
+                      {{ field.placeholder || 'Seleccionar...' }}
+                    </option>
+                  }
+                  @for (option of field.options; track option.value) {
+                    <option [value]="option.value" [disabled]="!!option.disabled">
+                      {{ option.label }}
+                    </option>
+                  }
+                </select>
+              }
+
+              @case ('radio') {
+                <div class="radio-group">
+                  @for (option of field.options; track option.value) {
+                    <label class="radio-option">
+                      <input
+                        type="radio"
+                        [name]="field.name"
+                        [value]="option.value"
+                        [(ngModel)]="model[field.name]"
+                        [disabled]="!!field.disabled || !!config.disabled || !!option.disabled"
+                        (change)="onFieldChange(field, $event)"
+                      />
+                      <span class="radio-custom"></span>
+                      <span class="radio-label">{{ option.label }}</span>
+                    </label>
+                  }
+                </div>
+              }
+
+              @case ('checkbox') {
+                <label class="checkbox-wrapper">
+                  <input
+                    type="checkbox"
+                    [id]="field.name"
+                    [name]="field.name"
+                    [(ngModel)]="model[field.name]"
+                    [disabled]="!!field.disabled || !!config.disabled"
+                    (change)="onFieldChange(field, $event)"
+                  />
+                  <span class="checkbox-custom"></span>
+                  <span class="checkbox-label">{{ field.placeholder || field.label }}</span>
+                </label>
+              }
+
+              @case ('switch') {
+                <label class="switch-wrapper">
+                  <input
+                    type="checkbox"
+                    [id]="field.name"
+                    [name]="field.name"
+                    [(ngModel)]="model[field.name]"
+                    [disabled]="!!field.disabled || !!config.disabled"
+                    (change)="onFieldChange(field, $event)"
+                  />
+                  <span class="switch-slider"></span>
+                  <span class="switch-label">{{ field.placeholder || 'Activar' }}</span>
+                </label>
+              }
+
+              @case ('range') {
+                <div class="range-wrapper">
+                  <input
+                    type="range"
+                    [id]="field.name"
+                    [name]="field.name"
+                    [(ngModel)]="model[field.name]"
+                    [min]="field.min || 0"
+                    [max]="field.max || 100"
+                    [step]="field.step || 1"
+                    [disabled]="!!field.disabled || !!config.disabled"
+                    class="form-input form-range"
+                    (input)="onFieldChange(field, $event)"
+                  />
+                  <span class="range-value">{{ model[field.name] }}</span>
+                </div>
+              }
+
+              @case ('color') {
+                <div class="color-wrapper">
+                  <input
+                    type="color"
+                    [id]="field.name"
+                    [name]="field.name"
+                    [(ngModel)]="model[field.name]"
+                    [disabled]="!!field.disabled || !!config.disabled"
+                    class="form-input form-color"
+                    (input)="onFieldChange(field, $event)"
+                  />
+                  <span class="color-preview" [style.background-color]="model[field.name]"></span>
+                </div>
+              }
+
+              @case ('file') {
+                <div class="file-wrapper">
+                  <input
+                    type="file"
+                    [id]="field.name"
+                    [name]="field.name"
+                    [accept]="field.accept"
+                    [multiple]="!!field.multiple"
+                    [disabled]="!!field.disabled || !!config.disabled"
+                    class="form-input form-file"
+                    (change)="onFieldChange(field, $event)"
+                  />
+                  <label [for]="field.name" class="file-label">
+                    <span class="file-icon">📎</span>
+                    <span class="file-text">{{
+                      field.placeholder || 'Seleccionar archivo...'
+                    }}</span>
+                  </label>
+                </div>
+              }
+
+              @default {
+                <input
+                  [type]="field.type"
+                  [id]="field.name"
+                  [name]="field.name"
+                  [(ngModel)]="model[field.name]"
+                  [placeholder]="field.placeholder || ''"
+                  [disabled]="!!field.disabled || !!config.disabled"
+                  [readonly]="!!field.readonly"
+                  [min]="field.min"
+                  [max]="field.max"
+                  [step]="field.step"
+                  [autocomplete]="field.autocomplete || 'off'"
+                  class="form-input"
+                  [class.has-icon]="!!field.icon"
+                  [class.has-prefix]="!!field.prefix"
+                  [class.has-suffix]="!!field.suffix"
+                  (input)="onFieldChange(field, $event)"
+                  (focus)="onFocus(field)"
+                  (blur)="onBlur(field)"
+                />
+              }
+            }
+
+            <!-- Suffix -->
+            @if (field.suffix) {
+              <span class="input-suffix">{{ field.suffix }}</span>
+            }
+          </div>
+
+          <!-- ─── Hint ────────────────────────────────────────────── -->
+          @if (field.hint && !hasError(field.name)) {
+            <span class="form-hint">{{ field.hint }}</span>
+          }
+
+          <!-- ─── Errors ──────────────────────────────────────────── -->
+          @if (hasError(field.name)) {
+            <div class="form-errors">
+              @for (error of getFieldErrors(field.name); track error) {
+                <span class="form-error">{{ error }}</span>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- ─── Actions ──────────────────────────────────────────────── -->
+    <div class="form-actions">
+      @if (config.showReset) {
+        <button
+          type="button"
+          class="form-btn form-btn--secondary"
+          (click)="onReset()"
+          [disabled]="!!config.loading"
+        >
+          {{ config.resetLabel }}
+        </button>
+      }
+
+      <button
+        type="submit"
+        class="form-btn form-btn--primary"
+        [disabled]="!!config.loading || !!config.disabled"
+      >
+        @if (config.loading) {
+          <span class="btn-spinner"></span>
+        } @else if (config.submitIcon) {
+          <span class="btn-icon">{{ config.submitIcon }}</span>
+        }
+        <span class="btn-text">{{ config.submitLabel }}</span>
+      </button>
+    </div>
+  </form>
+</div>

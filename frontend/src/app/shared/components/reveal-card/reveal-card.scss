@@ -1,0 +1,618 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CARD VARIABLES
+// ═══════════════════════════════════════════════════════════════════════════
+:host {
+  display: block;
+}
+
+$neon-cyan: #00f5d4;
+$neon-purple: #b537f2;
+$neon-blue: #3a86ff;
+$dark-bg: #050a18;
+$dark-surface: rgba(12, 20, 40, 0.6);
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BASE CARD STRUCTURE
+// ═══════════════════════════════════════════════════════════════════════════
+.reveal-card {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  transform: scale(1);
+  transition:
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform, box-shadow;
+
+  // Default Glass Style
+  background: rgba(12, 20, 40, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 245, 212, 0.1);
+
+  &:hover {
+    transform: scale(var(--hover-scale, 1.03));
+  }
+
+  // ─── Variants ─────────────────────────────────────────────────────────
+  &--glass {
+    background: rgba(12, 20, 40, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 245, 212, 0.1);
+
+    &:hover {
+      border-color: rgba(0, 245, 212, 0.25);
+      box-shadow:
+        0 25px 50px -12px rgba(0, 245, 212, 0.15),
+        0 0 80px -20px rgba(181, 55, 242, 0.3);
+    }
+  }
+
+  &--neon {
+    background: linear-gradient(145deg, rgba(12, 20, 40, 0.9), rgba(5, 10, 24, 0.95));
+    border: 1px solid rgba($neon-cyan, 0.2);
+
+    &:hover {
+      border-color: rgba($neon-cyan, 0.5);
+      box-shadow:
+        0 0 30px rgba($neon-cyan, 0.2),
+        0 0 60px rgba($neon-purple, 0.15),
+        inset 0 0 30px rgba(0, 245, 212, 0.05);
+    }
+  }
+
+  &--default {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    &:hover {
+      border-color: rgba(0, 245, 212, 0.3);
+      box-shadow:
+        0 20px 40px -10px rgba(0, 0, 0, 0.5),
+        0 0 40px rgba(0, 245, 212, 0.1);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// BACKGROUND LAYER
+// ═══════════════════════════════════════════════════════════════════════════
+.reveal-card__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+
+  &-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.15;
+    transition:
+      opacity 0.5s ease,
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+
+    .reveal-card--hovered & {
+      opacity: 0.25;
+      transform: scale(1.1);
+    }
+  }
+
+  &-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba($dark-bg, 0.3) 50%,
+      rgba($dark-bg, 0.8) 100%
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GLOW EFFECT
+// ═══════════════════════════════════════════════════════════════════════════
+.reveal-card__glow {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba($neon-cyan, 0.08) 0%,
+    rgba($neon-purple, 0.04) 30%,
+    transparent 60%
+  );
+  opacity: 0;
+  transform: scale(0.8) rotate(0deg);
+  transition:
+    opacity 0.6s ease,
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+  z-index: 1;
+
+  .reveal-card--hovered & {
+    opacity: 1;
+    transform: scale(1) rotate(15deg);
+    animation: glowRotate 8s linear infinite;
+  }
+}
+
+@keyframes glowRotate {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.05) rotate(180deg);
+  }
+  100% {
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// CONTENT LAYER
+// ═══════════════════════════════════════════════════════════════════════════
+.reveal-card__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 24px;
+}
+
+// ─── Header ────────────────────────────────────────────────────────────────
+.reveal-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: auto;
+}
+
+.reveal-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba($neon-cyan, 0.2), rgba($neon-purple, 0.2));
+  border: 1px solid rgba($neon-cyan, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  transition:
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.4s ease;
+
+  .reveal-card--hovered & {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 8px 20px rgba($neon-cyan, 0.25);
+  }
+
+  svg,
+  span {
+    filter: drop-shadow(0 0 8px rgba($neon-cyan, 0.5));
+  }
+}
+
+.reveal-card__badge {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba($neon-cyan, 0.1);
+  border: 1px solid rgba($neon-cyan, 0.2);
+  color: $neon-cyan;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease;
+
+  .reveal-card--hovered & {
+    background: rgba($neon-cyan, 0.2);
+    border-color: rgba($neon-cyan, 0.4);
+  }
+}
+
+// ─── Body ─────────────────────────────────────────────────────────────────
+.reveal-card__body {
+  margin-top: auto;
+  padding-top: 16px;
+}
+
+.reveal-card__title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+  transition: color 0.3s ease;
+
+  .reveal-card--hovered & {
+    background: linear-gradient(90deg, $neon-cyan, $neon-blue);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+.reveal-card__subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  transition: color 0.3s ease;
+
+  .reveal-card--hovered & {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// REVEAL PANEL (Slides in on hover)
+// ═══════════════════════════════════════════════════════════════════════════
+.reveal-card__panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  padding: 20px 24px;
+  background: linear-gradient(180deg, rgba($dark-bg, 0.1) 0%, rgba($dark-bg, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.4s ease,
+    transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .reveal-card--hovered & {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  // Reveal from bottom (default)
+  &.reveal-bottom {
+    bottom: 0;
+    transform: translateY(100%);
+    border-top: 1px solid rgba($neon-cyan, 0.1);
+
+    .reveal-card--hovered & {
+      transform: translateY(0);
+    }
+  }
+
+  // Reveal from top
+  &.reveal-top {
+    top: 0;
+    bottom: auto;
+    transform: translateY(-100%);
+    background: linear-gradient(180deg, rgba($dark-bg, 0.95) 0%, rgba($dark-bg, 0.7) 100%);
+    border-bottom: 1px solid rgba($neon-cyan, 0.1);
+
+    .reveal-card--hovered & {
+      transform: translateY(0);
+    }
+  }
+
+  // Reveal from left
+  &.reveal-left {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 85%;
+    transform: translateX(-100%);
+    border-right: 1px solid rgba($neon-cyan, 0.1);
+
+    .reveal-card--hovered & {
+      transform: translateX(0);
+    }
+  }
+
+  // Reveal from right
+  &.reveal-right {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    width: 85%;
+    transform: translateX(100%);
+    border-left: 1px solid rgba($neon-cyan, 0.1);
+
+    .reveal-card--hovered & {
+      transform: translateX(0);
+    }
+  }
+}
+
+// ─── Description ──────────────────────────────────────────────────────────
+.reveal-card__description {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+}
+
+// ─── Stats Grid ───────────────────────────────────────────────────────────
+.reveal-card__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.reveal-card__stat {
+  text-align: center;
+  padding: 12px 8px;
+  border-radius: 12px;
+  background: rgba(0, 245, 212, 0.05);
+  border: 1px solid rgba(0, 245, 212, 0.1);
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .reveal-card--hovered & {
+    background: rgba(0, 245, 212, 0.1);
+    border-color: rgba(0, 245, 212, 0.2);
+    transform: translateY(-2px);
+  }
+
+  &-value {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: $neon-cyan;
+    margin-bottom: 2px;
+  }
+
+  &-label {
+    display: block;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+// ─── Action Buttons ────────────────────────────────────────────────────────
+.reveal-card__actions {
+  display: flex;
+  gap: 10px;
+}
+
+.reveal-card__action {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+
+  &:first-child {
+    background: linear-gradient(135deg, rgba($neon-cyan, 0.2), rgba($neon-blue, 0.2));
+    border: 1px solid rgba($neon-cyan, 0.3);
+    color: $neon-cyan;
+
+    &:hover {
+      background: linear-gradient(135deg, rgba($neon-cyan, 0.35), rgba($neon-blue, 0.35));
+      box-shadow: 0 4px 15px rgba($neon-cyan, 0.25);
+      transform: translateY(-2px);
+    }
+  }
+
+  &:last-child {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.8);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.98);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// DECORATIVE ELEMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ─── Animated Border ──────────────────────────────────────────────────────
+.reveal-card__border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba($neon-cyan, 0.3),
+    rgba($neon-purple, 0.3),
+    rgba($neon-blue, 0.3)
+  );
+  background-size: 200% 200%;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 3;
+
+  .reveal-card--hovered & {
+    opacity: 1;
+    animation: borderGradient 3s ease infinite;
+  }
+}
+
+@keyframes borderGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+// ─── Corner Accents ───────────────────────────────────────────────────────
+.reveal-card__corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  opacity: 0;
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+
+  .reveal-card--hovered & {
+    opacity: 1;
+  }
+
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    background: $neon-cyan;
+    border-radius: 2px;
+    transition: background 0.3s ease;
+  }
+
+  &::before {
+    width: 100%;
+    height: 2px;
+  }
+
+  &::after {
+    width: 2px;
+    height: 100%;
+  }
+
+  // Top-left
+  &--tl {
+    top: 12px;
+    left: 12px;
+    transform: translate(-8px, -8px);
+
+    .reveal-card--hovered & {
+      transform: translate(0, 0);
+    }
+
+    &::before {
+      top: 0;
+      left: 0;
+    }
+    &::after {
+      top: 0;
+      left: 0;
+    }
+  }
+
+  // Top-right
+  &--tr {
+    top: 12px;
+    right: 12px;
+    transform: translate(8px, -8px);
+
+    .reveal-card--hovered & {
+      transform: translate(0, 0);
+    }
+
+    &::before {
+      top: 0;
+      right: 0;
+    }
+    &::after {
+      top: 0;
+      right: 0;
+    }
+  }
+
+  // Bottom-left
+  &--bl {
+    bottom: 12px;
+    left: 12px;
+    transform: translate(-8px, 8px);
+
+    .reveal-card--hovered & {
+      transform: translate(0, 0);
+    }
+
+    &::before {
+      bottom: 0;
+      left: 0;
+    }
+    &::after {
+      bottom: 0;
+      left: 0;
+    }
+  }
+
+  // Bottom-right
+  &--br {
+    bottom: 12px;
+    right: 12px;
+    transform: translate(8px, 8px);
+
+    .reveal-card--hovered & {
+      transform: translate(0, 0);
+    }
+
+    &::before {
+      bottom: 0;
+      right: 0;
+    }
+    &::after {
+      bottom: 0;
+      right: 0;
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RESPONSIVE ADJUSTMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+@media (max-width: 768px) {
+  .reveal-card {
+    height: 280px;
+  }
+
+  .reveal-card__title {
+    font-size: 1.25rem;
+  }
+
+  .reveal-card__panel {
+    &.reveal-left,
+    &.reveal-right {
+      width: 100%;
+      left: 0;
+      right: 0;
+    }
+  }
+}

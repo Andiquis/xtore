@@ -1,0 +1,113 @@
+<div class="panel">
+
+  <!-- Overlay opaco para cuando el sidebar está abierto en móviles -->
+  <div class="sidebar-overlay" [class.active]="isSidebarOpen" (click)="closeSidebar()"></div>
+
+  <aside class="sidebar" [class.mobile-open]="isSidebarOpen">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 14 14" fill="none">
+            <rect x="1" y="1" width="5" height="5" rx="1.5" fill="#0f0f0f"/>
+            <rect x="8" y="1" width="5" height="5" rx="1.5" fill="#0f0f0f"/>
+            <rect x="1" y="8" width="5" height="5" rx="1.5" fill="#0f0f0f"/>
+            <rect x="8" y="8" width="5" height="5" rx="1.5" fill="#0f0f0f" opacity="0.4"/>
+          </svg>
+        </div>
+        <span class="logo-text">Panel</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/panel/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+        Dashboard
+      </a>
+      <a routerLink="/panel/ventas" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 3h1.5l1.5 7.5h6l1.5-6h-8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="13" r="1.5" fill="currentColor"/><circle cx="11" cy="13" r="1.5" fill="currentColor"/></svg>
+        Ventas
+      </a>
+      <a routerLink="/panel/productos" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="2" rx="1" fill="currentColor"/><rect x="2" y="7" width="8" height="2" rx="1" fill="currentColor"/><rect x="2" y="11" width="10" height="2" rx="1" fill="currentColor"/></svg>
+        Productos
+      </a>
+      <a routerLink="/panel/inventario" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Inventario
+      </a>
+      <a routerLink="/panel/compras" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 4V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        Compras
+      </a>
+      <a routerLink="/panel/usuarios" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        Usuarios
+      </a>
+      <a routerLink="/panel/caja" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 6h.01M12 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Caja
+      </a>
+      <a routerLink="/panel/promociones" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 2l2.5 2.5L14 4l-1.5 3.5L14 11l-3.5-.5L8 14l-2.5-3.5L2 11l1.5-3.5L2 4l3.5.5L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>
+        Promociones
+      </a>
+      <a routerLink="/panel/reportes" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M3 14V2a1 1 0 0 1 1-1h5.5L14 5.5V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M9.5 1V5.5H14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M6 11v-2M9 11V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        Reportes
+      </a>
+      <a routerLink="/panel/configuracion" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 10.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 2v1.5M8 12.5V14M14 8h-1.5M3.5 8H2M12.24 3.76l-1.06 1.06M4.82 11.18l-1.06 1.06M12.24 12.24l-1.06-1.06M4.82 4.82L3.76 3.76" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        Configuración
+      </a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <!-- Header superior -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="icon-btn menu-btn" (click)="toggleSidebar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <h1 class="page-title">{{ currentSection }}</h1>
+      </div>
+      
+      <div class="header-right">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" placeholder="Buscar...">
+        </div>
+
+        <button class="icon-btn notification-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="badge"></span>
+        </button>
+        <div class="user-profile">
+          <div class="user-info">
+            <span class="user-name">Anderson</span>
+            <span class="user-role">Supeadmin</span>
+          </div>
+          <!--img src="https://i.pravatar.cc/150?img=1" alt="User Avatar" class="avatar"-->
+          <img src="https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/e000ee42cc031d95110b4e57d6c7eea8~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=8381f18f&x-expires=1774936800&x-signature=sfUrrTvhN%2FZ9lwYEyBb8Jga70xE%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=my" alt="User Avatar" class="avatar">
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+      <div class="content-inner">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+</div>

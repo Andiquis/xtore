@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Xtore</string>
+    <string name="title_activity_main">Xtore</string>
+    <string name="package_name">com.xtore.app</string>
+    <string name="custom_url_scheme">com.xtore.app</string>
+</resources>

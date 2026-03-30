@@ -1,0 +1,86 @@
+<article
+  class="reveal-card"
+  [class.reveal-card--hovered]="isHovered"
+  [class]="'reveal-card--' + variant"
+  [style.--hover-scale]="hoverScale"
+  (mouseenter)="onHover(true)"
+  (mouseleave)="onHover(false)"
+>
+  <!-- Background Image Layer -->
+  @if (content.image) {
+    <div class="reveal-card__bg">
+      <img [src]="content.image" [alt]="content.title" class="reveal-card__bg-image" />
+      <div class="reveal-card__bg-overlay"></div>
+    </div>
+  }
+
+  <!-- Glow Effect -->
+  @if (enableGlow) {
+    <div class="reveal-card__glow"></div>
+  }
+
+  <!-- Content Layer -->
+  <div class="reveal-card__content">
+    <!-- Header with Icon/Badge -->
+    <div class="reveal-card__header">
+      @if (content.icon) {
+        <div class="reveal-card__icon">
+          <span [innerHTML]="content.icon"></span>
+        </div>
+      }
+      @if (content.badge) {
+        <span class="reveal-card__badge">{{ content.badge }}</span>
+      }
+    </div>
+
+    <!-- Primary Content -->
+    <div class="reveal-card__body">
+      @if (content.title) {
+        <h3 class="reveal-card__title">{{ content.title }}</h3>
+      }
+      @if (content.subtitle) {
+        <p class="reveal-card__subtitle">{{ content.subtitle }}</p>
+      }
+    </div>
+
+    <!-- Reveal Panel (slides in on hover) -->
+    <div class="reveal-card__panel" [ngClass]="getRevealClass()">
+      @if (content.description) {
+        <p class="reveal-card__description">{{ content.description }}</p>
+      }
+
+      @if (content.stats && content.stats.length > 0) {
+        <div class="reveal-card__stats">
+          @for (stat of content.stats; track stat.label) {
+            <div class="reveal-card__stat">
+              <span class="reveal-card__stat-value">{{ stat.value }}</span>
+              <span class="reveal-card__stat-label">{{ stat.label }}</span>
+            </div>
+          }
+        </div>
+      }
+
+      @if (content.actions && content.actions.length > 0) {
+        <div class="reveal-card__actions">
+          @for (action of content.actions; track action.label) {
+            <button
+              class="reveal-card__action"
+              (click)="action.callback(); $event.stopPropagation()"
+            >
+              {{ action.label }}
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Border Animation -->
+  <div class="reveal-card__border"></div>
+
+  <!-- Corner Accents -->
+  <div class="reveal-card__corner reveal-card__corner--tl"></div>
+  <div class="reveal-card__corner reveal-card__corner--tr"></div>
+  <div class="reveal-card__corner reveal-card__corner--bl"></div>
+  <div class="reveal-card__corner reveal-card__corner--br"></div>
+</article>

@@ -1,0 +1,267 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+// ─── Variables ────────────────────────────────────────────────
+$warm-accent: #a0622a;
+$warm-text: #2c1f0e;
+$warm-muted: #8c7355;
+$warm-bg: #faf7f2;
+$warm-surface: #f5efe4;
+$warm-border: rgba(139, 107, 74, 0.15);
+
+.crud-container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* ─── HEADER ───────────────────────────────────────────────────── */
+
+.crud-header {
+  border-left: 5px solid $warm-accent;
+  padding-left: 15px;
+}
+
+.crud-header h2 {
+  margin: 0;
+  font-size: 26px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  color: $warm-text;
+}
+
+.crud-subtitle {
+  color: $warm-muted;
+  margin-top: 5px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ─── REVEAL CARDS SECTION ─────────────────────────────────────── */
+
+.reveal-cards-section {
+  background: linear-gradient(135deg, #050a18 0%, #0c1428 100%);
+  border-radius: 16px;
+  padding: 30px;
+  border: 1px solid rgba(0, 245, 212, 0.1);
+}
+
+.section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+  background: linear-gradient(90deg, #00f5d4, #3a86ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 24px 0;
+}
+
+.reveal-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* ─── CARDS ────────────────────────────────────────────────────── */
+
+.crud-card {
+  background: white;
+  border-radius: 16px;
+  padding: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  border: 1px solid $warm-border;
+  overflow: hidden;
+}
+
+.crud-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: $warm-surface;
+  border-bottom: 1px solid $warm-border;
+}
+
+.crud-card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  color: $warm-text;
+}
+
+.crud-card-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* ─── TABLE EXTRA ACTIONS ──────────────────────────────────────── */
+
+.table-extra-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-refresh {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: $warm-bg;
+  border: 1px solid $warm-border;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $warm-surface;
+    border-color: $warm-accent;
+    transform: rotate(180deg);
+  }
+}
+
+/* ─── SELECTION INFO BAR ───────────────────────────────────────── */
+
+.selection-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: linear-gradient(135deg, $warm-surface 0%, darken($warm-surface, 3%) 100%);
+  border-radius: 12px;
+  border: 1px solid $warm-border;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.selection-count {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: $warm-text;
+}
+
+.selection-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-selection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: $warm-text;
+  background: white;
+  border: 1px solid $warm-border;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $warm-bg;
+    border-color: $warm-accent;
+  }
+
+  &--danger {
+    color: #8c3718;
+
+    &:hover {
+      background: #f0ddd4;
+      border-color: #8c3718;
+    }
+  }
+}
+
+/* ─── CANCEL BUTTON ────────────────────────────────────────────── */
+
+.btn-cancel {
+  padding: 6px 14px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: $warm-muted;
+  background: transparent;
+  border: 1px solid $warm-border;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #8c3718;
+    background: #f0ddd4;
+    border-color: #8c3718;
+  }
+}
+
+/* ─── BOTONES ──────────────────────────────────────────────────── */
+
+.crud-actions {
+  background: $warm-surface;
+}
+
+/* ─── RESPONSIVE ───────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .crud-container {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .reveal-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reveal-cards-section {
+    padding: 20px;
+  }
+
+  .selection-info {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .selection-actions {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .btn-selection {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .crud-card-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+}

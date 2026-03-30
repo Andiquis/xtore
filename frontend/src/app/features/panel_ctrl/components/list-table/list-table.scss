@@ -1,0 +1,632 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+// ─── Variables cálidas ────────────────────────────────────────
+:host {
+  --warm-bg: #faf7f2;
+  --warm-surface: #f5efe4;
+  --warm-border: rgba(139, 107, 74, 0.15);
+  --warm-hover: #f0e8d8;
+  --warm-text: #2c1f0e;
+  --warm-muted: #8c7355;
+  --warm-accent: #a0622a;
+  --warm-selected: rgba(160, 98, 42, 0.08);
+
+  // Shadows
+  --shadow-sm: 0 1px 2px rgba(44, 31, 14, 0.04);
+  --shadow-md: 0 4px 12px rgba(44, 31, 14, 0.08);
+  --shadow-lg: 0 8px 24px rgba(44, 31, 14, 0.12);
+
+  // Transitions
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+
+  display: block;
+  width: 100%;
+}
+
+// ─── Contenedor principal ─────────────────────────────────────
+.table-container {
+  width: 100%;
+  border-radius: 16px;
+  background: var(--warm-bg);
+  border: 0.5px solid var(--warm-border);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal);
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+// ─── Header ───────────────────────────────────────────────────
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 16px 24px;
+  background: var(--warm-surface);
+  border-bottom: 0.5px solid var(--warm-border);
+
+  &__info {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.table-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--warm-text);
+  margin: 0;
+}
+
+.table-subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: var(--warm-muted);
+  font-weight: 400;
+}
+
+// ─── Search ───────────────────────────────────────────────────
+.table-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__icon {
+    position: absolute;
+    left: 12px;
+    font-size: 14px;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  &__input {
+    width: 220px;
+    padding: 10px 36px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 13px;
+    color: var(--warm-text);
+    background: var(--warm-bg);
+    border: 1px solid var(--warm-border);
+    border-radius: 10px;
+    outline: none;
+    transition: all var(--transition-fast);
+
+    &::placeholder {
+      color: var(--warm-muted);
+      opacity: 0.7;
+    }
+
+    &:focus {
+      border-color: var(--warm-accent);
+      box-shadow: 0 0 0 3px rgba(160, 98, 42, 0.1);
+    }
+  }
+
+  &__clear {
+    position: absolute;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--warm-muted);
+    background: var(--warm-surface);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+
+    &:hover {
+      background: var(--warm-hover);
+      color: var(--warm-text);
+    }
+  }
+}
+
+// ─── Loading State ────────────────────────────────────────────
+.table-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 24px;
+  background: var(--warm-bg);
+
+  &__spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--warm-border);
+    border-top-color: var(--warm-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  &__text {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--warm-muted);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ─── Scroll horizontal ────────────────────────────────────────
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  transition: opacity var(--transition-fast);
+
+  &--loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--warm-surface);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(139, 107, 74, 0.25);
+    border-radius: 6px;
+
+    &:hover {
+      background: rgba(139, 107, 74, 0.4);
+    }
+  }
+}
+
+// ─── Tabla ────────────────────────────────────────────────────
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13.5px;
+
+  // ─── Encabezados ────────────────────────────────────────────
+  thead tr {
+    border-bottom: 0.5px solid var(--warm-border);
+  }
+
+  th {
+    padding: 14px 20px;
+    background: var(--warm-surface);
+    font-family: 'DM Serif Display', serif;
+    font-size: 13px;
+    font-weight: 400;
+    font-style: italic;
+    text-align: left;
+    color: var(--warm-muted);
+    white-space: nowrap;
+    user-select: none;
+
+    &:first-child {
+      padding-left: 24px;
+    }
+    &:last-child {
+      padding-right: 24px;
+    }
+
+    &.sortable {
+      cursor: pointer;
+      transition: color var(--transition-fast);
+
+      &:hover {
+        color: var(--warm-accent);
+      }
+    }
+
+    .th-content {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sort-icon {
+      font-size: 11px;
+      opacity: 0.4;
+      transition: opacity var(--transition-fast);
+
+      &.active {
+        opacity: 1;
+        color: var(--warm-accent);
+      }
+    }
+  }
+
+  // ─── Celdas ─────────────────────────────────────────────────
+  td {
+    padding: 14px 20px;
+    color: var(--warm-text);
+    border-bottom: 0.5px solid var(--warm-border);
+    transition: background var(--transition-fast);
+    vertical-align: middle;
+
+    &:first-child {
+      padding-left: 24px;
+    }
+    &:last-child {
+      padding-right: 24px;
+    }
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  // ─── Variantes de tabla ─────────────────────────────────────
+  &--hoverable tbody tr:hover td {
+    background: var(--warm-hover);
+  }
+
+  &--striped tbody tr:nth-child(even) td {
+    background: rgba(245, 239, 228, 0.5);
+  }
+
+  &--bordered {
+    td,
+    th {
+      border: 0.5px solid var(--warm-border);
+    }
+  }
+
+  &--compact {
+    th,
+    td {
+      padding: 10px 16px;
+    }
+  }
+
+  &--sticky thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  // ─── Fila seleccionada ──────────────────────────────────────
+  tbody tr.selected td {
+    background: var(--warm-selected);
+  }
+}
+
+// ─── Checkbox ─────────────────────────────────────────────────
+.cell-checkbox {
+  width: 48px;
+  text-align: center;
+}
+
+.table-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--warm-accent);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+// ─── Modificadores de celda ───────────────────────────────────
+.cell-mono {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--warm-muted);
+}
+
+.cell-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--warm-text);
+}
+
+.cell-amount {
+  font-weight: 600;
+  color: var(--warm-accent);
+}
+
+// ─── Actions Column ───────────────────────────────────────────
+.cell-actions {
+  width: 120px;
+  text-align: center;
+}
+
+.actions-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--warm-surface);
+  border: 1px solid var(--warm-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  .action-icon {
+    font-size: 14px;
+  }
+
+  &:hover:not(:disabled) {
+    background: var(--warm-hover);
+    border-color: var(--warm-accent);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &--primary {
+    background: var(--warm-accent);
+    border-color: var(--warm-accent);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background: darken(#a0622a, 8%);
+    }
+  }
+
+  &--danger {
+    &:hover:not(:disabled) {
+      background: #f0ddd4;
+      border-color: #8c3718;
+      color: #8c3718;
+    }
+  }
+}
+
+// ─── Empty State ──────────────────────────────────────────────
+.empty-row td {
+  padding: 0 !important;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 56px 24px;
+
+  &__icon {
+    font-size: 40px;
+    opacity: 0.6;
+  }
+
+  &__text {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--warm-muted);
+  }
+}
+
+// ─── Badges ───────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: capitalize;
+
+  &--default {
+    background: var(--warm-surface);
+    color: var(--warm-muted);
+  }
+
+  &--green {
+    background: #e8edd8;
+    color: #4a6320;
+  }
+
+  &--amber {
+    background: #f5e2c0;
+    color: #7a4d10;
+  }
+
+  &--rust {
+    background: #f0ddd4;
+    color: #8c3718;
+  }
+
+  &--blue {
+    background: #d8e8f0;
+    color: #1a5276;
+  }
+
+  &--purple {
+    background: #e8d8f0;
+    color: #5b2c6f;
+  }
+}
+
+// ─── Footer / Pagination ──────────────────────────────────────
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 24px;
+  background: var(--warm-surface);
+  border-top: 0.5px solid var(--warm-border);
+
+  &__info {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.records-info {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  color: var(--warm-muted);
+}
+
+.table-pagination {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.pagination-size {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  label {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 12px;
+    color: var(--warm-muted);
+  }
+}
+
+.pagination-select {
+  padding: 6px 10px;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 12px;
+  color: var(--warm-text);
+  background: var(--warm-bg);
+  border: 1px solid var(--warm-border);
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color var(--transition-fast);
+
+  &:focus {
+    border-color: var(--warm-accent);
+  }
+}
+
+.pagination-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pagination-btn {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 13px;
+  color: var(--warm-text);
+  background: var(--warm-bg);
+  border: 1px solid var(--warm-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover:not(:disabled):not(.active) {
+    background: var(--warm-hover);
+    border-color: var(--warm-accent);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  &.active {
+    background: var(--warm-accent);
+    border-color: var(--warm-accent);
+    color: white;
+    font-weight: 600;
+  }
+}
+
+// ─── Responsive ───────────────────────────────────────────────
+@media (max-width: 768px) {
+  .table-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+
+    &__actions {
+      width: 100%;
+    }
+  }
+
+  .table-search__input {
+    width: 100%;
+  }
+
+  .table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .table-pagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .pagination-nav {
+    flex-wrap: wrap;
+  }
+}
+
+// ─── Animaciones de entrada ───────────────────────────────────
+@keyframes fadeInRow {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.data-table tbody tr {
+  animation: fadeInRow 0.3s ease forwards;
+
+  @for $i from 1 through 20 {
+    &:nth-child(#{$i}) {
+      animation-delay: #{$i * 0.03}s;
+    }
+  }
+}

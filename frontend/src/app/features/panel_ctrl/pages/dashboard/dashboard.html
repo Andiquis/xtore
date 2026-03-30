@@ -1,0 +1,123 @@
+<div class="dashboard">
+
+  <!-- ═══ SALUDO ═══ -->
+  <section class="welcome-banner">
+    <div class="welcome-text">
+      <h2>Bienvenido, Anderson 👋</h2>
+      <p>Aquí tienes un resumen de tu negocio hoy.</p>
+    </div>
+    <div class="welcome-date">
+      <span class="date-label">{{ currentDate }}</span>
+    </div>
+  </section>
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <section class="kpi-grid">
+    <div class="kpi-card" *ngFor="let kpi of kpis; let i = index" [style.--delay]="i * 80 + 'ms'">
+      <div class="kpi-icon" [style.background]="kpi.bgColor">
+        <lucide-icon [img]="kpi.icon" class="kpi-lucide" [style.color]="kpi.color" [size]="28" [strokeWidth]="2.5"></lucide-icon>
+      </div>
+      <div class="kpi-info">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <span class="kpi-value">{{ kpi.value }}</span>
+        <span class="kpi-change" [class.positive]="kpi.positive" [class.negative]="!kpi.positive">
+          {{ kpi.positive ? '▲' : '▼' }} {{ kpi.change }}
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FILA PRINCIPAL: GRÁFICO + RESUMEN ═══ -->
+  <section class="main-row">
+
+    <!-- Gráfico de Ventas (barras CSS) -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>Ventas Semanales</h3>
+        <div class="card-badge">Esta semana</div>
+      </div>
+      <div class="chart-bars">
+        <div class="bar-group" *ngFor="let bar of weeklyBars">
+          <div class="bar-track">
+            <div class="bar-fill" [style.height.%]="bar.percent" [style.background]="bar.color"></div>
+          </div>
+          <span class="bar-label">{{ bar.day }}</span>
+        </div>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-total">Total: <strong>S/ {{ weeklyTotal }}</strong></span>
+      </div>
+    </div>
+
+    <!-- Resumen rápido -->
+    <div class="card summary-card">
+      <div class="card-header">
+        <h3>Resumen Rápido</h3>
+      </div>
+      <div class="summary-list">
+        <div class="summary-item" *ngFor="let item of summaryItems">
+          <div class="summary-dot" [style.background]="item.color"></div>
+          <span class="summary-name">{{ item.name }}</span>
+          <span class="summary-value">{{ item.value }}</span>
+        </div>
+      </div>
+      <div class="progress-section">
+        <span class="progress-label">Meta mensual</span>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" [style.width.%]="monthlyGoalPercent"></div>
+        </div>
+        <span class="progress-percent">{{ monthlyGoalPercent }}%</span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══ FILA INFERIOR: PRODUCTOS TOP + ACTIVIDAD RECIENTE ═══ -->
+  <section class="bottom-row">
+
+    <!-- Top Productos -->
+    <div class="card top-products-card">
+      <div class="card-header">
+        <h3>Top Productos</h3>
+        <span class="card-subtitle">Más vendidos este mes</span>
+      </div>
+      <div class="product-list">
+        <div class="product-item" *ngFor="let product of topProducts; let i = index">
+          <span class="product-rank">#{{ i + 1 }}</span>
+          <div class="product-info">
+            <span class="product-name">{{ product.name }}</span>
+            <span class="product-category">{{ product.category }}</span>
+          </div>
+          <div class="product-stats">
+            <span class="product-sold">{{ product.sold }} uds</span>
+            <div class="mini-bar-track">
+              <div class="mini-bar-fill" [style.width.%]="product.percent" [style.background]="product.color"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actividad Reciente -->
+    <div class="card activity-card">
+      <div class="card-header">
+        <h3>Actividad Reciente</h3>
+        <span class="card-subtitle">Últimos movimientos</span>
+      </div>
+      <div class="activity-list">
+        <div class="activity-item" *ngFor="let activity of recentActivity">
+          <div class="activity-icon" [style.background]="activity.bgColor">
+            <lucide-icon [img]="activity.icon" [style.color]="activity.color" [size]="20" [strokeWidth]="2.5"></lucide-icon>
+          </div>
+          <div class="activity-info">
+            <span class="activity-title">{{ activity.title }}</span>
+            <span class="activity-desc">{{ activity.description }}</span>
+          </div>
+          <span class="activity-time">{{ activity.time }}</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div>

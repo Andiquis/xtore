@@ -1,0 +1,253 @@
+<div class="productos-page">
+
+  <!-- ── TABS DE NAVEGACIÓN ── -->
+  <div class="page-tabs">
+    <button class="tab-btn" [class.active]="activeTab === 'productos'" (click)="setTab('productos')">
+      <lucide-icon [img]="TabProductsIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+      Productos
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'categorias'" (click)="setTab('categorias')">
+      <lucide-icon [img]="TabCategoriesIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+      Categorías
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'marcas'" (click)="setTab('marcas')">
+      <lucide-icon [img]="TabBrandsIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+      Marcas
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'presentacion'" (click)="setTab('presentacion')">
+      <lucide-icon [img]="TabPresentacionIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+      Presentación
+    </button>
+  </div>
+
+  <div class="tab-content">
+
+    <!-- ============================================== -->
+    <!-- TAB: PRODUCTOS                               -->
+    <!-- ============================================== -->
+    <div *ngIf="activeTab === 'productos'" class="fade-in">
+      
+      <!-- Barra de Acciones y Filtros -->
+      <div class="top-bar">
+        <div class="search-section">
+          <div class="search-box">
+            <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+            <input type="text" placeholder="Buscar por nombre o código de producto">
+          </div>
+          
+          <div class="filter-group">
+            <select class="filter-select">
+              <option value="" disabled selected>Categoría</option>
+              <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.name }}</option>
+            </select>
+            
+            <select class="filter-select">
+              <option value="" disabled selected>Marca</option>
+              <option *ngFor="let m of marcas" [value]="m.id">{{ m.name }}</option>
+            </select>
+
+            <select class="filter-select">
+              <option value="" disabled selected>Presentación</option>
+              <option *ngFor="let p of presentaciones" [value]="p.id">{{ p.name }}</option>
+            </select>
+            
+            <button class="btn btn-outline" style="padding: 10px; width: 40px; border-radius: 999px;" title="Más filtros">
+              <lucide-icon [img]="FilterIcon" [size]="16" [strokeWidth]="2.5"></lucide-icon>
+            </button>
+          </div>
+        </div>
+        
+        <div class="actions-section">
+          <button class="btn btn-primary">
+            <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+            Añadir Producto
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Productos -->
+      <div class="table-card">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-check"><input type="checkbox"></th>
+                <th>Producto</th>
+                <th>Código (SKU)</th>
+                <th>Categoría</th>
+                <th>Marca</th>
+                <th>Presentación</th>
+                <th class="text-right">Precio</th>
+                <th class="text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of products" class="table-row">
+                <td class="col-check">
+                  <input type="checkbox">
+                </td>
+                
+                <td data-label="Producto">
+                  <div class="product-cell">
+                    <div class="product-img-box">
+                      <img *ngIf="product.image" [src]="product.image" [alt]="product.name">
+                      <lucide-icon *ngIf="!product.image" [img]="ImageIcon" [size]="20" class="icon-gray"></lucide-icon>
+                    </div>
+                    <span class="product-name font-bold text-dark">{{ product.name }}</span>
+                  </div>
+                </td>
+
+                <td class="font-mono text-gray" data-label="Código (SKU)">{{ product.codigo }}</td>
+                <td data-label="Categoría"><span class="category-badge">{{ product.category }}</span></td>
+                <td class="font-medium text-dark" data-label="Marca">{{ product.marca }}</td>
+                <td class="text-gray font-medium" data-label="Presentación">{{ product.presentacion }}</td>
+                <td class="text-right font-medium text-dark" data-label="Precio">S/ {{ product.price | number:'1.2-2' }}</td>
+
+                <td class="text-right" data-label="Acciones">
+                  <div class="action-buttons">
+                    <button class="icon-btn" title="Ver detalles">
+                      <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+                    </button>
+                    <button class="icon-btn" title="Editar">
+                      <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+                    </button>
+                    <button class="icon-btn btn-danger" title="Eliminar">
+                      <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="pagination">
+          <span class="page-info">Mostrando 1 a 6 de 142 productos</span>
+          <div class="page-controls">
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <span class="page-dots">...</span>
+            <button class="page-btn">24</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- TAB: CATEGORÍAS                              -->
+    <!-- ============================================== -->
+    <div *ngIf="activeTab === 'categorias'" class="fade-in">
+      <div class="top-bar">
+        <div class="search-section">
+          <div class="search-box">
+            <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
+            <input type="text" placeholder="Buscar categoría...">
+          </div>
+        </div>
+        <div class="actions-section">
+          <button class="btn btn-primary">
+            <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+            Nueva Categoría
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-cards">
+        <div class="model-card" *ngFor="let cat of categorias">
+          <div class="icon-box" [style.background]="cat.bg" [style.color]="cat.color">
+            <lucide-icon [img]="TabCategoriesIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+          </div>
+          <div class="info">
+            <h3>{{ cat.name }}</h3>
+            <p>{{ cat.count }} productos • <span [style.color]="cat.status === 'Visible' ? '#05cd99' : '#ff5b5b'">{{ cat.status }}</span></p>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="Ver detalles"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon></button>
+            <button class="icon-btn" title="Editar"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon></button>
+            <button class="icon-btn btn-danger" title="Eliminar"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- TAB: MARCAS                                  -->
+    <!-- ============================================== -->
+    <div *ngIf="activeTab === 'marcas'" class="fade-in">
+      <div class="top-bar">
+        <div class="search-section">
+          <div class="search-box">
+            <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
+            <input type="text" placeholder="Buscar marca...">
+          </div>
+        </div>
+        <div class="actions-section">
+          <button class="btn btn-primary">
+            <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+            Nueva Marca
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-cards">
+        <div class="model-card" *ngFor="let marca of marcas">
+          <div class="brand-logo" [style.background]="marca.bg">
+            {{ marca.logo }}
+          </div>
+          <div class="info">
+            <h3>{{ marca.name }}</h3>
+            <p>{{ marca.count }} productos registrados</p>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="Ver detalles"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon></button>
+            <button class="icon-btn" title="Editar"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon></button>
+            <button class="icon-btn btn-danger" title="Eliminar"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ============================================== -->
+    <!-- TAB: PRESENTACIÓN                            -->
+    <!-- ============================================== -->
+    <div *ngIf="activeTab === 'presentacion'" class="fade-in">
+      <div class="top-bar">
+        <div class="search-section">
+          <div class="search-box">
+            <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
+            <input type="text" placeholder="Buscar presentación...">
+          </div>
+        </div>
+        <div class="actions-section">
+          <button class="btn btn-primary">
+            <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+            Nueva Presentación
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-cards">
+        <div class="model-card" *ngFor="let pres of presentaciones">
+          <div class="icon-box" [style.background]="pres.bg" [style.color]="pres.color">
+            <lucide-icon [img]="TabPresentacionIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+          </div>
+          <div class="info">
+            <h3>{{ pres.name }}</h3>
+            <p>{{ pres.count }} productos • <span [style.color]="pres.status === 'Activo' ? '#05cd99' : '#ff5b5b'">{{ pres.status }}</span></p>
+          </div>
+          <div class="card-actions">
+            <button class="icon-btn" title="Ver detalles"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon></button>
+            <button class="icon-btn" title="Editar"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon></button>
+            <button class="icon-btn btn-danger" title="Eliminar"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

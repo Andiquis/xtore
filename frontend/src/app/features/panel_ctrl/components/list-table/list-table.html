@@ -1,0 +1,276 @@
+<div class="table-container">
+  <!-- ─── Header ─────────────────────────────────────────────────── -->
+  @if (config.title || config.searchable) {
+    <div class="table-header">
+      <div class="table-header__info">
+        @if (config.title) {
+          <h3 class="table-title">{{ config.title }}</h3>
+        }
+        @if (config.subtitle) {
+          <span class="table-subtitle">{{ config.subtitle }}</span>
+        }
+      </div>
+
+      <div class="table-header__actions">
+        @if (config.searchable) {
+          <div class="table-search">
+            <span class="table-search__icon">🔍</span>
+            <input
+              type="text"
+              class="table-search__input"
+              [placeholder]="config.searchPlaceholder || 'Buscar...'"
+              [value]="searchQuery()"
+              (input)="onSearch($event)"
+            />
+            @if (searchQuery()) {
+              <button class="table-search__clear" (click)="searchQuery.set('')" type="button">
+                ✕
+              </button>
+            }
+          </div>
+        }
+
+        <ng-content select="[tableActions]"></ng-content>
+      </div>
+    </div>
+  }
+
+  <!-- ─── Loading State ──────────────────────────────────────────── -->
+  @if (loading) {
+    <div class="table-loading">
+      @if (loadingTemplate) {
+        <ng-container *ngTemplateOutlet="loadingTemplate"></ng-container>
+      } @else {
+        <div class="table-loading__spinner"></div>
+        <span class="table-loading__text">{{ config.loadingMessage }}</span>
+      }
+    </div>
+  }
+
+  <!-- ─── Table Scroll Container ─────────────────────────────────── -->
+  <div class="table-scroll" [class.table-scroll--loading]="loading">
+    <table [ngClass]="getTableClasses()">
+      <!-- ─── Table Head ───────────────────────────────────────────── -->
+      <thead>
+        <tr>
+          <!-- Checkbox column -->
+          @if (config.selectable) {
+            <th class="cell-checkbox">
+              <input
+                type="checkbox"
+                [checked]="selectAll()"
+                (change)="toggleSelectAll()"
+                class="table-checkbox"
+              />
+            </th>
+          }
+
+          <!-- Data columns -->
+          @for (col of columns; track trackByColumn($index, col)) {
+            <th
+              [ngStyle]="getColumnStyle(col)"
+              [class.sortable]="col.sortable"
+              (click)="onSort(col)"
+            >
+              @if (headerTemplate) {
+                <ng-container
+                  *ngTemplateOutlet="headerTemplate; context: { $implicit: col }"
+                ></ng-container>
+              } @else {
+                <div class="th-content">
+                  <span>{{ col.header }}</span>
+                  @if (col.sortable) {
+                    <span class="sort-icon" [class.active]="sortState().field === col.field">
+                      {{ getSortIcon(col) }}
+                    </span>
+                  }
+                </div>
+              }
+            </th>
+          }
+
+          <!-- Actions column -->
+          @if (actions.length > 0) {
+            <th class="cell-actions">Acciones</th>
+          }
+        </tr>
+      </thead>
+
+      <!-- ─── Table Body ───────────────────────────────────────────── -->
+      <tbody>
+        @for (row of paginatedData(); track trackByField($index, row)) {
+          <tr
+            [class.selected]="isSelected(row)"
+            (click)="onRowClick(row)"
+            (dblclick)="onRowDoubleClick(row)"
+          >
+            <!-- Checkbox -->
+            @if (config.selectable) {
+              <td class="cell-checkbox" (click)="$event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="isSelected(row)"
+                  (change)="toggleRowSelection(row)"
+                  class="table-checkbox"
+                />
+              </td>
+            }
+
+            <!-- Data cells -->
+            @for (col of columns; track trackByColumn($index, col)) {
+              <td [ngStyle]="getColumnStyle(col)">
+                @if (cellTemplate) {
+                  <ng-container
+                    *ngTemplateOutlet="
+                      cellTemplate;
+                      context: { $implicit: row, column: col, value: getCellValue(row, col) }
+                    "
+                  ></ng-container>
+                } @else {
+                  @switch (col.type) {
+                    @case ('badge') {
+                      <span class="badge" [ngClass]="getBadgeClass(row[col.field], col)">
+                        {{ getBadgeLabel(row[col.field], col) }}
+                      </span>
+                    }
+                    @case ('number') {
+                      <span class="cell-mono">{{ getCellValue(row, col) }}</span>
+                    }
+                    @case ('date') {
+                      <span class="cell-date">{{ getCellValue(row, col) }}</span>
+                    }
+                    @default {
+                      {{ getCellValue(row, col) }}
+                    }
+                  }
+                }
+              </td>
+            }
+
+            <!-- Actions -->
+            @if (actions.length > 0) {
+              <td class="cell-actions" (click)="$event.stopPropagation()">
+                <div class="actions-container">
+                  @for (action of actions; track action.label) {
+                    @if (isActionVisible(action, row)) {
+                      <button
+                        class="action-btn"
+                        [class.action-btn--danger]="action.variant === 'danger'"
+                        [class.action-btn--primary]="action.variant === 'primary'"
+                        [disabled]="isActionDisabled(action, row)"
+                        [title]="action.label"
+                        (click)="executeAction(action, row, $event)"
+                        type="button"
+                      >
+                        <span class="action-icon">{{ action.icon }}</span>
+                      </button>
+                    }
+                  }
+                </div>
+              </td>
+            }
+          </tr>
+        } @empty {
+          <tr class="empty-row">
+            <td
+              [attr.colspan]="
+                columns.length + (config.selectable ? 1 : 0) + (actions.length > 0 ? 1 : 0)
+              "
+            >
+              @if (emptyTemplate) {
+                <ng-container *ngTemplateOutlet="emptyTemplate"></ng-container>
+              } @else {
+                <div class="empty-state">
+                  <span class="empty-state__icon">📭</span>
+                  <span class="empty-state__text">{{ config.emptyMessage }}</span>
+                </div>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ─── Footer / Pagination ────────────────────────────────────── -->
+  @if (pagination.enabled || totalRecords() > 0) {
+    <div class="table-footer">
+      <div class="table-footer__info">
+        <span class="records-info">
+          Mostrando {{ paginationInfo().start }} - {{ paginationInfo().end }} de
+          {{ paginationInfo().total }} registros
+        </span>
+      </div>
+
+      @if (pagination.enabled && totalPages() > 1) {
+        <div class="table-pagination">
+          <!-- Page size selector -->
+          <div class="pagination-size">
+            <label>Mostrar:</label>
+            <select
+              [value]="pagination.pageSize"
+              (change)="onPageSizeChange($event)"
+              class="pagination-select"
+            >
+              @for (size of pagination.pageSizeOptions; track size) {
+                <option [value]="size">{{ size }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Page navigation -->
+          <div class="pagination-nav">
+            <button
+              class="pagination-btn"
+              [disabled]="currentPage() === 1"
+              (click)="goToPage(1)"
+              type="button"
+              title="Primera página"
+            >
+              ⟪
+            </button>
+            <button
+              class="pagination-btn"
+              [disabled]="currentPage() === 1"
+              (click)="goToPage(currentPage() - 1)"
+              type="button"
+              title="Página anterior"
+            >
+              ‹
+            </button>
+
+            @for (page of getPageNumbers(); track page) {
+              <button
+                class="pagination-btn"
+                [class.active]="page === currentPage()"
+                (click)="goToPage(page)"
+                type="button"
+              >
+                {{ page }}
+              </button>
+            }
+
+            <button
+              class="pagination-btn"
+              [disabled]="currentPage() === totalPages()"
+              (click)="goToPage(currentPage() + 1)"
+              type="button"
+              title="Página siguiente"
+            >
+              ›
+            </button>
+            <button
+              class="pagination-btn"
+              [disabled]="currentPage() === totalPages()"
+              (click)="goToPage(totalPages())"
+              type="button"
+              title="Última página"
+            >
+              ⟫
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

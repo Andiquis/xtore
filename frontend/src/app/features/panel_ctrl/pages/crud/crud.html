@@ -1,0 +1,98 @@
+<div class="crud-container">
+  <!-- HEADER -->
+  <div class="crud-header">
+    <h2>Gestión CRUD</h2>
+    <p class="crud-subtitle">Administración de registros</p>
+  </div>
+
+  <!-- TARJETAS REVEAL (DEMO) -->
+  <div class="reveal-cards-section">
+    <h3 class="section-title">Tarjetas con Hover Animado</h3>
+    <p class="section-subtitle">
+      Pase el cursor sobre las tarjetas para revelar el contenido dinámico
+    </p>
+
+    <div class="reveal-cards-grid">
+      @for (card of revealCards; track card.title; let i = $index) {
+        <app-reveal-card
+          [content]="card"
+          [variant]="i % 3 === 0 ? 'neon' : i % 3 === 1 ? 'glass' : 'default'"
+          [revealDirection]="getRevealDirection(i)"
+          [hoverScale]="1.03"
+          [enableGlow]="true"
+        />
+      }
+    </div>
+  </div>
+
+  <!-- TABLA MEJORADA -->
+  <div class="crud-card">
+    <app-list-table
+      [columns]="columns"
+      [data]="data"
+      [actions]="tableActions"
+      [config]="tableConfig"
+      [pagination]="paginationConfig"
+      [loading]="isLoading"
+      (rowClick)="onRowClick($event)"
+      (rowDoubleClick)="onRowDoubleClick($event)"
+      (selectionChange)="onSelectionChange($event)"
+      (sortChange)="onSortChange($event)"
+      (pageChange)="onPageChange($event)"
+    >
+      <!-- Slot para acciones adicionales en el header de la tabla -->
+      <div tableActions class="table-extra-actions">
+        <button class="btn-refresh" (click)="simulateLoading()" title="Recargar datos">🔄</button>
+      </div>
+    </app-list-table>
+  </div>
+
+  <!-- INFO DE SELECCIÓN -->
+  @if (selectedUsers.length > 0) {
+    <div class="selection-info">
+      <span class="selection-count">{{ selectedUsers.length }} usuario(s) seleccionado(s)</span>
+      <div class="selection-actions">
+        <button class="btn-selection" (click)="onAction('leer')">👁️ Ver</button>
+        <button class="btn-selection" (click)="onAction('actualizar')">✏️ Editar</button>
+        <button class="btn-selection btn-selection--danger" (click)="onAction('eliminar')">
+          🗑️ Eliminar
+        </button>
+      </div>
+    </div>
+  }
+
+  <!-- BOTONES CRUD -->
+  <div class="crud-card crud-actions">
+    <div class="crud-card-header">
+      <h3>Acciones Rápidas</h3>
+    </div>
+
+    <div class="crud-card-body">
+      <app-crud-buttons
+        [buttons]="[
+          { type: 'crear', label: '+ Nuevo Usuario', class: 'crear', confirm: false },
+          { type: 'leer', label: 'Ver Detalles', class: 'leer', confirm: false },
+          { type: 'actualizar', label: 'Editar', class: 'actualizar', confirm: false },
+          { type: 'eliminar', label: 'Eliminar', class: 'eliminar', confirm: true },
+        ]"
+        [confirmMessage]="'¿Deseas continuar con la acción de '"
+        (action)="onAction($event)"
+      >
+      </app-crud-buttons>
+    </div>
+  </div>
+
+  <!-- FORMULARIO MEJORADO -->
+  <div class="crud-card">
+    <app-form1
+      [fields]="formFields"
+      [model]="formModel"
+      [config]="formConfig"
+      (submitForm)="guardar($event)"
+      (resetForm)="onFormReset()"
+      (valueChange)="onFormValueChange($event)"
+      (validationChange)="onFormValidationChange($event)"
+    >
+    </app-form1>
+  </div>
+</div>

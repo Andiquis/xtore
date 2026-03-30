@@ -1,0 +1,48 @@
+{
+  "name": "xtore-desktop",
+  "version": "1.0.0",
+  "description": "Aplicación de Escritorio Xtore (Windows/Linux)",
+  "author": {
+    "name": "Xtore",
+    "email": "contacto@xtore.com"
+  },
+  "homepage": "https://xtore.com",
+  "main": "main.js",
+  "scripts": {
+    "start": "pnpm run prebuild && electron . --no-sandbox",
+    "prebuild": "rm -rf frontend_dist && cp -r ../frontend/dist/frontend/browser frontend_dist || echo 'Advertencia: compilar frontend primero usando pnpm build en la carpeta frontend.'",
+    "build:linux": "pnpm run prebuild && electron-builder --linux deb",
+    "build:win": "pnpm run prebuild && electron-builder --win nsis",
+    "build:all": "pnpm run prebuild && electron-builder -wl"
+  },
+  "build": {
+    "appId": "com.xtore.desktop",
+    "productName": "Xtore",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist_electron"
+    },
+    "files": [
+      "main.js",
+      "package.json",
+      "frontend_dist/**/*"
+    ],
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "category": "Office"
+    },
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.png"
+    }
+  },
+  "devDependencies": {
+    "electron": "^29.1.5",
+    "electron-builder": "^24.13.3",
+    "jimp": "0.16.13"
+  }
+}

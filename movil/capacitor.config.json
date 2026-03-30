@@ -1,0 +1,5 @@
+{
+  "appId": "com.xtore.app",
+  "appName": "Xtore",
+  "webDir": "../frontend/dist/frontend/browser"
+}

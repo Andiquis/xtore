@@ -1,0 +1,418 @@
+/* ============================================
+   XTORE — Premium Dark Neon Landing
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap');
+
+/* === Reset === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* === Variables === */
+$neon-cyan: #00f5d4;
+$neon-purple: #b537f2;
+$neon-blue: #3a86ff;
+$dark-bg: #050a18;
+$dark-surface: #0c1428;
+
+/* === Fondo principal === */
+.background {
+  position: relative;
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: $dark-bg;
+  overflow: hidden;
+  font-family: 'Outfit', system-ui, sans-serif;
+  color: #ffffff;
+}
+
+/* === Partículas flotantes === */
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: $neon-cyan;
+  opacity: 0;
+  animation: particleFloat 8s ease-in-out infinite;
+
+  @for $i from 1 through 12 {
+    &:nth-child(#{$i}) {
+      left: random(95) + 2%;
+      top: random(95) + 2%;
+      animation-delay: #{$i * 0.6}s;
+      animation-duration: #{6 + random(6)}s;
+      width: #{2 + random(3)}px;
+      height: #{2 + random(3)}px;
+
+      @if $i % 3 == 0 {
+        background: $neon-purple;
+      } @else if $i % 3 == 1 {
+        background: $neon-blue;
+      }
+    }
+  }
+}
+
+@keyframes particleFloat {
+  0% {
+    transform: translateY(0) translateX(0) scale(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: translateY(-80px) translateX(30px) scale(1.2);
+  }
+  85% {
+    opacity: 0.7;
+  }
+  100% {
+    transform: translateY(-160px) translateX(-20px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* === Orbes flotantes (ambient glow) === */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.25;
+  z-index: 0;
+  animation: orbPulse 12s ease-in-out infinite;
+}
+
+.orb-1 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, $neon-cyan, transparent 70%);
+  top: -15%;
+  right: -10%;
+  animation-delay: 0s;
+}
+
+.orb-2 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, $neon-purple, transparent 70%);
+  bottom: -10%;
+  left: -8%;
+  animation-delay: 4s;
+}
+
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, $neon-blue, transparent 70%);
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-delay: 8s;
+}
+
+@keyframes orbPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.35;
+  }
+}
+
+/* === Hero Container (glassmorphism) === */
+.hero-container {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 4rem;
+  border-radius: 24px;
+  background: rgba(12, 20, 40, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 245, 212, 0.1);
+  box-shadow:
+    0 0 60px rgba(0, 245, 212, 0.05),
+    0 0 120px rgba(181, 55, 242, 0.04),
+    inset 0 0 60px rgba(0, 245, 212, 0.02);
+  animation: containerAppear 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+@keyframes containerAppear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Logo icon === */
+.logo-glow {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba($neon-cyan, 0.15), rgba($neon-purple, 0.15));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+  animation: logoBreath 3s ease-in-out infinite;
+  border: 1px solid rgba($neon-cyan, 0.2);
+}
+
+.logo-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 8px rgba($neon-cyan, 0.6));
+}
+
+@keyframes logoBreath {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba($neon-cyan, 0.1), 0 0 40px rgba($neon-purple, 0.05);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba($neon-cyan, 0.2), 0 0 60px rgba($neon-purple, 0.1);
+    transform: scale(1.05);
+  }
+}
+
+/* === Title — letra por letra === */
+.title {
+  display: flex;
+  gap: 6px;
+  margin: 0;
+}
+
+.letter {
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  background: linear-gradient(135deg, $neon-cyan 0%, $neon-blue 50%, $neon-purple 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 20px rgba($neon-cyan, 0.3));
+  animation: letterPop 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(0.15s * var(--i) + 0.5s);
+  opacity: 0;
+  transform: translateY(20px) scale(0.8);
+  display: inline-block;
+
+  &:hover {
+    animation: letterBounce 0.4s ease;
+    filter: drop-shadow(0 0 30px rgba($neon-cyan, 0.6));
+    cursor: default;
+  }
+}
+
+@keyframes letterPop {
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes letterBounce {
+  0% { transform: translateY(0) scale(1); }
+  30% { transform: translateY(-12px) scale(1.15); }
+  60% { transform: translateY(4px) scale(0.95); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* === Subtítulo === */
+.subtitle {
+  font-size: 1.15rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  animation: fadeUp 0.8s 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Divider === */
+.divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, $neon-cyan, $neon-purple, transparent);
+  border-radius: 2px;
+  animation: fadeUp 0.8s 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards,
+             dividerGlow 3s 2.5s ease-in-out infinite;
+  opacity: 0;
+}
+
+@keyframes dividerGlow {
+  0%, 100% {
+    width: 60px;
+    box-shadow: 0 0 10px rgba($neon-cyan, 0.3);
+  }
+  50% {
+    width: 90px;
+    box-shadow: 0 0 20px rgba($neon-cyan, 0.5);
+  }
+}
+
+/* === Tagline / Motivational quote === */
+.tagline {
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+  max-width: 400px;
+  text-align: center;
+  line-height: 1.6;
+  animation: fadeUp 0.8s 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  opacity: 0;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+/* === Pulse ring === */
+.pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba($neon-cyan, 0.1);
+  transform: translate(-50%, -50%);
+  animation: pulseExpand 4s ease-out infinite;
+  pointer-events: none;
+}
+
+@keyframes pulseExpand {
+  0% {
+    width: 200px;
+    height: 200px;
+    opacity: 0.3;
+    border-color: rgba($neon-cyan, 0.15);
+  }
+  100% {
+    width: 600px;
+    height: 600px;
+    opacity: 0;
+    border-color: rgba($neon-purple, 0.05);
+  }
+}
+
+/* === Bottom bar decorativo === */
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  display: flex;
+  z-index: 10;
+}
+
+.bar-segment {
+  flex: 1;
+  height: 100%;
+  animation: barLoad 1.5s ease forwards;
+  opacity: 0;
+
+  &:nth-child(1) {
+    background: $neon-cyan;
+    animation-delay: 2s;
+  }
+  &:nth-child(2) {
+    background: $neon-blue;
+    animation-delay: 2.15s;
+  }
+  &:nth-child(3) {
+    background: $neon-purple;
+    animation-delay: 2.3s;
+  }
+  &:nth-child(4) {
+    background: $neon-blue;
+    animation-delay: 2.45s;
+  }
+  &:nth-child(5) {
+    background: $neon-cyan;
+    animation-delay: 2.6s;
+  }
+}
+
+@keyframes barLoad {
+  0% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0.7;
+  }
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .hero-container {
+    padding: 2rem 2rem;
+    margin: 1rem;
+  }
+
+  .letter {
+    font-size: 3rem;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    letter-spacing: 2px;
+  }
+
+  .tagline {
+    font-size: 0.9rem;
+    max-width: 280px;
+  }
+
+  .logo-glow {
+    width: 55px;
+    height: 55px;
+  }
+
+  .logo-icon {
+    font-size: 1.5rem;
+  }
+}
