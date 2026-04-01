@@ -42,3 +42,13 @@ Para ejecutar cualquiera de estos scripts, abre una terminal en la raíz de tu p
 * Compila la versión de producción del `frontend` (Angular).
 * Sincroniza y transpila el código dentro de la carpeta `desktop/`.
 * Dispara la compilación nativa de **Electron Builder**, generando instaladores tanto para Linux (`.deb`) como para Windows (`.exe`) listos para ser distribuidos.
+
+
+
+
+
+**OJITO, EL SIGUIENTE PASO PARA ESTE GRUPO DE SCRIPT ES JUNTARLOS EN UN SOLO SCRIPT LA CUAL MUESTRE OPCIONES DE ACCIONES JAJA*
+
+**AH Y CIERTO FALTA UN README.MD DEL PROYECTO PRINCIPAL, EN RESUMEN FALTA EL MD DE LA RAIZ*
+
+**XXXDE*
