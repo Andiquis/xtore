@@ -1,55 +1,62 @@
-# xtore System
+# Sistema xtore
 
-## Description
-xtore is a robust and scalable system designed to manage and streamline operations across various modules, including database management, frontend, backend, and mobile applications. It is built to support modern development practices and ensure seamless integration between components.
+## Descripción
 
-## Features
-- Modular architecture for easy scalability.
-- Comprehensive database management.
-- Responsive frontend and mobile applications.
-- Well-documented scripts for automation.
-- Support for multi-platform deployment.
+xtore es un sistema robusto y escalable diseñado para gestionar y optimizar operaciones en varios módulos, incluyendo la gestión de bases de datos, frontend, backend y aplicaciones móviles. Está construido para soportar prácticas modernas de desarrollo y garantizar una integración fluida entre componentes.
 
-## Installation
-1. Clone the repository:
+## Características
+
+- Arquitectura modular para una fácil escalabilidad.
+- Gestión integral de bases de datos.
+- Aplicaciones frontend y móviles responsivas.
+- Scripts bien documentados para automatización.
+- Soporte para despliegue multiplataforma.
+
+## Instalación
+
+1. Clona el repositorio:
    ```bash
    git clone <repository-url>
    ```
-2. Navigate to the `scripts` directory:
+2. Navega al directorio `scripts`:
    ```bash
    cd xtore/scripts
    ```
-3. Run the setup script:
+3. Ejecuta el script de configuración:
    ```bash
    ./setup.sh
    ```
 
-## Usage
-- To start the system, use the following command:
+## Uso
+
+- Para iniciar el sistema, utiliza el siguiente comando:
   ```bash
   ./start.sh
   ```
-- For specific module operations, refer to the documentation in the respective module directories (e.g., `frontend/`, `backend/`, `movil/`).
+- Para operaciones específicas de los módulos, consulta la documentación en los directorios correspondientes (por ejemplo, `frontend/`, `backend/`, `movil/`).
 
-## Contributing
-We welcome contributions to improve xtore. To contribute:
-1. Fork the repository.
-2. Create a new branch for your feature or bug fix:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. Commit your changes:
-   ```bash
-   git commit -m "Add your commit message"
-   ```
-4. Push to your branch:
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. Create a pull request.
+## Contribuir
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+Damos la bienvenida a contribuciones para mejorar xtore. Para contribuir:
+1. Haz un fork del repositorio.
+2. Crea una nueva rama para tu funcionalidad o corrección de errores:
+   ```bash
+   git checkout -b feature/tu-nombre-de-funcionalidad
+   ```
+3. Realiza tus cambios y haz un commit:
+   ```bash
+   git commit -m "Añade tu mensaje de commit"
+   ```
+4. Sube tu rama:
+   ```bash
+   git push origin feature/tu-nombre-de-funcionalidad
+   ```
+5. Crea un pull request.
 
-## Contact
-For any inquiries or support, please contact the development team at support@xtore.com.
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
+
+## Contacto
+
+Para cualquier consulta o soporte, por favor contacta al equipo de desarrollo en support@xtore.com.
