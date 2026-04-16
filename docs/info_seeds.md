@@ -1,0 +1,1 @@
+los seeds son archivos que se encargan de llenar la base de datos con datos de prueba, para esto se utiliza el comando `npm run seed` el cual ejecuta el archivo `src/core/seeds/index.ts` el cual a su vez ejecuta los archivos de cada entidad que se encuentran en la carpeta `src/core/seeds/entities`
