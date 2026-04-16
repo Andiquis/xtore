@@ -57,46 +57,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Paso 4: Instalar el APK en el dispositivo conectado
-echo ""
-echo "4. Instalando el APK en el dispositivo conectado..."
-
-# Verificar si adb está disponible
-if ! command -v adb &> /dev/null; then
-    echo "❌ Error: La herramienta 'adb' no está instalada o no está en el PATH."
-    echo "👉 Solución: Asegúrate de que el SDK de Android esté correctamente configurado y que 'platform-tools' esté en el PATH."
-    echo "El APK se encuentra en: $ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
-    exit 1
-fi
-
-# Verificar si hay un dispositivo conectado
-DEVICE_CONNECTED=$(adb devices | grep -w "device" | wc -l)
-if [ "$DEVICE_CONNECTED" -eq 0 ]; then
-    echo "❌ Error: No se detectó ningún dispositivo conectado con depuración USB habilitada."
-    echo "👉 Solución: Conecta un dispositivo Android y habilita la depuración USB en las opciones de desarrollador."
-    echo "El APK se encuentra en: $ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
-    exit 1
-fi
-
-# Intentar instalar el APK
-adb install -r "$ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
-
-if [ $? -ne 0 ]; then
-    echo "❌ Error: No se pudo instalar el APK en el dispositivo. Verifica los permisos y el estado del dispositivo."
-    echo "El APK se encuentra en: $ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
-    exit 1
-fi
-
-echo "✅ APK instalado exitosamente en el dispositivo."
-
-# Debug final
-echo "======================================="
-echo "🔍 DEBUG FINAL"
-echo "- Herramienta adb: $(command -v adb)"
-echo "- Dispositivos conectados: $(adb devices | grep -w 'device')"
-echo "- Ruta del APK: $ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
-echo "======================================="
-
 echo ""
 echo "======================================="
 echo "🎉 ¡BUILD E INSTALADOR COMPLETADOS CON ÉXITO!"

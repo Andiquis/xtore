@@ -38,6 +38,7 @@ xtore es un sistema robusto y escalable diseñado para gestionar y optimizar ope
 ## Contribuir
 
 Damos la bienvenida a contribuciones para mejorar xtore. Para contribuir:
+
 1. Haz un fork del repositorio.
 2. Crea una nueva rama para tu funcionalidad o corrección de errores:
    ```bash
