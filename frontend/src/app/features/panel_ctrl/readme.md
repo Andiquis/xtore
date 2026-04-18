@@ -17,7 +17,7 @@ panel_ctrl/
 │           3. list-table.ts
 ├── layout/
 │   └── 1. panel-layout/
-├── map.md
+├── readme.md
 ├── pages/
 │   ├── 1. caja/
 │   ├── 2. compras/

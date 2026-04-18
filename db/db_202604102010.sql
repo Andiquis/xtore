@@ -102,3 +102,90 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_unicode_ci
 COMMENT = 'Relación muchos a muchos entre usuarios y roles';
+
+
+-- -----------------------------------------------------
+-- Table `db_xqasis`.`t_solicitudes_admin`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db_xqasis`.`t_solicitudes_admin` (
+  `id_solicitud` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `id_usuario` BIGINT(20) NOT NULL,
+  `token_aprobacion` VARCHAR(255) NOT NULL,
+  `mensaje_solicitante` TEXT NULL DEFAULT NULL,
+  `estado` ENUM('pendiente', 'aprobado', 'rechazado') NULL DEFAULT 'pendiente',
+  `fecha_solicitud` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP(),
+  `fecha_respuesta` TIMESTAMP NULL DEFAULT NULL,
+  `aprobado_por` BIGINT(20) NULL DEFAULT NULL,
+  `motivo_rechazo` TEXT NULL DEFAULT NULL,
+  `ip_solicitud` VARCHAR(45) NULL DEFAULT NULL,
+  `user_agent` VARCHAR(255) NULL DEFAULT NULL,
+  PRIMARY KEY (`id_solicitud`),
+  UNIQUE INDEX `token_aprobacion` (`token_aprobacion` ASC) VISIBLE,
+  INDEX `idx_usuario` (`id_usuario` ASC) VISIBLE,
+  INDEX `idx_token` (`token_aprobacion` ASC) VISIBLE,
+  INDEX `idx_estado` (`estado` ASC) VISIBLE,
+  INDEX `idx_fecha_solicitud` (`fecha_solicitud` ASC) VISIBLE,
+  INDEX `fk_solicitud_aprobador` (`aprobado_por` ASC) VISIBLE,
+  CONSTRAINT `fk_solicitud_aprobador`
+    FOREIGN KEY (`aprobado_por`)
+    REFERENCES `db_xqasis`.`t_usuarios` (`id_usuario`)
+    ON DELETE SET NULL,
+  CONSTRAINT `fk_solicitud_usuario`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `db_xqasis`.`t_usuarios` (`id_usuario`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 25
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci;
+
+
+-- -----------------------------------------------------
+-- Table `db_xqasis`.`t_superadmin`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db_xqasis`.`t_superadmin` (
+  `id_superadmin` INT(11) NOT NULL AUTO_INCREMENT,
+  `id_usuario` BIGINT(20) NOT NULL,
+  `login_facial` LONGBLOB NULL DEFAULT NULL,
+  `verificacion_segunda_capa` TINYINT(1) NULL DEFAULT 0,
+  `auditoria_extendida` TINYINT(1) NULL DEFAULT 1,
+  `clave_maestra_hash` VARCHAR(255) NULL DEFAULT NULL,
+  `fecha_creacion` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  PRIMARY KEY (`id_superadmin`),
+  UNIQUE INDEX `id_usuario` (`id_usuario` ASC) VISIBLE,
+  INDEX `idx_id_usuario` (`id_usuario` ASC) VISIBLE,
+  CONSTRAINT `fk_root_usuario`
+    FOREIGN KEY (`id_usuario`)
+    REFERENCES `db_xqasis`.`t_usuarios` (`id_usuario`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci
+COMMENT = 'Información adicional de seguridad para superadministradores';
+
+
+-- -----------------------------------------------------
+-- Table `db_xqasis`.`t_verification_codes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `db_xqasis`.`t_verification_codes` (
+  `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT(20) NOT NULL,
+  `code` VARCHAR(6) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `type` ENUM('registro', 'recuperacion') NULL DEFAULT 'registro',
+  `usado` TINYINT(1) NULL DEFAULT 0,
+  `expires_at` TIMESTAMP NOT NULL,
+  `created_at` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  PRIMARY KEY (`id`),
+  INDEX `idx_user_code` (`user_id` ASC, `code` ASC) VISIBLE,
+  INDEX `idx_expiration` (`expires_at` ASC) VISIBLE,
+  INDEX `idx_email_type` (`email` ASC, `type` ASC, `usado` ASC) VISIBLE,
+  CONSTRAINT `fk_verification_user`
+    FOREIGN KEY (`user_id`)
+    REFERENCES `db_xqasis`.`t_usuarios` (`id_usuario`)
+    ON DELETE CASCADE)
+ENGINE = InnoDB
+AUTO_INCREMENT = 39
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_unicode_ci
+COMMENT = 'Códigos de verificación por email';

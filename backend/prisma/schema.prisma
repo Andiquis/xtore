@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model t_roles {
+  id_rol             Int                 @id @default(autoincrement())
+  nombre_rol         String              @unique(map: "nombre_rol") @db.VarChar(50)
+  estado_rol         t_roles_estado_rol? @default(activo)
+  descripcion_rol    String?             @db.Text
+  fecha_creacion     DateTime?           @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime?           @default(now()) @db.DateTime(0)
+  t_usuario_roles    t_usuario_roles[]
+
+  @@index([estado_rol], map: "idx_estado_rol")
+  @@index([nombre_rol], map: "idx_nombre_rol")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model t_usuario_roles {
+  id_usuario                                          BigInt
+  id_rol                                              Int
+  fecha_asignacion_rol                                DateTime?                              @default(now()) @db.DateTime(0)
+  fecha_revocacion_rol                                DateTime?                              @db.DateTime(0)
+  estado_asignacion_rol                               t_usuario_roles_estado_asignacion_rol? @default(activo)
+  asignado_por                                        BigInt?
+  t_usuarios_t_usuario_roles_asignado_porTot_usuarios t_usuarios?                            @relation("t_usuario_roles_asignado_porTot_usuarios", fields: [asignado_por], references: [id_usuario], onUpdate: NoAction, map: "fk_ur_asignado_por")
+  t_roles                                             t_roles                                @relation(fields: [id_rol], references: [id_rol], onDelete: Cascade, onUpdate: NoAction, map: "fk_ur_rol")
+  t_usuarios_t_usuario_roles_id_usuarioTot_usuarios   t_usuarios                             @relation("t_usuario_roles_id_usuarioTot_usuarios", fields: [id_usuario], references: [id_usuario], onDelete: Cascade, onUpdate: NoAction, map: "fk_ur_usuario")
+
+  @@id([id_usuario, id_rol])
+  @@index([asignado_por], map: "fk_ur_asignado_por")
+  @@index([id_rol], map: "fk_ur_rol")
+  @@index([estado_asignacion_rol], map: "idx_estado_asignacion")
+  @@index([fecha_asignacion_rol], map: "idx_fecha_asignacion")
+}
+
+model t_usuarios {
+  id_usuario                                               BigInt                      @id @default(autoincrement())
+  nombre_user                                              String                      @db.VarChar(200)
+  dni_user                                                 String?                     @unique @db.VarChar(20)
+  email_user                                               String                      @unique @db.VarChar(255)
+  telefono_user                                            String?                     @db.VarChar(20)
+  direccion_user                                           String?                     @db.Text
+  foto_url_user                                            String?                     @db.VarChar(500)
+  password_user                                            String                      @db.VarChar(255)
+  must_change_password                                     Boolean?                    @default(false)
+  email_verificado                                         Boolean?                    @default(false)
+  intentos_login_fallidos                                  Int?                        @default(0)
+  bloqueado_hasta                                          DateTime?                   @db.Timestamp(0)
+  ultimo_login                                             DateTime?                   @db.Timestamp(0)
+  token_recuperacion                                       String?                     @db.VarChar(100)
+  token_expiracion                                         DateTime?                   @db.Timestamp(0)
+  proveedor_oauth                                          t_usuarios_proveedor_oauth?
+  sub_oauth                                                String?                     @unique @db.VarChar(100)
+  activo                                                   Boolean?                    @default(true)
+  fecha_creacion                                           DateTime?                   @default(now()) @db.DateTime(0)
+  fecha_modificacion                                       DateTime?                   @db.DateTime(0)
+  ip_registro                                              String?                     @db.VarChar(45)
+  user_agent                                               String?                     @db.VarChar(500)
+  codigo_de_invitacion                                     String?                     @db.VarChar(50)
+  intentos_reenvio_verificacion                            Int?                        @default(0)
+  ultimo_reenvio_verificacion                              DateTime?                   @db.Timestamp(0)
+  bloqueado_reenvio_hasta                                  DateTime?                   @db.Timestamp(0)
+  t_usuario_roles_t_usuario_roles_asignado_porTot_usuarios t_usuario_roles[]           @relation("t_usuario_roles_asignado_porTot_usuarios")
+  t_usuario_roles_t_usuario_roles_id_usuarioTot_usuarios   t_usuario_roles[]           @relation("t_usuario_roles_id_usuarioTot_usuarios")
+
+  @@index([activo, email_user], map: "idx_activo_email")
+  @@index([codigo_de_invitacion], map: "idx_codigo_invitacion")
+  @@index([dni_user], map: "idx_dni_user")
+  @@index([email_user], map: "idx_email_user")
+  @@index([fecha_creacion], map: "idx_fecha_creacion")
+  @@index([sub_oauth], map: "idx_sub_oauth")
+  @@index([ultimo_login], map: "idx_ultimo_login")
+}
+
+enum t_roles_estado_rol {
+  activo
+  inactivo
+}
+
+enum t_usuario_roles_estado_asignacion_rol {
+  activo
+  inactivo
+}
+
+enum t_usuarios_proveedor_oauth {
+  google
+  facebook
+  apple
+}
