@@ -52,3 +52,5 @@ Para ejecutar cualquiera de estos scripts, abre una terminal en la raíz de tu p
 **AH Y CIERTO FALTA UN README.MD DEL PROYECTO PRINCIPAL, EN RESUMEN FALTA EL MD DE LA RAIZ O MAPEO DE LA APLICACION*
 
 **XXXDE*
+
+ya estan juntados en git_start.sh, el cual muestra un menú de opciones git
