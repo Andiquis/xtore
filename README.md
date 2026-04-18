@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/1.png" alt="RosaNegra Banner" width="800" style="border-radius: 10px;">
+  <br/><br/>
+
 # Sistema xtore
 
 ## Descripción
