@@ -11,6 +11,7 @@ import { filter } from 'rxjs';
 })
 export class PanelLayout implements OnInit {
   currentSection: string = 'Dashboard';
+  currentDate: string = this.formatCurrentDate();
   isSidebarOpen: boolean = false;
   private router = inject(Router);
 
@@ -30,6 +31,19 @@ export class PanelLayout implements OnInit {
 
   closeSidebar() {
     this.isSidebarOpen = false;
+  }
+
+  private formatCurrentDate(): string {
+    const formattedDate = new Date().toLocaleDateString('es-PE', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    return formattedDate
+      .replace(/\b\p{L}/gu, letter => letter.toUpperCase())
+      .concat('.');
   }
 
   private updateSectionName(url: string) {

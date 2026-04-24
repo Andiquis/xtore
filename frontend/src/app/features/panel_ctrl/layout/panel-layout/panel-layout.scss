@@ -8,7 +8,7 @@
   --sidebar-hover-bg: rgba(255, 255, 255, 0.04);
   
   --header-bg: #ffffff;
-  --content-bg: #f4f7fe; /* Very soft light grayish blue */
+  --content-bg: #e7eef8; /* Very soft light grayish blue */
   
   --accent-primary: #4318ff;
   --accent-light: rgba(67, 24, 255, 0.1);
@@ -165,7 +165,7 @@
 .content {
   flex: 1;
   overflow: auto;
-  padding: 30px 40px;
+  padding: 24px 40px 30px;
   background: var(--content-bg);
 }
 
@@ -185,7 +185,7 @@
    HEADER
    ══════════════════════════════════════════ */
 .top-header {
-  height: 80px;
+  height: 72px;
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0; /* Subtle border separating header from content */
   display: flex;
@@ -196,12 +196,26 @@
 }
 
 .page-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   font-size: 24px;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-dark);
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+}
+
+.header-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-date {
+  display: block;
+  margin: 6px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--text-secondary);
 }
 
 .header-left {
@@ -220,24 +234,29 @@
 .search-box {
   display: flex;
   align-items: center;
-  background: var(--content-bg); /* Faint gray/blue to contrast with white header */
-  border-radius: 8px;            /* Classic rounded corners, not full pill */
-  padding: 10px 16px;
+  background: #f8faff;
+  border-radius: 10px;
+  padding: 9px 15px;
   width: 280px;
   transition: var(--transition);
-  border: 1px solid transparent;
+  border: 1px solid #dfe7f5;
+
+  &:hover {
+    background: #ffffff;
+    border-color: #cdd8ee;
+  }
 
   &:focus-within {
     background: #ffffff;
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 0 3px var(--accent-light);
+    border-color: rgba(67, 24, 255, 0.38);
+    box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.08);
   }
 
   svg {
     width: 18px;
     height: 18px;
-    color: var(--text-secondary);
-    margin-right: 12px;
+    color: #7b8bad;
+    margin-right: 10px;
     flex-shrink: 0;
   }
 
@@ -252,7 +271,7 @@
     font-family: inherit;
 
     &::placeholder {
-      color: #94a3b8;
+      color: #8d9cbc;
     }
   }
 }
@@ -400,7 +419,7 @@
   }
 
   .content {
-    padding: 24px;
+    padding: 20px 24px 24px;
   }
   
   .search-box {
@@ -411,7 +430,7 @@
 @media (max-width: 768px) {
   .top-header {
     padding: 0 16px;
-    height: 70px;
+    height: 64px;
   }
   
   .header-right {
@@ -424,7 +443,7 @@
   }
 
   .content {
-    padding: 16px;
+    padding: 14px 16px 16px;
   }
 
   .page-title {

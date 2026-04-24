@@ -2,6 +2,8 @@
    XTORE — Premium Dark Neon Landing
    ============================================ */
 
+@use 'sass:math';
+
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap');
 
 
@@ -49,12 +51,12 @@ $dark-surface: #0c1428;
 
   @for $i from 1 through 12 {
     &:nth-child(#{$i}) {
-      left: random(95) + 2%;
-      top: random(95) + 2%;
+      left: #{math.random(95) + 2}%;
+      top: #{math.random(95) + 2}%;
       animation-delay: #{$i * 0.6}s;
-      animation-duration: #{6 + random(6)}s;
-      width: #{2 + random(3)}px;
-      height: #{2 + random(3)}px;
+      animation-duration: #{6 + math.random(6)}s;
+      width: #{2 + math.random(3)}px;
+      height: #{2 + math.random(3)}px;
 
       @if $i % 3 == 0 {
         background: $neon-purple;

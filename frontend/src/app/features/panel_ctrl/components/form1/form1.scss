@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
 
 // ─── Variables cálidas ────────────────────────────────────────
@@ -664,7 +666,7 @@
     border: none;
 
     &:hover:not(:disabled) {
-      background: darken(#a0622a, 8%);
+      background: color.adjust(#a0622a, $lightness: -8%);
       transform: translateY(-1px);
       box-shadow: var(--shadow-md);
     }
