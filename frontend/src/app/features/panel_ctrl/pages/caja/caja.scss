@@ -1,0 +1,11 @@
+@use '../compras/compras';
+
+.cash-status {
+  display: block;
+}
+
+.method-row > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

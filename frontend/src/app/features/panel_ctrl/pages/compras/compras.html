@@ -1,2 +1,105 @@
-<p>compras works!</p>
-<p>ESTO VA ESTAR INTERESANTE, AQUI SE MOSTRARAN LAS COMPRAS QUE HAY EN LA TIENDA, SE PODRA FILTRAR POR FECHA, POR CATEGORIA, POR PRODUCTO, ETC. TAMBIEN SE PODRA VER LOS DETALLES DE CADA COMPRA, COMO EL TOTAL DE LA COMPRA, LOS PRODUCTOS QUE SE COMPRARON, EL PROVEEDOR QUE VENDIO, ETC.</p>
+<div class="module-page">
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of kpis" [class]="'tone-' + kpi.tone">
+      <div class="kpi-icon"><lucide-icon [img]="kpi.icon" [size]="22" [strokeWidth]="2.4"></lucide-icon></div>
+      <div><span>{{ kpi.label }}</span><strong>{{ kpi.value }}</strong><small>{{ kpi.helper }}</small></div>
+    </article>
+  </section>
+
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box">
+        <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
+        <input type="text" placeholder="Buscar por proveedor, orden o documento">
+      </div>
+      <div class="filter-group">
+        <select class="filter-select"><option>Este mes</option><option>Hoy</option><option>Esta semana</option></select>
+        <select class="filter-select"><option>Todos los estados</option><option>Pendiente</option><option>Recibida</option><option>Confirmada</option></select>
+        <select class="filter-select"><option>Estado de pago</option><option>Pagada</option><option>Por pagar</option><option>Parcial</option></select>
+        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon></button>
+      </div>
+    </div>
+    <div class="actions-section">
+      <button class="btn btn-primary"><lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>Nueva compra</button>
+    </div>
+  </div>
+
+  <section class="workspace">
+    <div class="main-column">
+      <div class="table-card">
+        <div class="table-card-header">
+          <div><h3>Listado de compras</h3><p>Consulta órdenes, recepción, pagos y actualización de inventario.</p></div>
+          <span class="table-count">{{ purchases.length }} compras</span>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-check"><input type="checkbox" [checked]="areAllPurchasesSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllPurchases($event)"></th>
+                <th>Documento</th><th>Proveedor</th><th>Fecha</th><th>Recepción</th><th>Pago</th><th class="text-right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let purchase of purchases" class="data-row" [class.active]="activePurchase?.id === purchase.id" [class.checked]="isPurchaseSelected(purchase)" (click)="showPurchaseDetails(purchase)">
+                <td class="col-check" (click)="$event.stopPropagation()"><input type="checkbox" [checked]="isPurchaseSelected(purchase)" (change)="togglePurchaseSelection(purchase, $event)"></td>
+                <td><div class="main-cell"><strong>{{ purchase.doc }}</strong><span>{{ purchase.id }}</span></div></td>
+                <td><div class="main-cell"><strong>{{ purchase.supplier }}</strong><span>{{ purchase.responsible }}</span></div></td>
+                <td class="muted-cell">{{ purchase.date }}</td>
+                <td><span class="status-pill" [ngClass]="getStatusClass(purchase.status)">{{ purchase.status }}</span></td>
+                <td><span class="status-pill" [ngClass]="getPaymentClass(purchase.payment)">{{ purchase.payment }}</span></td>
+                <td class="text-right total-cell">S/ {{ purchase.total | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="selection-summary-panel" *ngIf="selectedPurchases.length === 1">
+          <div><span class="section-kicker">Compra marcada</span><h3>{{ selectedPurchases[0].doc }}</h3><p>{{ selectedPurchases[0].supplier }} · S/ {{ selectedPurchases[0].total | number:'1.2-2' }}</p></div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="showPurchaseDetails(selectedPurchases[0])"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>Ver detalle</button>
+            <button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar</button>
+            <button class="tool-btn danger"><lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>Anular</button>
+          </div>
+        </div>
+        <div class="selection-summary-panel bulk" *ngIf="selectedPurchases.length > 1">
+          <div><span class="section-kicker">Selección múltiple</span><h3>{{ selectedPurchases.length }} compras seleccionadas</h3><p>Acciones generales para órdenes marcadas.</p></div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="clearSelection()"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon>Limpiar</button>
+            <button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar lote</button>
+          </div>
+        </div>
+        <div class="pagination">
+          <div class="page-summary"><span class="page-info">Mostrando <strong>1-4</strong> de <strong>42</strong> compras</span><label class="page-size"><span>Por página</span><select><option>5</option><option>10</option><option>25</option></select></label></div>
+          <div class="page-controls"><button class="page-nav" disabled>Anterior</button><button class="page-btn active">1</button><button class="page-btn">2</button><span class="page-dots">...</span><button class="page-btn">9</button><button class="page-nav">Siguiente</button></div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <div class="panel-header"><span class="section-kicker">Registro rápido</span><lucide-icon [img]="SupplierIcon" [size]="18"></lucide-icon></div>
+      <div class="quick-form">
+        <label>Proveedor<select><option>Distribuidora Norte SAC</option><option>Textiles Rivera</option></select></label>
+        <label>Documento<input value="OC-000209"></label>
+        <label>Condición<select><option>Crédito 15 días</option><option>Contado</option></select></label>
+      </div>
+      <div class="mini-list">
+        <div class="mini-row" *ngFor="let item of draftItems"><div><strong>{{ item.name }}</strong><span>{{ item.qty }} x S/ {{ item.cost | number:'1.2-2' }}</span></div><b>S/ {{ item.qty * item.cost | number:'1.2-2' }}</b></div>
+      </div>
+      <div class="totals-box">
+        <span><small>Subtotal</small><strong>S/ {{ subtotal | number:'1.2-2' }}</strong></span>
+        <span><small>IGV</small><strong>S/ {{ tax | number:'1.2-2' }}</strong></span>
+        <span class="grand-total"><small>Total</small><strong>S/ {{ total | number:'1.2-2' }}</strong></span>
+      </div>
+      <button class="submit-btn"><lucide-icon [img]="TruckIcon" [size]="18"></lucide-icon>Registrar compra</button>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="activePurchase as purchase" (click)="closePurchaseDetails()">
+    <section class="detail-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closePurchaseDetails()">x</button>
+      <div class="modal-heading"><div class="soft-icon"><lucide-icon [img]="TruckIcon" [size]="24"></lucide-icon></div><div><span class="section-kicker">Detalle de compra</span><h2>{{ purchase.doc }}</h2><p>{{ purchase.supplier }} · {{ purchase.date }} · {{ purchase.responsible }}</p></div></div>
+      <div class="modal-grid"><span><strong>Recepción</strong>{{ purchase.status }}</span><span><strong>Pago</strong>{{ purchase.payment }}</span><span><strong>Total</strong>S/ {{ purchase.total | number:'1.2-2' }}</span><span><strong>Orden</strong>{{ purchase.id }}</span></div>
+      <div class="modal-items"><h3>Productos comprados</h3><div class="modal-item" *ngFor="let item of purchase.items"><span>{{ item.name }}</span><strong>{{ item.qty }} x S/ {{ item.cost | number:'1.2-2' }}</strong></div></div>
+      <div class="crud-actions modal-actions"><button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar recepción</button><button class="tool-btn"><lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon>Imprimir</button><button class="tool-btn danger"><lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>Anular</button></div>
+    </section>
+  </div>
+</div>

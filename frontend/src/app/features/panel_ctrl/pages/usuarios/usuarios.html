@@ -1,5 +1,74 @@
-<div class="mockup-container" style="display: flex; justify-content: center; align-items: flex-start; min-height: 100%; padding: 0;">
-  <img src="/image.png" alt="Usuarios Mockup" style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-</div>
-<p style="margin-top: 20px; font-size: 16px; color: #555;">ESTO VA ESTAR INTERESANTE, AQUI SE MOSTRARAN LOS USUARIOS QUE HAY EN LA TIENDA, SE PODRA FILTRAR POR NOMBRE, POR CORREO, POR ROL, ETC. TAMBIEN SE PODRA VER LOS DETALLES DE CADA USUARIO, COMO SU NOMBRE, SU CORREO, SU ROL, ETC.</p>
+<div class="module-page">
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of kpis" [class]="'tone-' + kpi.tone">
+      <div class="kpi-icon"><lucide-icon [img]="kpi.icon" [size]="22"></lucide-icon></div>
+      <div><span>{{ kpi.label }}</span><strong>{{ kpi.value }}</strong><small>{{ kpi.helper }}</small></div>
+    </article>
+  </section>
 
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box"><lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon><input placeholder="Buscar por nombre, correo o usuario"></div>
+      <div class="filter-group">
+        <select class="filter-select"><option>Todos los roles</option><option>Administrador</option><option>Vendedor</option><option>Cajero</option></select>
+        <select class="filter-select"><option>Todos los estados</option><option>Activo</option><option>Pendiente</option><option>Bloqueado</option></select>
+        <select class="filter-select"><option>Último acceso</option><option>Hoy</option><option>Esta semana</option></select>
+        <button class="btn btn-outline filter-clear-btn"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon></button>
+      </div>
+    </div>
+    <div class="actions-section"><button class="btn btn-primary"><lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>Nuevo usuario</button></div>
+  </div>
+
+  <section class="workspace">
+    <div class="main-column">
+      <div class="table-card">
+        <div class="table-card-header"><div><h3>Usuarios del sistema</h3><p>Gestiona roles, permisos, acceso y estado de cuenta.</p></div><span class="table-count">{{ users.length }} usuarios</span></div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead><tr><th class="col-check"><input type="checkbox" [checked]="areAllUsersSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllUsers($event)"></th><th>Usuario</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Último acceso</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let user of users" class="data-row" [class.active]="activeUser?.id === user.id" [class.checked]="isUserSelected(user)" (click)="showUserDetails(user)">
+                <td class="col-check" (click)="$event.stopPropagation()"><input type="checkbox" [checked]="isUserSelected(user)" (change)="toggleUserSelection(user, $event)"></td>
+                <td><div class="user-cell"><span>{{ user.name.charAt(0) }}</span><div><strong>{{ user.name }}</strong><small>{{ user.username }}</small></div></div></td>
+                <td class="muted-cell">{{ user.email }}</td>
+                <td><span class="role-badge">{{ user.role }}</span></td>
+                <td><span class="status-pill" [ngClass]="getStatusClass(user.status)">{{ user.status }}</span></td>
+                <td class="muted-cell">{{ user.access }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="selection-summary-panel" *ngIf="selectedUsers.length === 1">
+          <div><span class="section-kicker">Usuario marcado</span><h3>{{ selectedUsers[0].name }}</h3><p>{{ selectedUsers[0].role }} · {{ selectedUsers[0].status }}</p></div>
+          <div class="crud-actions"><button class="tool-btn" (click)="showUserDetails(selectedUsers[0])"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>Ver perfil</button><button class="tool-btn primary"><lucide-icon [img]="KeyIcon" [size]="16"></lucide-icon>Reset clave</button><button class="tool-btn danger"><lucide-icon [img]="LockIcon" [size]="16"></lucide-icon>Bloquear</button></div>
+        </div>
+        <div class="selection-summary-panel bulk" *ngIf="selectedUsers.length > 1">
+          <div><span class="section-kicker">Selección múltiple</span><h3>{{ selectedUsers.length }} usuarios seleccionados</h3><p>Acciones masivas sobre cuentas marcadas.</p></div>
+          <div class="crud-actions"><button class="tool-btn" (click)="clearSelection()"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon>Limpiar</button><button class="tool-btn primary"><lucide-icon [img]="RoleIcon" [size]="16"></lucide-icon>Asignar rol</button><button class="tool-btn danger"><lucide-icon [img]="LockIcon" [size]="16"></lucide-icon>Bloquear lote</button></div>
+        </div>
+        <div class="pagination"><div class="page-summary"><span class="page-info">Mostrando <strong>1-4</strong> de <strong>29</strong> usuarios</span><label class="page-size"><span>Por página</span><select><option>5</option><option>10</option></select></label></div><div class="page-controls"><button class="page-nav" disabled>Anterior</button><button class="page-btn active">1</button><button class="page-btn">2</button><span class="page-dots">...</span><button class="page-btn">6</button><button class="page-nav">Siguiente</button></div></div>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <div class="panel-header"><span class="section-kicker">Roles y permisos</span><lucide-icon [img]="RoleIcon" [size]="18"></lucide-icon></div>
+      <div class="role-card" *ngFor="let role of roles"><div><strong>{{ role.name }}</strong><span>{{ role.description }}</span></div><b>{{ role.count }}</b></div>
+      <div class="quick-form">
+        <label>Nombre completo<input placeholder="Nuevo usuario"></label>
+        <label>Correo<input placeholder="correo@xtore.pe"></label>
+        <label>Rol<select><option>Vendedor</option><option>Cajero</option><option>Inventario</option></select></label>
+        <button class="submit-btn"><lucide-icon [img]="UserIcon" [size]="18"></lucide-icon>Crear usuario</button>
+      </div>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="activeUser as user" (click)="closeUserDetails()">
+    <section class="detail-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeUserDetails()">x</button>
+      <div class="modal-heading"><div class="soft-icon"><lucide-icon [img]="UserIcon" [size]="24"></lucide-icon></div><div><span class="section-kicker">Perfil de usuario</span><h2>{{ user.name }}</h2><p>{{ user.email }} · {{ user.role }}</p></div></div>
+      <div class="modal-grid"><span><strong>Usuario</strong>{{ user.username }}</span><span><strong>Estado</strong>{{ user.status }}</span><span><strong>Rol</strong>{{ user.role }}</span><span><strong>Acceso</strong>{{ user.access }}</span></div>
+      <div class="modal-items"><h3>Permisos asignados</h3><div class="modal-item" *ngFor="let permission of user.permissions"><span>{{ permission }}</span><strong>Permitido</strong></div></div>
+      <div class="crud-actions modal-actions"><button class="tool-btn primary"><lucide-icon [img]="KeyIcon" [size]="16"></lucide-icon>Restablecer clave</button><button class="tool-btn"><lucide-icon [img]="MailIcon" [size]="16"></lucide-icon>Enviar acceso</button><button class="tool-btn danger"><lucide-icon [img]="LockIcon" [size]="16"></lucide-icon>Bloquear</button></div>
+    </section>
+  </div>
+</div>

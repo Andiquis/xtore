@@ -1,2 +1,64 @@
-<p>caja works!</p>
-<p>ESTO VA ESTAR INTERESANTE, AQUI SE MOSTRARA LA CAJA DE LA TIENDA, SE PODRA VER EL TOTAL DE DINERO QUE HAY EN LA CAJA, LAS VENTAS QUE SE HAN REALIZADO, LAS COMPRAS QUE SE HAN REALIZADO, ETC. TAMBIEN SE PODRA REALIZAR VENTAS DESDE AQUI, ASI COMO REALIZAR COMPRAS DESDE AQUI.</p>
+<div class="module-page">
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of kpis" [class]="'tone-' + kpi.tone">
+      <div class="kpi-icon"><lucide-icon [img]="kpi.icon" [size]="22"></lucide-icon></div>
+      <div><span>{{ kpi.label }}</span><strong>{{ kpi.value }}</strong><small>{{ kpi.helper }}</small></div>
+    </article>
+  </section>
+
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box"><lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon><input placeholder="Buscar movimiento, concepto o usuario"></div>
+      <div class="filter-group">
+        <select class="filter-select"><option>Turno actual</option><option>Hoy</option><option>Esta semana</option></select>
+        <select class="filter-select"><option>Todos los tipos</option><option>Ingreso</option><option>Egreso</option></select>
+        <select class="filter-select"><option>Método de pago</option><option>Efectivo</option><option>Tarjeta</option><option>Yape</option></select>
+        <button class="btn btn-outline filter-clear-btn"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon></button>
+      </div>
+    </div>
+    <div class="actions-section"><button class="btn btn-primary"><lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>Registrar movimiento</button></div>
+  </div>
+
+  <section class="workspace">
+    <div class="main-column">
+      <div class="table-card">
+        <div class="table-card-header"><div><h3>Movimientos de caja</h3><p>Controla ingresos, egresos y pagos recibidos durante el turno.</p></div><span class="table-count">Caja abierta</span></div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead><tr><th class="col-check"><input type="checkbox" [checked]="areAllMovementsSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllMovements($event)"></th><th>Movimiento</th><th>Método</th><th>Usuario</th><th>Hora</th><th>Estado</th><th class="text-right">Monto</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let movement of movements" class="data-row" [class.active]="activeMovement?.id === movement.id" [class.checked]="isMovementSelected(movement)" (click)="showMovementDetails(movement)">
+                <td class="col-check" (click)="$event.stopPropagation()"><input type="checkbox" [checked]="isMovementSelected(movement)" (change)="toggleMovementSelection(movement, $event)"></td>
+                <td><div class="main-cell"><strong>{{ movement.concept }}</strong><span>{{ movement.id }} · {{ movement.type }}</span></div></td>
+                <td><span class="role-badge">{{ movement.method }}</span></td>
+                <td class="muted-cell">{{ movement.user }}</td>
+                <td class="muted-cell">{{ movement.time }}</td>
+                <td><span class="status-pill" [ngClass]="getMovementClass(movement.type)">{{ movement.status }}</span></td>
+                <td class="text-right total-cell">S/ {{ movement.amount | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="selection-summary-panel" *ngIf="selectedMovements.length === 1"><div><span class="section-kicker">Movimiento marcado</span><h3>{{ selectedMovements[0].concept }}</h3><p>{{ selectedMovements[0].type }} · S/ {{ selectedMovements[0].amount | number:'1.2-2' }}</p></div><div class="crud-actions"><button class="tool-btn" (click)="showMovementDetails(selectedMovements[0])"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>Ver detalle</button><button class="tool-btn primary"><lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon>Imprimir</button><button class="tool-btn danger"><lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>Anular</button></div></div>
+        <div class="pagination"><div class="page-summary"><span class="page-info">Mostrando <strong>1-4</strong> de <strong>64</strong> movimientos</span><label class="page-size"><span>Por página</span><select><option>5</option><option>10</option></select></label></div><div class="page-controls"><button class="page-nav" disabled>Anterior</button><button class="page-btn active">1</button><button class="page-btn">2</button><span class="page-dots">...</span><button class="page-btn">13</button><button class="page-nav">Siguiente</button></div></div>
+      </div>
+    </div>
+
+    <aside class="side-panel">
+      <div class="panel-header"><span class="section-kicker">Caja actual</span><lucide-icon [img]="OpenIcon" [size]="18"></lucide-icon></div>
+      <div class="cash-status"><strong>Turno abierto</strong><span>Responsable: Anderson · Apertura 08:00</span></div>
+      <div class="method-list"><div class="method-row" *ngFor="let method of methods"><div><lucide-icon [img]="method.icon" [size]="18"></lucide-icon><strong>{{ method.name }}</strong></div><b>S/ {{ method.value | number:'1.2-2' }}</b></div></div>
+      <div class="quick-form"><label>Monto contado<input value="6842.50"></label><label>Observación<textarea rows="3" placeholder="Notas del cierre..."></textarea></label></div>
+      <button class="submit-btn"><lucide-icon [img]="CloseIcon" [size]="18"></lucide-icon>Cerrar caja</button>
+    </aside>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="activeMovement as movement" (click)="closeMovementDetails()">
+    <section class="detail-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" (click)="closeMovementDetails()">x</button>
+      <div class="modal-heading"><div class="soft-icon"><lucide-icon [img]="OpenIcon" [size]="24"></lucide-icon></div><div><span class="section-kicker">Detalle de movimiento</span><h2>{{ movement.concept }}</h2><p>{{ movement.type }} · {{ movement.method }} · {{ movement.user }}</p></div></div>
+      <div class="modal-grid"><span><strong>ID</strong>{{ movement.id }}</span><span><strong>Hora</strong>{{ movement.time }}</span><span><strong>Estado</strong>{{ movement.status }}</span><span><strong>Monto</strong>S/ {{ movement.amount | number:'1.2-2' }}</span></div>
+      <div class="crud-actions modal-actions"><button class="tool-btn primary"><lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon>Imprimir</button><button class="tool-btn danger"><lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>Anular</button></div>
+    </section>
+  </div>
+</div>

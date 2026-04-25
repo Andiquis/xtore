@@ -20,13 +20,13 @@
       </div>
       <div class="filter-group">
         <select class="filter-select">
-          <option>Todas las categorías</option>
+          <option>Categoria</option>
           <option>Ropa</option>
           <option>Calzado</option>
           <option>Accesorios</option>
         </select>
         <select class="filter-select">
-          <option>Todos los estados</option>
+          <option>Estado</option>
           <option>Saludable</option>
           <option>Bajo stock</option>
           <option>Agotado</option>
@@ -168,9 +168,9 @@
 
         <div class="pagination">
           <div class="page-summary">
-            <span>Mostrando <strong>1-5</strong> de <strong>84</strong> productos</span>
-            <label>
-              Por página
+            <span class="page-info">Mostrando <strong>1-5</strong> de <strong>84</strong> productos</span>
+            <label class="page-size">
+              <span>Por página</span>
               <select>
                 <option>5</option>
                 <option>10</option>
@@ -179,12 +179,12 @@
             </label>
           </div>
           <div class="page-controls">
-            <button disabled>Anterior</button>
-            <button class="active">1</button>
-            <button>2</button>
-            <span>...</span>
-            <button>17</button>
-            <button>Siguiente</button>
+            <button class="page-nav" disabled>Anterior</button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <span class="page-dots">...</span>
+            <button class="page-btn">17</button>
+            <button class="page-nav">Siguiente</button>
           </div>
         </div>
       </div>

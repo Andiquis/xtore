@@ -1,0 +1,35 @@
+@use '../compras/compras';
+
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  > span {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #eef7ff;
+    color: #0369a1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+  }
+
+  strong,
+  small {
+    display: block;
+  }
+
+  strong {
+    color: var(--ink);
+    font-size: 14px;
+  }
+
+  small {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 700;
+  }
+}

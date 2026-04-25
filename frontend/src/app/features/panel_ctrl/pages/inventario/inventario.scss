@@ -507,50 +507,100 @@
   padding: 16px 24px 20px;
   border-top: 1px solid var(--line);
   background: var(--soft);
-}
 
-.page-summary,
-.page-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 800;
-
-  strong {
-    color: var(--ink);
+  .page-summary {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
   }
 
-  select,
-  button {
-    height: 34px;
-    border: 1px solid var(--line);
-    border-radius: 9px;
-    background: #ffffff;
-    color: var(--ink);
-    font-family: inherit;
+  .page-info {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+
+    strong {
+      color: var(--ink);
+      font-weight: 800;
+    }
+  }
+
+  .page-size {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
     font-weight: 800;
+
+    select {
+      height: 32px;
+      padding: 0 30px 0 10px;
+      border: 1px solid #dfe7f5;
+      border-radius: 9px;
+      background: #ffffff;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
   }
 
-  select {
-    padding: 0 10px;
-  }
+  .page-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
-  button {
-    padding: 0 12px;
-    cursor: pointer;
+    .page-btn,
+    .page-nav {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      font-weight: 800;
+      border-radius: 9px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
 
-    &.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #ffffff;
+      &:hover {
+        border-color: #9bd6f2;
+        color: #0369a1;
+        box-shadow: 0 6px 14px rgba(112, 144, 176, 0.1);
+      }
     }
 
-    &:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
+    .page-btn {
+      width: 34px;
+
+      &.active {
+        background: #0ea5e9;
+        border-color: #0ea5e9;
+        color: #ffffff;
+        box-shadow: 0 8px 18px rgba(14, 165, 233, 0.2);
+      }
+    }
+
+    .page-nav {
+      padding: 0 12px;
+
+      &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        box-shadow: none;
+        color: var(--muted);
+      }
+    }
+
+    .page-dots {
+      color: var(--muted);
+      font-weight: 800;
+      padding: 0 4px;
     }
   }
 }
@@ -824,6 +874,13 @@
   .inventory-panel {
     position: static;
   }
+}
+
+@media (max-width: 768px) {
+  .top-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
 
   .search-section {
     width: 100%;
@@ -837,39 +894,17 @@
   }
 
   .filter-group {
+    width: 100%;
     display: grid;
-    grid-template-columns: repeat(3, minmax(150px, 1fr)) 40px;
-    gap: 10px;
-    align-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
 
-  .filter-select {
+  .filter-select,
+  .filter-clear-btn {
     width: 100%;
   }
 
-  .filter-clear-btn {
-    width: 40px;
-    justify-self: end;
-  }
-}
-
-@media (min-width: 769px) and (max-width: 1200px) {
-  .top-bar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 12px;
-    align-items: center;
-  }
-
-  .search-section {
-    display: grid;
-    grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.4fr);
-    align-items: center;
-    width: auto;
-  }
-}
-
-@media (max-width: 768px) {
   .selection-summary-panel,
   .pagination {
     align-items: stretch;
@@ -881,10 +916,6 @@
     width: 100%;
   }
 
-  .filter-group {
-    grid-template-columns: 1fr 1fr;
-  }
-
   .kpi-grid,
   .modal-grid {
     grid-template-columns: 1fr;
@@ -893,21 +924,13 @@
   .crud-actions,
   .page-controls,
   .page-summary {
-    justify-content: flex-start;
+    justify-content: center;
   }
 }
 
 @media (max-width: 480px) {
   .inventario-page {
     gap: 16px;
-  }
-
-  .filter-group {
-    grid-template-columns: 1fr;
-  }
-
-  .filter-clear-btn {
-    justify-self: stretch;
   }
 
   .table-card-header,
@@ -921,9 +944,26 @@
     margin-right: 16px;
   }
 
-  .tool-btn,
-  .page-controls button {
+  .tool-btn {
     width: 100%;
+  }
+
+  .pagination {
+    padding: 14px 16px 18px;
+
+    .page-summary {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .page-controls {
+      gap: 6px;
+    }
+
+    .page-nav {
+      flex: 1;
+      min-width: 92px;
+    }
   }
 
   .inventory-modal-backdrop {
