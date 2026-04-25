@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { 
   LucideAngularModule, 
   Search, 
-  Filter, 
+  Eraser, 
   Plus, 
   MoreVertical, 
   Edit2, 
@@ -29,10 +29,12 @@ export class Productos {
   
   // ── Estado ──
   activeTab: 'productos' | 'categorias' | 'marcas' | 'presentacion' = 'productos';
+  activeProduct: any = null;
+  selectedProducts: any[] = [];
 
   // ── Iconos ──
   SearchIcon = Search;
-  FilterIcon = Filter;
+  EraserIcon = Eraser;
   PlusIcon = Plus;
   MoreIcon = MoreVertical;
   EditIcon = Edit2;
@@ -49,6 +51,48 @@ export class Productos {
   // ── Funciones ──
   setTab(tab: 'productos' | 'categorias' | 'marcas' | 'presentacion') {
     this.activeTab = tab;
+  }
+
+  showProductDetails(product: any) {
+    this.activeProduct = product;
+  }
+
+  closeProductDetails() {
+    this.activeProduct = null;
+  }
+
+  isProductSelected(product: any) {
+    return this.selectedProducts.some(selected => selected.id === product.id);
+  }
+
+  toggleProductSelection(product: any, event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    if (checked) {
+      this.selectedProducts = this.isProductSelected(product)
+        ? this.selectedProducts
+        : [...this.selectedProducts, product];
+      return;
+    }
+
+    this.selectedProducts = this.selectedProducts.filter(selected => selected.id !== product.id);
+  }
+
+  toggleAllProducts(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.selectedProducts = checked ? [...this.products] : [];
+  }
+
+  areAllProductsSelected() {
+    return this.products.length > 0 && this.selectedProducts.length === this.products.length;
+  }
+
+  hasPartialSelection() {
+    return this.selectedProducts.length > 0 && !this.areAllProductsSelected();
+  }
+
+  clearProductSelection() {
+    this.selectedProducts = [];
   }
 
   // ── Mock Data: Productos ──
