@@ -40,7 +40,7 @@ export const PANEL_CTRL_ROUTES: Routes = [
       },
       {
         path: 'promociones',
-        loadComponent: () => import('../pages/crud/crud').then((m) => m.Crud),
+        loadComponent: () => import('../pages/promociones/promociones').then((m) => m.Promociones),
       },
       {
         path: 'reportes',
