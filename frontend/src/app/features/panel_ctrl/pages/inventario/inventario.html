@@ -1,2 +1,313 @@
-<p>inventario works!</p>
-<p>ESTO VA ESTAR INTERESANTE, AQUI SE MOSTRARAN LOS PRODUCTOS QUE HAY EN LA TIENDA, SE PODRA FILTRAR POR NOMBRE, POR CATEGORIA, POR PRECIO, ETC. TAMBIEN SE PODRA VER LOS DETALLES DE CADA PRODUCTO, COMO SU NOMBRE, SU CATEGORIA, SU PRECIO, SU STOCK, ETC.</p>
+<div class="inventario-page">
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of kpis" [class]="'tone-' + kpi.tone">
+      <div class="kpi-icon">
+        <lucide-icon [img]="kpi.icon" [size]="22" [strokeWidth]="2.4"></lucide-icon>
+      </div>
+      <div>
+        <span>{{ kpi.label }}</span>
+        <strong>{{ kpi.value }}</strong>
+        <small>{{ kpi.helper }}</small>
+      </div>
+    </article>
+  </section>
+
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box">
+        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+        <input type="text" placeholder="Buscar por producto, SKU o ubicación">
+      </div>
+      <div class="filter-group">
+        <select class="filter-select">
+          <option>Todas las categorías</option>
+          <option>Ropa</option>
+          <option>Calzado</option>
+          <option>Accesorios</option>
+        </select>
+        <select class="filter-select">
+          <option>Todos los estados</option>
+          <option>Saludable</option>
+          <option>Bajo stock</option>
+          <option>Agotado</option>
+        </select>
+        <select class="filter-select">
+          <option>Tipo de movimiento</option>
+          <option>Entrada</option>
+          <option>Salida</option>
+          <option>Ajuste</option>
+        </select>
+        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
+          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+    <div class="actions-section">
+      <button class="btn btn-primary">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        Nuevo movimiento
+      </button>
+    </div>
+  </div>
+
+  <section class="inventory-workspace">
+    <div class="inventory-main">
+      <div class="inventory-table-card">
+        <div class="table-card-header">
+          <div>
+            <h3>Stock actual</h3>
+            <p>Selecciona una fila para revisar kardex, movimientos y ajustes.</p>
+          </div>
+          <span class="table-count">{{ stockItems.length }} productos</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="inventory-table">
+            <thead>
+              <tr>
+                <th class="col-check">
+                  <input
+                    type="checkbox"
+                    [checked]="areAllItemsSelected()"
+                    [indeterminate]="hasPartialSelection()"
+                    (change)="toggleAllItems($event)"
+                  >
+                </th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Ubicación</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Último movimiento</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let item of stockItems"
+                class="inventory-row"
+                [class.active]="activeItem?.id === item.id"
+                [class.checked]="isItemSelected(item)"
+                (click)="showInventoryDetails(item)"
+              >
+                <td class="col-check" (click)="$event.stopPropagation()">
+                  <input
+                    type="checkbox"
+                    [checked]="isItemSelected(item)"
+                    (change)="toggleItemSelection(item, $event)"
+                  >
+                </td>
+                <td>
+                  <div class="product-cell">
+                    <strong>{{ item.product }}</strong>
+                    <span>{{ item.sku }}</span>
+                  </div>
+                </td>
+                <td><span class="category-badge">{{ item.category }}</span></td>
+                <td class="location-cell">{{ item.location }}</td>
+                <td>
+                  <div class="stock-cell">
+                    <div>
+                      <strong>{{ item.stock }}</strong>
+                      <span>Min {{ item.min }} · Max {{ item.max }}</span>
+                    </div>
+                    <div class="stock-track">
+                      <span [style.width.%]="getStockPercent(item)"></span>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="status-pill" [ngClass]="getStatusClass(item.status)">{{ item.status }}</span></td>
+                <td class="last-move">{{ item.lastMove }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+          <div>
+            <span class="section-kicker">Producto marcado</span>
+            <h3>{{ selectedItems[0].product }}</h3>
+            <p>{{ selectedItems[0].sku }} · Stock {{ selectedItems[0].stock }} · {{ selectedItems[0].status }}</p>
+          </div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="showInventoryDetails(selectedItems[0])">
+              <lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>
+              Ver kardex
+            </button>
+            <button class="tool-btn primary">
+              <lucide-icon [img]="AdjustIcon" [size]="16"></lucide-icon>
+              Ajustar
+            </button>
+            <button class="tool-btn danger">
+              <lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon>
+              Desactivar
+            </button>
+          </div>
+        </div>
+
+        <div class="selection-summary-panel bulk" *ngIf="selectedItems.length > 1">
+          <div>
+            <span class="section-kicker">Selección múltiple</span>
+            <h3>{{ selectedItems.length }} productos seleccionados</h3>
+            <p>Acciones generales sobre productos marcados con checklist.</p>
+          </div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="clearSelection()">
+              <lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon>
+              Limpiar
+            </button>
+            <button class="tool-btn primary">
+              <lucide-icon [img]="AdjustIcon" [size]="16"></lucide-icon>
+              Ajuste masivo
+            </button>
+            <button class="tool-btn danger">
+              <lucide-icon [img]="AlertIcon" [size]="16"></lucide-icon>
+              Marcar alerta
+            </button>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <div class="page-summary">
+            <span>Mostrando <strong>1-5</strong> de <strong>84</strong> productos</span>
+            <label>
+              Por página
+              <select>
+                <option>5</option>
+                <option>10</option>
+                <option>25</option>
+              </select>
+            </label>
+          </div>
+          <div class="page-controls">
+            <button disabled>Anterior</button>
+            <button class="active">1</button>
+            <button>2</button>
+            <span>...</span>
+            <button>17</button>
+            <button>Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="inventory-panel">
+      <div class="panel-header">
+        <span class="section-kicker">Ajuste rápido</span>
+        <button class="mini-action">
+          <lucide-icon [img]="MoreIcon" [size]="18"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="movement-form">
+        <label>
+          Producto
+          <select>
+            <option>Zapatillas Urban Pro</option>
+            <option>Polo Classic Fit Blanco</option>
+            <option>Mochila Explorer 40L</option>
+          </select>
+        </label>
+        <label>
+          Tipo de movimiento
+          <select>
+            <option>Entrada</option>
+            <option>Salida</option>
+            <option>Ajuste</option>
+          </select>
+        </label>
+        <label>
+          Cantidad
+          <input type="number" value="1" min="1">
+        </label>
+        <label>
+          Motivo
+          <textarea rows="3" placeholder="Reposición, merma, devolución..."></textarea>
+        </label>
+        <button class="submit-movement">
+          <lucide-icon [img]="AdjustIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+          Registrar movimiento
+        </button>
+      </div>
+
+      <div class="alerts-card">
+        <div class="panel-header">
+          <span class="section-kicker">Alertas</span>
+          <span class="alert-count">16</span>
+        </div>
+        <div class="alert-item" *ngFor="let item of stockItems.slice(1, 4)" [ngClass]="getStatusClass(item.status)">
+          <div>
+            <strong>{{ item.product }}</strong>
+            <span>{{ item.status }} · Stock {{ item.stock }}</span>
+          </div>
+          <lucide-icon [img]="AlertIcon" [size]="18"></lucide-icon>
+        </div>
+      </div>
+
+      <div class="movements-card">
+        <div class="panel-header">
+          <span class="section-kicker">Movimientos recientes</span>
+          <lucide-icon [img]="HistoryIcon" [size]="18"></lucide-icon>
+        </div>
+        <div class="movement-item" *ngFor="let move of recentMovements">
+          <span class="movement-icon" [ngClass]="getMovementClass(move.type)">
+            <lucide-icon [img]="getMovementIcon(move.type)" [size]="16"></lucide-icon>
+          </span>
+          <div>
+            <strong>{{ move.product }}</strong>
+            <span>{{ move.type }} · {{ move.qty }} uds · {{ move.user }}</span>
+          </div>
+          <small>{{ move.time }}</small>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <div class="inventory-modal-backdrop" *ngIf="activeItem as item" (click)="closeInventoryDetails()">
+    <section class="inventory-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeInventoryDetails()">x</button>
+      <div class="modal-heading">
+        <div class="soft-icon">
+          <lucide-icon [img]="ProductIcon" [size]="24"></lucide-icon>
+        </div>
+        <div>
+          <span class="section-kicker">Kardex de producto</span>
+          <h2>{{ item.product }}</h2>
+          <p>{{ item.sku }} · {{ item.category }} · Ubicación {{ item.location }}</p>
+        </div>
+      </div>
+      <div class="modal-grid">
+        <span><strong>Stock actual</strong>{{ item.stock }}</span>
+        <span><strong>Mínimo</strong>{{ item.min }}</span>
+        <span><strong>Máximo</strong>{{ item.max }}</span>
+        <span><strong>Responsable</strong>{{ item.responsible }}</span>
+      </div>
+      <div class="modal-items">
+        <h3>Historial de movimientos</h3>
+        <div class="modal-item" *ngFor="let move of item.movements">
+          <span class="movement-icon" [ngClass]="getMovementClass(move.type)">
+            <lucide-icon [img]="getMovementIcon(move.type)" [size]="16"></lucide-icon>
+          </span>
+          <div>
+            <strong>{{ move.type }} · {{ move.qty }} uds</strong>
+            <span>{{ move.reason }} · {{ move.user }}</span>
+          </div>
+          <small>{{ move.date }}</small>
+        </div>
+      </div>
+      <div class="crud-actions modal-actions">
+        <button class="tool-btn primary">
+          <lucide-icon [img]="AdjustIcon" [size]="16"></lucide-icon>
+          Ajustar stock
+        </button>
+        <button class="tool-btn">
+          <lucide-icon [img]="ResetIcon" [size]="16"></lucide-icon>
+          Recalcular
+        </button>
+        <button class="tool-btn danger">
+          <lucide-icon [img]="AlertIcon" [size]="16"></lucide-icon>
+          Crear alerta
+        </button>
+      </div>
+    </section>
+  </div>
+</div>
