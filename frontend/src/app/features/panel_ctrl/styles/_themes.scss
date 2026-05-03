@@ -1,0 +1,938 @@
+/* ============================================================
+   panel-ctrl — Complete Theme System
+   Tokens: bg, surface, surface-alt, border, text, text-muted,
+           primary, primary-hover, primary-fg,
+           accent, accent-hover, accent-fg,
+           success, warning, danger, info
+   ============================================================ */
+
+/* ──────────────────────────────────────────────
+   BASE RESET & GLOBAL RULES
+────────────────────────────────────────────── */
+.panel-ctrl *,
+.panel-ctrl *::before,
+.panel-ctrl *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.panel-ctrl {
+  background-color: var(--pc-bg);
+  color: var(--pc-text);
+  font-family: var(--pc-font, "Inter", "Segoe UI", system-ui, sans-serif);
+  font-size: var(--pc-font-size, 15px);
+  line-height: var(--pc-line-height, 1.6);
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 01 · LIGHT — Slate & Azure
+   Limpio, profesional, alta legibilidad
+────────────────────────────────────────────── */
+.panel-ctrl.theme-light {
+  --pc-bg:             #f0f4f8;
+  --pc-surface:        #ffffff;
+  --pc-surface-alt:    #e8edf3;
+  --pc-border:         #cbd5e1;
+  --pc-text:           #0f172a;
+  --pc-text-muted:     #64748b;
+  --pc-primary:        #2563eb;
+  --pc-primary-hover:  #1d4ed8;
+  --pc-primary-fg:     #ffffff;
+  --pc-accent:         #7c3aed;
+  --pc-accent-hover:   #6d28d9;
+  --pc-accent-fg:      #ffffff;
+  --pc-success:        #059669;
+  --pc-success-bg:     #d1fae5;
+  --pc-warning:        #d97706;
+  --pc-warning-bg:     #fef3c7;
+  --pc-danger:         #dc2626;
+  --pc-danger-bg:      #fee2e2;
+  --pc-info:           #0891b2;
+  --pc-info-bg:        #cffafe;
+  --pc-shadow:         0 1px 3px rgba(15,23,42,0.10), 0 4px 12px rgba(15,23,42,0.06);
+  --pc-radius:         10px;
+  --pc-radius-sm:      6px;
+  --pc-radius-lg:      16px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 02 · DARK — Midnight Slate
+   Elegante, oscuro, ojos descansados
+────────────────────────────────────────────── */
+.panel-ctrl.theme-dark {
+  --pc-bg:             #020617;
+  --pc-surface:        #0f172a;
+  --pc-surface-alt:    #1e293b;
+  --pc-border:         #334155;
+  --pc-text:           #f1f5f9;
+  --pc-text-muted:     #94a3b8;
+  --pc-primary:        #38bdf8;
+  --pc-primary-hover:  #7dd3fc;
+  --pc-primary-fg:     #0c1424;
+  --pc-accent:         #a78bfa;
+  --pc-accent-hover:   #c4b5fd;
+  --pc-accent-fg:      #1a0a3a;
+  --pc-success:        #34d399;
+  --pc-success-bg:     #064e3b;
+  --pc-warning:        #fbbf24;
+  --pc-warning-bg:     #451a03;
+  --pc-danger:         #f87171;
+  --pc-danger-bg:      #450a0a;
+  --pc-info:           #22d3ee;
+  --pc-info-bg:        #083344;
+  --pc-shadow:         0 1px 3px rgba(0,0,0,0.50), 0 4px 16px rgba(0,0,0,0.35);
+  --pc-radius:         10px;
+  --pc-radius-sm:      6px;
+  --pc-radius-lg:      16px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 03 · AURORA — Boreal Twilight
+   Verdes y azules nórdicos sobre oscuro profundo
+────────────────────────────────────────────── */
+.panel-ctrl.theme-aurora {
+  --pc-bg:             #050d12;
+  --pc-surface:        #081a20;
+  --pc-surface-alt:    #0d2a35;
+  --pc-border:         #134455;
+  --pc-text:           #e0f7f4;
+  --pc-text-muted:     #7cb9b3;
+  --pc-primary:        #00e5c8;
+  --pc-primary-hover:  #33edd5;
+  --pc-primary-fg:     #021018;
+  --pc-accent:         #7b63ff;
+  --pc-accent-hover:   #9b87ff;
+  --pc-accent-fg:      #08021c;
+  --pc-success:        #00e5c8;
+  --pc-success-bg:     #03302c;
+  --pc-warning:        #f4d03f;
+  --pc-warning-bg:     #2a2003;
+  --pc-danger:         #ff6b9d;
+  --pc-danger-bg:      #2d0212;
+  --pc-info:           #45b4ff;
+  --pc-info-bg:        #041525;
+  --pc-shadow:         0 2px 8px rgba(0,229,200,0.08), 0 8px 24px rgba(0,0,0,0.55);
+  --pc-radius:         12px;
+  --pc-radius-sm:      7px;
+  --pc-radius-lg:      20px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 04 · SAKURA — Blossom & Ink
+   Rosados suaves, melocotón y tinta oscura
+────────────────────────────────────────────── */
+.panel-ctrl.theme-sakura {
+  --pc-bg:             #fff5f7;
+  --pc-surface:        #ffffff;
+  --pc-surface-alt:    #ffe8ee;
+  --pc-border:         #f9b8c6;
+  --pc-text:           #1a0d12;
+  --pc-text-muted:     #9d6475;
+  --pc-primary:        #e01b6c;
+  --pc-primary-hover:  #c01560;
+  --pc-primary-fg:     #ffffff;
+  --pc-accent:         #7e3af2;
+  --pc-accent-hover:   #6c2fe0;
+  --pc-accent-fg:      #ffffff;
+  --pc-success:        #0f9c7a;
+  --pc-success-bg:     #d6f5ed;
+  --pc-warning:        #e0850a;
+  --pc-warning-bg:     #fdf0da;
+  --pc-danger:         #c7000c;
+  --pc-danger-bg:      #fee0e1;
+  --pc-info:           #0578b9;
+  --pc-info-bg:        #daeef9;
+  --pc-shadow:         0 1px 4px rgba(224,27,108,0.08), 0 6px 16px rgba(26,13,18,0.07);
+  --pc-radius:         12px;
+  --pc-radius-sm:      6px;
+  --pc-radius-lg:      20px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 05 · OBSIDIAN — Void & Gold
+   Negro carbono, detalles áureos
+────────────────────────────────────────────── */
+.panel-ctrl.theme-obsidian {
+  --pc-bg:             #0a0a0b;
+  --pc-surface:        #141415;
+  --pc-surface-alt:    #1e1e20;
+  --pc-border:         #2e2e32;
+  --pc-text:           #f5f3ee;
+  --pc-text-muted:     #8a8880;
+  --pc-primary:        #d4a017;
+  --pc-primary-hover:  #e6b52b;
+  --pc-primary-fg:     #0a0800;
+  --pc-accent:         #c26bff;
+  --pc-accent-hover:   #d48aff;
+  --pc-accent-fg:      #110020;
+  --pc-success:        #52c97a;
+  --pc-success-bg:     #0a1f12;
+  --pc-warning:        #e8a020;
+  --pc-warning-bg:     #1e1200;
+  --pc-danger:         #ff5a5a;
+  --pc-danger-bg:      #1f0606;
+  --pc-info:           #5ab4ff;
+  --pc-info-bg:        #041324;
+  --pc-shadow:         0 2px 6px rgba(0,0,0,0.70), 0 8px 28px rgba(0,0,0,0.55);
+  --pc-radius:         8px;
+  --pc-radius-sm:      4px;
+  --pc-radius-lg:      14px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 06 · FOREST — Mossy & Earthy
+   Verdes oliva, tierra y madera cálida
+────────────────────────────────────────────── */
+.panel-ctrl.theme-forest {
+  --pc-bg:             #f2f4ee;
+  --pc-surface:        #fafaf7;
+  --pc-surface-alt:    #e6ead e;
+  --pc-border:         #c5ccb5;
+  --pc-text:           #1c2110;
+  --pc-text-muted:     #5e6b4a;
+  --pc-primary:        #3d7a2e;
+  --pc-primary-hover:  #326624;
+  --pc-primary-fg:     #f9fdf8;
+  --pc-accent:         #a05c28;
+  --pc-accent-hover:   #8a4e20;
+  --pc-accent-fg:      #fdf5ee;
+  --pc-success:        #2a7b2a;
+  --pc-success-bg:     #d8f0d4;
+  --pc-warning:        #c97b0a;
+  --pc-warning-bg:     #fbeece;
+  --pc-danger:         #c0391b;
+  --pc-danger-bg:      #f9ddd6;
+  --pc-info:           #2166a0;
+  --pc-info-bg:        #d6e8f6;
+  --pc-shadow:         0 1px 3px rgba(28,33,16,0.10), 0 4px 14px rgba(28,33,16,0.06);
+  --pc-radius:         10px;
+  --pc-radius-sm:      5px;
+  --pc-radius-lg:      18px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 07 · CANDY — Pop & Vibrant
+   Paleta pop, colores saturados y alegres
+────────────────────────────────────────────── */
+.panel-ctrl.theme-candy {
+  --pc-bg:             #fef0fb;
+  --pc-surface:        #ffffff;
+  --pc-surface-alt:    #fde4f9;
+  --pc-border:         #f0a8e8;
+  --pc-text:           #1a0820;
+  --pc-text-muted:     #8b4da0;
+  --pc-primary:        #d020c8;
+  --pc-primary-hover:  #b01aac;
+  --pc-primary-fg:     #ffffff;
+  --pc-accent:         #f07020;
+  --pc-accent-hover:   #d86018;
+  --pc-accent-fg:      #ffffff;
+  --pc-success:        #00b86e;
+  --pc-success-bg:     #ccf7e6;
+  --pc-warning:        #f0b000;
+  --pc-warning-bg:     #fef5cc;
+  --pc-danger:         #f01028;
+  --pc-danger-bg:      #fee0e4;
+  --pc-info:           #00a8e0;
+  --pc-info-bg:        #cceefc;
+  --pc-shadow:         0 2px 8px rgba(208,32,200,0.10), 0 6px 20px rgba(26,8,32,0.08);
+  --pc-radius:         14px;
+  --pc-radius-sm:      8px;
+  --pc-radius-lg:      24px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 08 · DUSK — Purple Haze
+   Atardecer morado, transiciones cálidas
+────────────────────────────────────────────── */
+.panel-ctrl.theme-dusk {
+  --pc-bg:             #1a0d2e;
+  --pc-surface:        #261540;
+  --pc-surface-alt:    #341d54;
+  --pc-border:         #4a2d72;
+  --pc-text:           #f3ecff;
+  --pc-text-muted:     #b08ee0;
+  --pc-primary:        #e040fb;
+  --pc-primary-hover:  #ea6afc;
+  --pc-primary-fg:     #1a0030;
+  --pc-accent:         #ff7043;
+  --pc-accent-hover:   #ff8a65;
+  --pc-accent-fg:      #200800;
+  --pc-success:        #69f0ae;
+  --pc-success-bg:     #003321;
+  --pc-warning:        #ffcc02;
+  --pc-warning-bg:     #2a1e00;
+  --pc-danger:         #ff5252;
+  --pc-danger-bg:      #2d0808;
+  --pc-info:           #40c4ff;
+  --pc-info-bg:        #001f33;
+  --pc-shadow:         0 2px 8px rgba(224,64,251,0.15), 0 8px 28px rgba(0,0,0,0.60);
+  --pc-radius:         12px;
+  --pc-radius-sm:      6px;
+  --pc-radius-lg:      20px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 09 · ARCTIC — Ice & Steel
+   Azules hielo, neutros fríos, muy limpio
+────────────────────────────────────────────── */
+.panel-ctrl.theme-arctic {
+  --pc-bg:             #eef3f8;
+  --pc-surface:        #f8fbff;
+  --pc-surface-alt:    #ddeaf4;
+  --pc-border:         #aec9de;
+  --pc-text:           #0a1824;
+  --pc-text-muted:     #4e7590;
+  --pc-primary:        #0067b8;
+  --pc-primary-hover:  #005299;
+  --pc-primary-fg:     #ffffff;
+  --pc-accent:         #00b0a0;
+  --pc-accent-hover:   #009488;
+  --pc-accent-fg:      #ffffff;
+  --pc-success:        #007d5e;
+  --pc-success-bg:     #d0ede5;
+  --pc-warning:        #a06400;
+  --pc-warning-bg:     #f5eacc;
+  --pc-danger:         #c0001c;
+  --pc-danger-bg:      #f5d5da;
+  --pc-info:           #006ab0;
+  --pc-info-bg:        #d0e7f5;
+  --pc-shadow:         0 1px 3px rgba(10,24,36,0.10), 0 5px 14px rgba(10,24,36,0.06);
+  --pc-radius:         8px;
+  --pc-radius-sm:      4px;
+  --pc-radius-lg:      14px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 10 · EMBER — Warm Charcoal
+   Carbón cálido, naranjas y bronces ígneos
+────────────────────────────────────────────── */
+.panel-ctrl.theme-ember {
+  --pc-bg:             #141009;
+  --pc-surface:        #1e170e;
+  --pc-surface-alt:    #2a2015;
+  --pc-border:         #3d3020;
+  --pc-text:           #f5ede0;
+  --pc-text-muted:     #a08060;
+  --pc-primary:        #ff7e30;
+  --pc-primary-hover:  #ff9a55;
+  --pc-primary-fg:     #1a0800;
+  --pc-accent:         #ff3860;
+  --pc-accent-hover:   #ff5c7a;
+  --pc-accent-fg:      #1a0010;
+  --pc-success:        #8cdd60;
+  --pc-success-bg:     #121f08;
+  --pc-warning:        #ffc108;
+  --pc-warning-bg:     #1f1600;
+  --pc-danger:         #ff4444;
+  --pc-danger-bg:      #200404;
+  --pc-info:           #60c8ff;
+  --pc-info-bg:        #04141f;
+  --pc-shadow:         0 2px 8px rgba(255,126,48,0.10), 0 8px 28px rgba(0,0,0,0.60);
+  --pc-radius:         9px;
+  --pc-radius-sm:      5px;
+  --pc-radius-lg:      16px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 11 · MINT — Fresh & Serene
+   Verdes menta suaves, muy refrescante
+────────────────────────────────────────────── */
+.panel-ctrl.theme-mint {
+  --pc-bg:             #f0faf6;
+  --pc-surface:        #ffffff;
+  --pc-surface-alt:    #e2f5ed;
+  --pc-border:         #a8dbc4;
+  --pc-text:           #0c2018;
+  --pc-text-muted:     #4a8068;
+  --pc-primary:        #059669;
+  --pc-primary-hover:  #047857;
+  --pc-primary-fg:     #ffffff;
+  --pc-accent:         #6366f1;
+  --pc-accent-hover:   #4f46e5;
+  --pc-accent-fg:      #ffffff;
+  --pc-success:        #10b981;
+  --pc-success-bg:     #ccf5e8;
+  --pc-warning:        #d97706;
+  --pc-warning-bg:     #fef3c7;
+  --pc-danger:         #ef4444;
+  --pc-danger-bg:      #fee2e2;
+  --pc-info:           #0ea5e9;
+  --pc-info-bg:        #e0f2fe;
+  --pc-shadow:         0 1px 4px rgba(5,150,105,0.08), 0 5px 16px rgba(12,32,24,0.06);
+  --pc-radius:         10px;
+  --pc-radius-sm:      6px;
+  --pc-radius-lg:      18px;
+}
+
+/* ──────────────────────────────────────────────
+   THEME 12 · NOIR — Grayscale Luxury
+   Blancos y negros absolutos, contraste máximo
+────────────────────────────────────────────── */
+.panel-ctrl.theme-noir {
+  --pc-bg:             #080808;
+  --pc-surface:        #111111;
+  --pc-surface-alt:    #1c1c1c;
+  --pc-border:         #333333;
+  --pc-text:           #f8f8f8;
+  --pc-text-muted:     #888888;
+  --pc-primary:        #f8f8f8;
+  --pc-primary-hover:  #ffffff;
+  --pc-primary-fg:     #000000;
+  --pc-accent:         #aaaaaa;
+  --pc-accent-hover:   #cccccc;
+  --pc-accent-fg:      #000000;
+  --pc-success:        #7fcf7f;
+  --pc-success-bg:     #0a1a0a;
+  --pc-warning:        #cfcf4f;
+  --pc-warning-bg:     #1a1a05;
+  --pc-danger:         #cf5050;
+  --pc-danger-bg:      #1a0505;
+  --pc-info:           #7fafcf;
+  --pc-info-bg:        #050f1a;
+  --pc-shadow:         0 2px 6px rgba(0,0,0,0.80), 0 8px 28px rgba(0,0,0,0.65);
+  --pc-radius:         6px;
+  --pc-radius-sm:      3px;
+  --pc-radius-lg:      12px;
+}
+
+/* ══════════════════════════════════════════════
+   COMPONENT LIBRARY — shared across all themes
+   ══════════════════════════════════════════════ */
+
+/* Card / Panel */
+.panel-ctrl .pc-card {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius);
+  box-shadow: var(--pc-shadow);
+  padding: 1.25rem 1.5rem;
+  transition: box-shadow 0.2s ease;
+}
+
+.panel-ctrl .pc-card:hover {
+  box-shadow: var(--pc-shadow), 0 0 0 2px var(--pc-primary);
+}
+
+.panel-ctrl .pc-card--alt {
+  background: var(--pc-surface-alt);
+}
+
+/* Divider */
+.panel-ctrl .pc-divider {
+  border: none;
+  border-top: 1px solid var(--pc-border);
+  margin: 1rem 0;
+}
+
+/* Typography */
+.panel-ctrl .pc-title {
+  color: var(--pc-text);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.panel-ctrl .pc-subtitle {
+  color: var(--pc-text-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.panel-ctrl .pc-label {
+  color: var(--pc-text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* Buttons */
+.panel-ctrl .pc-btn {
+  align-items: center;
+  border: none;
+  border-radius: var(--pc-radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 0.9rem;
+  font-weight: 500;
+  gap: 0.5rem;
+  justify-content: center;
+  padding: 0.5rem 1.125rem;
+  text-decoration: none;
+  transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.panel-ctrl .pc-btn:active {
+  transform: scale(0.97);
+}
+
+.panel-ctrl .pc-btn--primary {
+  background: var(--pc-primary);
+  color: var(--pc-primary-fg);
+}
+
+.panel-ctrl .pc-btn--primary:hover {
+  background: var(--pc-primary-hover);
+}
+
+.panel-ctrl .pc-btn--accent {
+  background: var(--pc-accent);
+  color: var(--pc-accent-fg);
+}
+
+.panel-ctrl .pc-btn--accent:hover {
+  background: var(--pc-accent-hover);
+}
+
+.panel-ctrl .pc-btn--ghost {
+  background: transparent;
+  border: 1px solid var(--pc-border);
+  color: var(--pc-text);
+}
+
+.panel-ctrl .pc-btn--ghost:hover {
+  border-color: var(--pc-primary);
+  color: var(--pc-primary);
+}
+
+.panel-ctrl .pc-btn--danger {
+  background: var(--pc-danger);
+  color: #fff;
+}
+
+.panel-ctrl .pc-btn--danger:hover {
+  opacity: 0.88;
+}
+
+.panel-ctrl .pc-btn[disabled],
+.panel-ctrl .pc-btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+/* Form inputs */
+.panel-ctrl .pc-input {
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text);
+  font-size: 0.925rem;
+  outline: none;
+  padding: 0.5rem 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+}
+
+.panel-ctrl .pc-input::placeholder {
+  color: var(--pc-text-muted);
+  opacity: 0.7;
+}
+
+.panel-ctrl .pc-input:focus {
+  border-color: var(--pc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-primary) 20%, transparent);
+}
+
+.panel-ctrl .pc-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.panel-ctrl .pc-input--error {
+  border-color: var(--pc-danger);
+}
+
+.panel-ctrl .pc-input--error:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-danger) 20%, transparent);
+}
+
+/* Select */
+.panel-ctrl .pc-select {
+  appearance: none;
+  background-color: var(--pc-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text);
+  cursor: pointer;
+  font-size: 0.925rem;
+  outline: none;
+  padding: 0.5rem 2.25rem 0.5rem 0.875rem;
+  width: 100%;
+}
+
+.panel-ctrl .pc-select:focus {
+  border-color: var(--pc-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-primary) 20%, transparent);
+}
+
+/* Checkbox & Radio */
+.panel-ctrl .pc-check {
+  accent-color: var(--pc-primary);
+  cursor: pointer;
+  height: 1rem;
+  width: 1rem;
+}
+
+/* Badge / Chip */
+.panel-ctrl .pc-badge {
+  border-radius: var(--pc-radius-lg);
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.3em 0.7em;
+}
+
+.panel-ctrl .pc-badge--primary {
+  background: color-mix(in srgb, var(--pc-primary) 18%, transparent);
+  color: var(--pc-primary);
+}
+
+.panel-ctrl .pc-badge--accent {
+  background: color-mix(in srgb, var(--pc-accent) 18%, transparent);
+  color: var(--pc-accent);
+}
+
+.panel-ctrl .pc-badge--success {
+  background: var(--pc-success-bg);
+  color: var(--pc-success);
+}
+
+.panel-ctrl .pc-badge--warning {
+  background: var(--pc-warning-bg);
+  color: var(--pc-warning);
+}
+
+.panel-ctrl .pc-badge--danger {
+  background: var(--pc-danger-bg);
+  color: var(--pc-danger);
+}
+
+.panel-ctrl .pc-badge--info {
+  background: var(--pc-info-bg);
+  color: var(--pc-info);
+}
+
+/* Alert / Banner */
+.panel-ctrl .pc-alert {
+  border-left: 3px solid;
+  border-radius: var(--pc-radius-sm);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  padding: 0.75rem 1rem;
+}
+
+.panel-ctrl .pc-alert--success {
+  background: var(--pc-success-bg);
+  border-color: var(--pc-success);
+  color: var(--pc-success);
+}
+
+.panel-ctrl .pc-alert--warning {
+  background: var(--pc-warning-bg);
+  border-color: var(--pc-warning);
+  color: var(--pc-warning);
+}
+
+.panel-ctrl .pc-alert--danger {
+  background: var(--pc-danger-bg);
+  border-color: var(--pc-danger);
+  color: var(--pc-danger);
+}
+
+.panel-ctrl .pc-alert--info {
+  background: var(--pc-info-bg);
+  border-color: var(--pc-info);
+  color: var(--pc-info);
+}
+
+/* Progress bar */
+.panel-ctrl .pc-progress {
+  background: var(--pc-surface-alt);
+  border-radius: var(--pc-radius-lg);
+  height: 6px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.panel-ctrl .pc-progress__bar {
+  background: var(--pc-primary);
+  border-radius: inherit;
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.panel-ctrl .pc-progress__bar--accent {
+  background: var(--pc-accent);
+}
+
+.panel-ctrl .pc-progress__bar--success {
+  background: var(--pc-success);
+}
+
+/* Tooltip */
+.panel-ctrl [data-tooltip] {
+  position: relative;
+}
+
+.panel-ctrl [data-tooltip]::after {
+  background: var(--pc-text);
+  border-radius: var(--pc-radius-sm);
+  bottom: calc(100% + 6px);
+  color: var(--pc-bg);
+  content: attr(data-tooltip);
+  font-size: 0.78rem;
+  left: 50%;
+  opacity: 0;
+  padding: 0.3em 0.65em;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  transition: opacity 0.18s ease;
+  white-space: nowrap;
+}
+
+.panel-ctrl [data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+/* Skeleton loader */
+.panel-ctrl .pc-skeleton {
+  animation: pc-shimmer 1.6s infinite linear;
+  background: linear-gradient(
+    90deg,
+    var(--pc-surface-alt) 0%,
+    var(--pc-border) 50%,
+    var(--pc-surface-alt) 100%
+  );
+  background-size: 200% 100%;
+  border-radius: var(--pc-radius-sm);
+}
+
+@keyframes pc-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Avatar */
+.panel-ctrl .pc-avatar {
+  align-items: center;
+  background: color-mix(in srgb, var(--pc-primary) 18%, transparent);
+  border-radius: 50%;
+  color: var(--pc-primary);
+  display: inline-flex;
+  font-size: 0.85rem;
+  font-weight: 600;
+  height: 2.25rem;
+  justify-content: center;
+  overflow: hidden;
+  width: 2.25rem;
+}
+
+.panel-ctrl .pc-avatar img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+/* Navigation / Tabs */
+.panel-ctrl .pc-tabs {
+  border-bottom: 1px solid var(--pc-border);
+  display: flex;
+  gap: 0;
+  list-style: none;
+}
+
+.panel-ctrl .pc-tabs__item {
+  border-bottom: 2px solid transparent;
+  color: var(--pc-text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: -1px;
+  padding: 0.625rem 1rem;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.panel-ctrl .pc-tabs__item:hover {
+  color: var(--pc-text);
+}
+
+.panel-ctrl .pc-tabs__item--active {
+  border-color: var(--pc-primary);
+  color: var(--pc-primary);
+}
+
+/* Table */
+.panel-ctrl .pc-table {
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  width: 100%;
+}
+
+.panel-ctrl .pc-table th {
+  background: var(--pc-surface-alt);
+  border-bottom: 1px solid var(--pc-border);
+  color: var(--pc-text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.panel-ctrl .pc-table td {
+  border-bottom: 1px solid var(--pc-border);
+  color: var(--pc-text);
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+.panel-ctrl .pc-table tr:last-child td {
+  border-bottom: none;
+}
+
+.panel-ctrl .pc-table tr:hover td {
+  background: color-mix(in srgb, var(--pc-primary) 6%, transparent);
+}
+
+/* Toggle / Switch */
+.panel-ctrl .pc-toggle {
+  cursor: pointer;
+  display: inline-block;
+  height: 1.25rem;
+  position: relative;
+  width: 2.25rem;
+}
+
+.panel-ctrl .pc-toggle input {
+  height: 0;
+  opacity: 0;
+  width: 0;
+}
+
+.panel-ctrl .pc-toggle__track {
+  background: var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: background 0.2s ease;
+}
+
+.panel-ctrl .pc-toggle input:checked ~ .pc-toggle__track {
+  background: var(--pc-primary);
+}
+
+.panel-ctrl .pc-toggle__knob {
+  background: #fff;
+  border-radius: 50%;
+  bottom: 2px;
+  height: 0.85rem;
+  left: 2px;
+  position: absolute;
+  transition: transform 0.2s ease;
+  width: 0.85rem;
+}
+
+.panel-ctrl .pc-toggle input:checked ~ .pc-toggle__track .pc-toggle__knob {
+  transform: translateX(1rem);
+}
+
+/* Sidebar / Nav */
+.panel-ctrl .pc-sidebar {
+  background: var(--pc-surface);
+  border-right: 1px solid var(--pc-border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 100%;
+  padding: 1rem 0.75rem;
+  width: 14rem;
+}
+
+.panel-ctrl .pc-sidebar__item {
+  align-items: center;
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text-muted);
+  cursor: pointer;
+  display: flex;
+  font-size: 0.9rem;
+  gap: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.panel-ctrl .pc-sidebar__item:hover {
+  background: var(--pc-surface-alt);
+  color: var(--pc-text);
+}
+
+.panel-ctrl .pc-sidebar__item--active {
+  background: color-mix(in srgb, var(--pc-primary) 12%, transparent);
+  color: var(--pc-primary);
+  font-weight: 500;
+}
+
+/* Scrollbar (Webkit) */
+.panel-ctrl ::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.panel-ctrl ::-webkit-scrollbar-track {
+  background: var(--pc-surface-alt);
+  border-radius: 3px;
+}
+
+.panel-ctrl ::-webkit-scrollbar-thumb {
+  background: var(--pc-border);
+  border-radius: 3px;
+}
+
+.panel-ctrl ::-webkit-scrollbar-thumb:hover {
+  background: var(--pc-text-muted);
+}
+
+/* Focus ring (accessibility) */
+.panel-ctrl :focus-visible {
+  outline: 2px solid var(--pc-primary);
+  outline-offset: 2px;
+}
+
+/* ══════════════════════════════════════════════
+   LAYOUT UTILITIES
+   ══════════════════════════════════════════════ */
+.panel-ctrl .pc-flex        { display: flex; }
+.panel-ctrl .pc-flex-col    { display: flex; flex-direction: column; }
+.panel-ctrl .pc-items-center { align-items: center; }
+.panel-ctrl .pc-justify-between { justify-content: space-between; }
+.panel-ctrl .pc-gap-1       { gap: 0.25rem; }
+.panel-ctrl .pc-gap-2       { gap: 0.5rem; }
+.panel-ctrl .pc-gap-3       { gap: 0.75rem; }
+.panel-ctrl .pc-gap-4       { gap: 1rem; }
+.panel-ctrl .pc-p-2         { padding: 0.5rem; }
+.panel-ctrl .pc-p-4         { padding: 1rem; }
+.panel-ctrl .pc-p-6         { padding: 1.5rem; }
+.panel-ctrl .pc-mt-1        { margin-top: 0.25rem; }
+.panel-ctrl .pc-mt-2        { margin-top: 0.5rem; }
+.panel-ctrl .pc-mt-4        { margin-top: 1rem; }
+.panel-ctrl .pc-w-full      { width: 100%; }
+.panel-ctrl .pc-text-sm     { font-size: 0.875rem; }
+.panel-ctrl .pc-text-muted  { color: var(--pc-text-muted); }
+.panel-ctrl .pc-font-medium { font-weight: 500; }

@@ -47,6 +47,10 @@ export const PANEL_CTRL_ROUTES: Routes = [
         loadComponent: () => import('../pages/reportes/reportes').then((m) => m.Reportes),
       },
       {
+        path: 'soporte',
+        loadComponent: () => import('../pages/soporte/soporte').then((m) => m.Soporte),
+      },
+      {
         path: 'configuracion',
         loadComponent: () => import('../pages/configuracion/configuracion').then((m) => m.Configuracion),
       }

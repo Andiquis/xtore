@@ -35,6 +35,7 @@
           <option>Efectivo</option>
           <option>Tarjeta</option>
           <option>Transferencia</option>
+          <option>Yape</option>
         </select>
         <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
           <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
@@ -65,12 +66,7 @@
             <thead>
               <tr>
                 <th class="col-check">
-                  <input
-                    type="checkbox"
-                    [checked]="areAllSalesSelected()"
-                    [indeterminate]="hasPartialSelection()"
-                    (change)="toggleAllSales($event)"
-                  >
+                  <input type="checkbox" [checked]="areAllSalesSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllSales($event)">
                 </th>
                 <th>Comprobante</th>
                 <th>Cliente</th>
@@ -81,19 +77,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr
-                *ngFor="let sale of sales"
-                class="sales-row"
-                [class.active]="activeSale?.id === sale.id"
-                [class.checked]="isSaleSelected(sale)"
-                (click)="showSaleDetails(sale)"
-              >
+              <tr *ngFor="let sale of sales" class="sales-row" [class.active]="activeSale?.id === sale.id" [class.checked]="isSaleSelected(sale)" (click)="showSaleDetails(sale)">
                 <td class="col-check" (click)="$event.stopPropagation()">
-                  <input
-                    type="checkbox"
-                    [checked]="isSaleSelected(sale)"
-                    (change)="toggleSaleSelection(sale, $event)"
-                  >
+                  <input type="checkbox" [checked]="isSaleSelected(sale)" (change)="toggleSaleSelection(sale, $event)">
                 </td>
                 <td>
                   <div class="receipt-cell">
@@ -128,6 +114,7 @@
           </table>
         </div>
 
+        <!-- Selección simple -->
         <div class="selection-summary-panel" *ngIf="selectedSales.length === 1">
           <div>
             <span class="section-kicker">Venta marcada</span>
@@ -136,52 +123,42 @@
           </div>
           <div class="crud-actions">
             <button class="tool-btn" (click)="showSaleDetails(selectedSales[0])">
-              <lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>
-              Ver detalle
+              <lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon> Ver detalle
             </button>
             <button class="tool-btn primary">
-              <lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon>
-              Imprimir
+              <lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon> Imprimir
             </button>
             <button class="tool-btn danger">
-              <lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>
-              Anular
+              <lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon> Anular
             </button>
           </div>
         </div>
 
+        <!-- Selección múltiple -->
         <div class="selection-summary-panel bulk" *ngIf="selectedSales.length > 1">
           <div>
             <span class="section-kicker">Selección múltiple</span>
             <h3>{{ selectedSales.length }} ventas seleccionadas</h3>
-            <p>Acciones generales para comprobantes seleccionados.</p>
           </div>
           <div class="crud-actions">
             <button class="tool-btn" (click)="clearSelection()">
-              <lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon>
-              Limpiar
+              <lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon> Limpiar
             </button>
             <button class="tool-btn primary">
-              <lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon>
-              Imprimir lote
+              <lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon> Imprimir lote
             </button>
             <button class="tool-btn danger">
-              <lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>
-              Anular lote
+              <lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon> Anular lote
             </button>
           </div>
         </div>
 
         <div class="pagination">
           <div class="page-summary">
-            <span class="page-info">Mostrando <strong>1-5</strong> de <strong>86</strong> ventas</span>
+            <span class="page-info">Mostrando <strong>1-7</strong> de <strong>86</strong> ventas</span>
             <label class="page-size">
               <span>Por página</span>
-              <select>
-                <option>5</option>
-                <option>10</option>
-                <option>25</option>
-              </select>
+              <select><option>5</option><option>10</option><option>25</option></select>
             </label>
           </div>
           <div class="page-controls">
@@ -196,46 +173,115 @@
       </div>
     </div>
 
+    <!-- ═══ PUNTO DE VENTA MEJORADO ═══ -->
     <aside class="sale-panel">
       <div class="panel-header">
         <span class="section-kicker">Punto de venta</span>
-        <button class="mini-action">
-          <lucide-icon [img]="MoreIcon" [size]="18"></lucide-icon>
-        </button>
+        <div class="comprobante-toggle">
+          <button [class.active]="selectedComprobante === 'Boleta'" (click)="selectedComprobante = 'Boleta'">Boleta</button>
+          <button [class.active]="selectedComprobante === 'Factura'" (click)="selectedComprobante = 'Factura'">Factura</button>
+        </div>
       </div>
+
+      <!-- Cliente -->
       <div class="customer-box">
         <div class="soft-icon">
           <lucide-icon [img]="CustomerIcon" [size]="20"></lucide-icon>
         </div>
-        <div>
-          <strong>Cliente rápido</strong>
-          <span>DNI/RUC pendiente</span>
+        <div class="customer-fields">
+          <input type="text" placeholder="Nombre del cliente" [(ngModel)]="clienteNombre" class="customer-input">
+          <input type="text" [placeholder]="selectedComprobante === 'Factura' ? 'RUC' : 'DNI (opcional)'" [(ngModel)]="clienteDocumento" class="customer-input small">
         </div>
       </div>
-      <div class="cart-list">
-        <div class="cart-item" *ngFor="let item of cartItems">
-          <div>
-            <strong>{{ item.name }}</strong>
-            <span>{{ item.qty }} x S/ {{ item.price | number:'1.2-2' }}</span>
+
+      <!-- Buscador de productos -->
+      <div class="product-search-wrapper">
+        <div class="product-search-box">
+          <lucide-icon [img]="SearchIcon" [size]="16" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+          <input type="text" placeholder="Buscar producto o SKU..." [(ngModel)]="productSearch">
+        </div>
+        <div class="product-dropdown" *ngIf="filteredProducts.length > 0">
+          <div class="product-option" *ngFor="let p of filteredProducts" (click)="addToCart(p)">
+            <div><strong>{{ p.name }}</strong><span>{{ p.sku }}</span></div>
+            <span class="product-price">S/ {{ p.price | number:'1.2-2' }}</span>
           </div>
-          <b>S/ {{ item.qty * item.price | number:'1.2-2' }}</b>
         </div>
       </div>
-      <div class="totals-box">
-        <span><small>Subtotal</small><strong>S/ {{ subtotal | number:'1.2-2' }}</strong></span>
+
+      <!-- Carrito -->
+      <div class="cart-list">
+        <div class="cart-item" *ngFor="let item of cartItems; let i = index">
+          <div class="cart-item-info">
+            <strong>{{ item.name }}</strong>
+            <span>S/ {{ item.price | number:'1.2-2' }} c/u</span>
+            <span class="item-discount" *ngIf="item.discount > 0">-{{ item.discount }}% desc.</span>
+          </div>
+          <div class="cart-item-controls">
+            <div class="qty-control">
+              <button class="qty-btn" (click)="decrementQty(item)" [disabled]="item.qty <= 1">
+                <lucide-icon [img]="MinusIcon" [size]="14" [strokeWidth]="2.5"></lucide-icon>
+              </button>
+              <span class="qty-value">{{ item.qty }}</span>
+              <button class="qty-btn" (click)="incrementQty(item)">
+                <lucide-icon [img]="PlusIcon" [size]="14" [strokeWidth]="2.5"></lucide-icon>
+              </button>
+            </div>
+            <b class="cart-item-total">S/ {{ item.qty * item.price | number:'1.2-2' }}</b>
+            <button class="cart-remove" (click)="removeFromCart(i)">
+              <lucide-icon [img]="TrashIcon" [size]="14" [strokeWidth]="2"></lucide-icon>
+            </button>
+          </div>
+        </div>
+        <div class="cart-empty" *ngIf="cartItems.length === 0">
+          <lucide-icon [img]="ReceiptAltIcon" [size]="28" [strokeWidth]="1.5"></lucide-icon>
+          <span>Agrega productos al carrito</span>
+        </div>
+      </div>
+
+      <!-- Descuento global -->
+      <div class="global-discount" *ngIf="cartItems.length > 0">
+        <lucide-icon [img]="PercentIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+        <span>Descuento global</span>
+        <input type="number" [(ngModel)]="globalDiscount" min="0" max="100" placeholder="0" class="discount-input">
+        <span class="discount-suffix">%</span>
+      </div>
+
+      <!-- Totales -->
+      <div class="totals-box" *ngIf="cartItems.length > 0">
+        <span><small>Subtotal ({{ cartItemCount }} items)</small><strong>S/ {{ subtotal | number:'1.2-2' }}</strong></span>
+        <span *ngIf="discountTotal > 0" class="discount-line"><small>Descuentos</small><strong>- S/ {{ discountTotal | number:'1.2-2' }}</strong></span>
         <span><small>IGV 18%</small><strong>S/ {{ tax | number:'1.2-2' }}</strong></span>
         <span class="grand-total"><small>Total</small><strong>S/ {{ total | number:'1.2-2' }}</strong></span>
       </div>
-      <button class="checkout-btn">
-        <lucide-icon [img]="PaymentIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
-        Cobrar venta
-      </button>
+
+      <!-- Método de pago -->
+      <div class="payment-methods" *ngIf="cartItems.length > 0">
+        <button *ngFor="let pm of paymentMethods" class="pm-btn" [class.active]="selectedPaymentMethod === pm.name" (click)="selectedPaymentMethod = pm.name">
+          <lucide-icon [img]="pm.icon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          <span>{{ pm.name }}</span>
+        </button>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="pos-actions" *ngIf="cartItems.length > 0">
+        <button class="checkout-btn">
+          <lucide-icon [img]="PaymentIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+          Cobrar S/ {{ total | number:'1.2-2' }}
+        </button>
+        <button class="clear-btn" (click)="clearCart()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Vaciar
+        </button>
+      </div>
     </aside>
   </section>
 
+  <!-- ═══ MODAL DE DETALLE ═══ -->
   <div class="sale-modal-backdrop" *ngIf="activeSale as sale" (click)="closeSaleDetails()">
     <section class="sale-modal" (click)="$event.stopPropagation()">
-      <button class="modal-close" type="button" (click)="closeSaleDetails()">x</button>
+      <button class="modal-close" type="button" (click)="closeSaleDetails()">
+        <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+      </button>
       <div class="modal-heading">
         <div class="soft-icon">
           <lucide-icon [img]="ReceiptIcon" [size]="24"></lucide-icon>
@@ -249,7 +295,7 @@
       <div class="modal-grid">
         <span><strong>Cliente</strong>{{ sale.cliente }}</span>
         <span><strong>Método</strong>{{ sale.metodo }}</span>
-        <span><strong>Estado</strong>{{ sale.estado }}</span>
+        <span><strong>Estado</strong><em class="status-pill" [ngClass]="getStatusClass(sale.estado)" style="font-style:normal">{{ sale.estado }}</em></span>
         <span><strong>Total</strong>S/ {{ sale.total | number:'1.2-2' }}</span>
       </div>
       <div class="modal-items">
@@ -261,16 +307,13 @@
       </div>
       <div class="crud-actions modal-actions">
         <button class="tool-btn primary">
-          <lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon>
-          Imprimir
+          <lucide-icon [img]="PrintIcon" [size]="16"></lucide-icon> Imprimir
         </button>
         <button class="tool-btn">
-          <lucide-icon [img]="RefundIcon" [size]="16"></lucide-icon>
-          Reenviar
+          <lucide-icon [img]="RefundIcon" [size]="16"></lucide-icon> Reenviar
         </button>
         <button class="tool-btn danger">
-          <lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>
-          Anular
+          <lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon> Anular
         </button>
       </div>
     </section>

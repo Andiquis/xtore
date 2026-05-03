@@ -11,9 +11,9 @@ Para que Capacitor pueda generar todas las resoluciones necesarias para los dist
 Coloca dos imágenes en la raíz de la carpeta de tu proyecto móvil (`/home/andi/vXcode/xtore/movil`):
 
 1.  **`icon.png`** (o `icon.jpeg`): Será el ícono de la aplicación (el logo).
-    *   *Resolución recomendada*: `1024x1024 px` (cuadrado perfecto).
+    - _Resolución recomendada_: `1024x1024 px` (cuadrado perfecto).
 2.  **`splash.png`** (o `fondo.jpeg`): Será la imagen de carga a pantalla completa.
-    *   *Resolución recomendada*: `2732x2732 px` (para evitar cortes al rotar pantalla).
+    - _Resolución recomendada_: `2732x2732 px` (para evitar cortes al rotar pantalla).
 
 > [!TIP]
 > Se recomienda usar el formato `.png` sin transparencias para el splash screen y `.png` con transparencia (opcional) para el ícono.
@@ -32,7 +32,8 @@ npx @capacitor/assets generate --android
 ```
 
 ### ¿Qué hace exactamente este comando?
-Al pulsar *Enter*, la herramienta tomará tus dos imágenes y producirá matemáticamente **más de 80 variaciones de recortes e íconos** (redondos, cuadrados, fondo transparente, landscape, portrait, carpetas `mdpi`, `xhdpi`, `xxhdpi`, etc.). 
+
+Al pulsar _Enter_, la herramienta tomará tus dos imágenes y producirá matemáticamente **más de 80 variaciones de recortes e íconos** (redondos, cuadrados, fondo transparente, landscape, portrait, carpetas `mdpi`, `xhdpi`, `xxhdpi`, etc.).
 
 Todos estos nuevos archivos gráficos se escupen directamente en las "tripas" de Android de tu proyecto, específicamente en la ruta oculta:
 👉 `/movil/android/app/src/main/res/`

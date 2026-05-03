@@ -3,3 +3,4 @@ export const environment = {
   apiUrl: 'https://api.xtore.com/api',
   appName: 'XTORE',
 };
+

@@ -1,2 +1,217 @@
-<p>reportes works!</p>
-en esta seccion se mostrara todo lo relacionado con los reportes, adicionalmente tendra un valor agregado de implementacion de reportes con ia, se implementara una ia que analice los datos relevantes sobre el negocio y comparta reportes personalizados para cada usuario, esto se hara con el fin de que los usuarios puedan tomar mejores decisiones basadas en los datos y tendencias del mercado.
+<div class="reportes-page">
+
+  <!-- ═══ TABS DE REPORTE ═══ -->
+  <nav class="report-tabs">
+    <button *ngFor="let tab of reportTabs" class="tab-btn" [class.active]="activeReport === tab.id" (click)="setReport(tab.id)">
+      <lucide-icon [img]="tab.icon" [size]="18" [strokeWidth]="2.2"></lucide-icon>
+      <span>{{ tab.label }}</span>
+    </button>
+  </nav>
+
+  <!-- ═══ BARRA DE FILTROS ═══ -->
+  <div class="top-bar">
+    <div class="filter-section">
+      <div class="filter-group">
+        <select class="filter-select period-select">
+          <option>Hoy</option>
+          <option selected>Esta semana</option>
+          <option>Este mes</option>
+          <option>Último trimestre</option>
+          <option>Este año</option>
+          <option>Personalizado</option>
+        </select>
+        <input type="date" class="date-input">
+        <span class="date-separator">—</span>
+        <input type="date" class="date-input">
+        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
+          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+    <div class="export-section">
+      <button class="btn btn-outline">
+        <lucide-icon [img]="ExcelIcon" [size]="16" [strokeWidth]="2.2"></lucide-icon>
+        Excel
+      </button>
+      <button class="btn btn-outline">
+        <lucide-icon [img]="PdfIcon" [size]="16" [strokeWidth]="2.2"></lucide-icon>
+        PDF
+      </button>
+      <button class="btn btn-primary">
+        <lucide-icon [img]="DownloadIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+        Exportar
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of currentKpis; let i = index" [class]="'tone-' + kpi.tone" [style.--delay]="i * 80 + 'ms'">
+      <div class="kpi-icon">
+        <lucide-icon [img]="kpi.icon" [size]="22" [strokeWidth]="2.4"></lucide-icon>
+      </div>
+      <div class="kpi-body">
+        <span class="kpi-label">{{ kpi.label }}</span>
+        <strong class="kpi-value">{{ kpi.value }}</strong>
+        <span class="kpi-change" [class.positive]="kpi.positive" [class.negative]="!kpi.positive">
+          <lucide-icon [img]="kpi.positive ? ArrowUpIcon : ArrowDownIcon" [size]="14" [strokeWidth]="2.5"></lucide-icon>
+          {{ kpi.change }}
+        </span>
+      </div>
+    </article>
+  </section>
+
+  <!-- ═══ FILA PRINCIPAL: GRÁFICO + DISTRIBUCIÓN ═══ -->
+  <section class="main-row">
+
+    <!-- Gráfico de barras semanal -->
+    <div class="card chart-card">
+      <div class="card-header">
+        <div>
+          <h3>Ventas por semana</h3>
+          <p>Comparativa semanal del periodo seleccionado</p>
+        </div>
+        <span class="card-badge">{{ selectedPeriod }}</span>
+      </div>
+      <div class="chart-bars">
+        <div class="bar-group" *ngFor="let bar of weeklyBars">
+          <div class="bar-value">S/ {{ bar.value | number:'1.0-0' }}</div>
+          <div class="bar-track">
+            <div class="bar-fill" [style.height.%]="bar.percent"></div>
+          </div>
+          <span class="bar-label">{{ bar.label }}</span>
+        </div>
+      </div>
+      <div class="chart-total">
+        <span>Total del periodo:</span>
+        <strong>S/ 43,470</strong>
+      </div>
+    </div>
+
+    <!-- Distribución por método de pago -->
+    <div class="card distribution-card">
+      <div class="card-header">
+        <div>
+          <h3>Métodos de pago</h3>
+          <p>Distribución de ingresos</p>
+        </div>
+      </div>
+      <div class="distribution-list">
+        <div class="dist-item" *ngFor="let item of paymentDistribution">
+          <div class="dist-info">
+            <span class="dist-dot" [style.background]="item.color"></span>
+            <span class="dist-name">{{ item.method }}</span>
+          </div>
+          <div class="dist-data">
+            <span class="dist-amount">{{ item.amount }}</span>
+            <span class="dist-percent">{{ item.percent }}%</span>
+          </div>
+          <div class="dist-bar-track">
+            <div class="dist-bar-fill" [style.width.%]="item.percent" [style.background]="item.color"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══ FILA INFERIOR: TOP PRODUCTOS + RESUMEN FINANCIERO ═══ -->
+  <section class="bottom-row">
+
+    <!-- Top productos -->
+    <div class="card products-card">
+      <div class="card-header">
+        <div>
+          <h3>Top productos</h3>
+          <p>Más vendidos en el periodo</p>
+        </div>
+      </div>
+      <div class="table-responsive">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Producto</th>
+              <th class="text-right">Uds</th>
+              <th class="text-right">Ingresos</th>
+              <th>Rendimiento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of topProducts; let i = index">
+              <td><span class="rank">{{ i + 1 }}</span></td>
+              <td>
+                <div class="product-cell">
+                  <strong>{{ product.name }}</strong>
+                  <span>{{ product.category }}</span>
+                </div>
+              </td>
+              <td class="text-right"><strong>{{ product.sold }}</strong></td>
+              <td class="text-right">S/ {{ product.revenue | number:'1.0-0' }}</td>
+              <td>
+                <div class="perf-bar-track">
+                  <div class="perf-bar-fill" [style.width.%]="product.percent"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Resumen financiero -->
+    <div class="card financial-card">
+      <div class="card-header">
+        <div>
+          <h3>Resumen financiero</h3>
+          <p>Estado de resultados del periodo</p>
+        </div>
+      </div>
+      <div class="financial-list">
+        <div class="fin-item" *ngFor="let item of financialSummary" [class.highlight]="item.highlight" [class.accent]="item.accent">
+          <span class="fin-label">{{ item.label }}</span>
+          <span class="fin-value">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ═══ TABLA DE VENTAS DIARIAS ═══ -->
+  <section class="card daily-card">
+    <div class="card-header">
+      <div>
+        <h3>Detalle diario</h3>
+        <p>Ventas por día del periodo seleccionado</p>
+      </div>
+      <span class="card-badge">{{ dailySales.length }} días</span>
+    </div>
+    <div class="table-responsive">
+      <table class="report-table daily-table">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th class="text-right">Transacciones</th>
+            <th class="text-right">Total ventas</th>
+            <th class="text-right">Promedio</th>
+            <th>Tendencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let day of dailySales; let i = index">
+            <td><strong>{{ day.date }}</strong></td>
+            <td class="text-right">{{ day.count }}</td>
+            <td class="text-right"><strong>S/ {{ day.total | number:'1.0-0' }}</strong></td>
+            <td class="text-right">S/ {{ day.avg | number:'1.2-2' }}</td>
+            <td>
+              <div class="trend-bar-track">
+                <div class="trend-bar-fill" [style.width.%]="day.total * 100 / 5240"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>

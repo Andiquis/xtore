@@ -1,2 +1,251 @@
-<p>promociones works!</p>
-ESTO VA ESTAR INTERESANTE, AQUI SE MOSTRARAN LAS PROMOCIONES QUE HAY EN LA TIENDA, SE PODRA FILTRAR POR CATEGORIA, POR PRECIO, POR DESCUENTO, ETC. TAMBIEN SE PODRA VER LOS DETALLES DE CADA PROMOCION, COMO EL DESCUENTO QUE OFRECE, LA FECHA DE VENCIMIENTO, ETC.
+<div class="promociones-page">
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of kpis; let i = index" [class]="'tone-' + kpi.tone" [style.--delay]="i * 80 + 'ms'">
+      <div class="kpi-icon">
+        <lucide-icon [img]="kpi.icon" [size]="22" [strokeWidth]="2.4"></lucide-icon>
+      </div>
+      <div>
+        <span>{{ kpi.label }}</span>
+        <strong>{{ kpi.value }}</strong>
+        <small>{{ kpi.helper }}</small>
+      </div>
+    </article>
+  </section>
+
+  <!-- ═══ BARRA DE HERRAMIENTAS ═══ -->
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box">
+        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+        <input type="text" placeholder="Buscar por nombre, categoría o tipo">
+      </div>
+      <div class="filter-group">
+        <select class="filter-select">
+          <option>Todos los estados</option>
+          <option>Activa</option>
+          <option>Programada</option>
+          <option>Pausada</option>
+          <option>Vencida</option>
+        </select>
+        <select class="filter-select">
+          <option>Tipo de descuento</option>
+          <option>Porcentaje</option>
+          <option>Monto fijo</option>
+          <option>2x1</option>
+          <option>Combo</option>
+        </select>
+        <select class="filter-select">
+          <option>Categoría</option>
+          <option>Ropa</option>
+          <option>Calzado</option>
+          <option>Accesorios</option>
+          <option>Electrónica</option>
+        </select>
+        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
+          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+    <div class="actions-section">
+      <button class="btn btn-primary">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        Nueva promoción
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ WORKSPACE ═══ -->
+  <section class="promo-workspace">
+    <div class="promo-main">
+      <div class="promo-table-card">
+        <div class="table-card-header">
+          <div>
+            <h3>Listado de promociones</h3>
+            <p>Selecciona una promoción para ver su detalle y rendimiento.</p>
+          </div>
+          <span class="table-count">{{ promotions.length }} promociones</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="promo-table">
+            <thead>
+              <tr>
+                <th class="col-check">
+                  <input type="checkbox" [checked]="areAllPromosSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllPromos($event)">
+                </th>
+                <th>Promoción</th>
+                <th>Tipo</th>
+                <th>Descuento</th>
+                <th>Vigencia</th>
+                <th>Estado</th>
+                <th class="text-right">Ventas</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let promo of promotions" class="promo-row" [class.active]="activePromotion?.id === promo.id" [class.checked]="isPromoSelected(promo)" (click)="showPromotionDetails(promo)">
+                <td class="col-check" (click)="$event.stopPropagation()">
+                  <input type="checkbox" [checked]="isPromoSelected(promo)" (change)="togglePromoSelection(promo, $event)">
+                </td>
+                <td>
+                  <div class="promo-cell">
+                    <strong>{{ promo.name }}</strong>
+                    <span>{{ promo.category }} · {{ promo.productsCount || 'Todos los' }} productos</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="type-pill">
+                    <lucide-icon [img]="getTypeIcon(promo.type)" [size]="14" [strokeWidth]="2.4"></lucide-icon>
+                    {{ promo.type }}
+                  </span>
+                </td>
+                <td><span class="discount-value">{{ promo.value }}</span></td>
+                <td>
+                  <div class="date-cell">
+                    <strong>{{ promo.startDate }}</strong>
+                    <span>{{ promo.endDate }}</span>
+                  </div>
+                </td>
+                <td><span class="status-pill" [ngClass]="getStatusClass(promo.status)">{{ promo.status }}</span></td>
+                <td class="text-right">
+                  <div class="sales-cell">
+                    <strong>{{ promo.salesCount }}</strong>
+                    <span>S/ {{ promo.revenue | number:'1.0-0' }}</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Selección simple -->
+        <div class="selection-summary-panel" *ngIf="selectedPromotions.length === 1">
+          <div>
+            <span class="section-kicker">Promoción marcada</span>
+            <h3>{{ selectedPromotions[0].name }}</h3>
+            <p>{{ selectedPromotions[0].type }} · {{ selectedPromotions[0].value }} · {{ selectedPromotions[0].status }}</p>
+          </div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="showPromotionDetails(selectedPromotions[0])">
+              <lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon> Ver detalle
+            </button>
+            <button class="tool-btn primary">
+              <lucide-icon [img]="EditIcon" [size]="16"></lucide-icon> Editar
+            </button>
+            <button class="tool-btn danger">
+              <lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon> Eliminar
+            </button>
+          </div>
+        </div>
+
+        <!-- Selección múltiple -->
+        <div class="selection-summary-panel bulk" *ngIf="selectedPromotions.length > 1">
+          <div>
+            <span class="section-kicker">Selección múltiple</span>
+            <h3>{{ selectedPromotions.length }} promociones seleccionadas</h3>
+          </div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="clearSelection()">
+              <lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon> Limpiar
+            </button>
+            <button class="tool-btn danger">
+              <lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon> Eliminar lote
+            </button>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <span class="page-info">Mostrando <strong>1-7</strong> de <strong>7</strong></span>
+          <div class="page-controls">
+            <button class="page-nav" disabled>Anterior</button>
+            <button class="page-btn active">1</button>
+            <button class="page-nav" disabled>Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <aside class="metrics-panel">
+      <div class="panel-header"><span class="section-kicker">Rendimiento general</span></div>
+      <div class="metric-cards">
+        <div class="metric-card">
+          <div class="metric-icon blue"><lucide-icon [img]="ChartIcon" [size]="20" [strokeWidth]="2.2"></lucide-icon></div>
+          <div class="metric-info"><span>Total ventas</span><strong>{{ totalSales }}</strong></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon green"><lucide-icon [img]="DollarIcon" [size]="20" [strokeWidth]="2.2"></lucide-icon></div>
+          <div class="metric-info"><span>Ingresos</span><strong>S/ {{ totalRevenue | number:'1.0-0' }}</strong></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon amber"><lucide-icon [img]="ZapIcon" [size]="20" [strokeWidth]="2.2"></lucide-icon></div>
+          <div class="metric-info"><span>Activas</span><strong>{{ activePromotionsCount }}</strong></div>
+        </div>
+      </div>
+      <div class="top-promos">
+        <h4>Top promociones</h4>
+        <div class="top-item" *ngFor="let promo of promotions | slice:0:4; let i = index">
+          <span class="top-rank">#{{ i + 1 }}</span>
+          <div class="top-info">
+            <strong>{{ promo.name }}</strong>
+            <span>{{ promo.salesCount }} ventas</span>
+          </div>
+          <div class="top-bar-track"><div class="top-bar-fill" [style.width.%]="promo.revenue * 100 / 8420"></div></div>
+        </div>
+      </div>
+      <div class="promo-by-type">
+        <h4>Por tipo</h4>
+        <div class="type-item"><span class="type-dot" style="background:#4318ff"></span><span class="type-name">Porcentaje</span><span class="type-count">4</span></div>
+        <div class="type-item"><span class="type-dot" style="background:#05cd99"></span><span class="type-name">2x1</span><span class="type-count">1</span></div>
+        <div class="type-item"><span class="type-dot" style="background:#ffb01a"></span><span class="type-name">Monto fijo</span><span class="type-count">1</span></div>
+        <div class="type-item"><span class="type-dot" style="background:#ff5b5b"></span><span class="type-name">Combo</span><span class="type-count">1</span></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- ═══ MODAL ═══ -->
+  <div class="promo-modal-backdrop" *ngIf="activePromotion as promo" (click)="closePromotionDetails()">
+    <section class="promo-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closePromotionDetails()">
+        <lucide-icon [img]="CloseIcon" [size]="20" [strokeWidth]="2.5"></lucide-icon>
+      </button>
+      <div class="modal-heading">
+        <div class="soft-icon"><lucide-icon [img]="GiftIcon" [size]="24"></lucide-icon></div>
+        <div>
+          <span class="section-kicker">Detalle de promoción</span>
+          <h2>{{ promo.name }}</h2>
+          <p>{{ promo.description }}</p>
+        </div>
+      </div>
+      <div class="modal-grid">
+        <span><strong>Tipo</strong>{{ promo.type }}</span>
+        <span><strong>Descuento</strong>{{ promo.value }}</span>
+        <span><strong>Categoría</strong>{{ promo.category }}</span>
+        <span><strong>Estado</strong><em class="status-pill" [ngClass]="getStatusClass(promo.status)">{{ promo.status }}</em></span>
+        <span><strong>Inicio</strong>{{ promo.startDate }}</span>
+        <span><strong>Fin</strong>{{ promo.endDate }}</span>
+      </div>
+      <div class="modal-metrics">
+        <div class="modal-metric"><small>Ventas generadas</small><strong>{{ promo.salesCount }}</strong></div>
+        <div class="modal-metric"><small>Ingresos</small><strong>S/ {{ promo.revenue | number:'1.0-0' }}</strong></div>
+      </div>
+      <div class="modal-items" *ngIf="promo.products.length > 0">
+        <h3>Productos incluidos</h3>
+        <div class="modal-item" *ngFor="let product of promo.products">
+          <lucide-icon [img]="TagIcon" [size]="14" [strokeWidth]="2"></lucide-icon>
+          <span>{{ product }}</span>
+        </div>
+      </div>
+      <div class="modal-conditions" *ngIf="promo.conditions">
+        <h3>Condiciones</h3>
+        <p>{{ promo.conditions }}</p>
+      </div>
+      <div class="crud-actions modal-actions">
+        <button class="tool-btn primary"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon> Editar</button>
+        <button class="tool-btn danger"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon> Eliminar</button>
+      </div>
+    </section>
+  </div>
+
+</div>

@@ -1,0 +1,241 @@
+<div class="soporte-page">
+
+  <!-- ═══ KPI CARDS ═══ -->
+  <section class="kpi-grid">
+    <article class="kpi-card" *ngFor="let kpi of kpis; let i = index" [class]="'tone-' + kpi.tone" [style.--delay]="i * 80 + 'ms'">
+      <div class="kpi-icon">
+        <lucide-icon [img]="kpi.icon" [size]="22" [strokeWidth]="2.4"></lucide-icon>
+      </div>
+      <div>
+        <span>{{ kpi.label }}</span>
+        <strong>{{ kpi.value }}</strong>
+        <small>{{ kpi.helper }}</small>
+      </div>
+    </article>
+  </section>
+
+  <!-- ═══ BARRA DE HERRAMIENTAS ═══ -->
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box">
+        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+        <input type="text" placeholder="Buscar por asunto, cliente o ID de ticket">
+      </div>
+      <div class="filter-group">
+        <select class="filter-select">
+          <option>Todos los estados</option>
+          <option>Abierto</option>
+          <option>En Progreso</option>
+          <option>Resuelto</option>
+          <option>Cerrado</option>
+        </select>
+        <select class="filter-select">
+          <option>Prioridad</option>
+          <option>Alta</option>
+          <option>Media</option>
+          <option>Baja</option>
+        </select>
+        <select class="filter-select">
+          <option>Categoría</option>
+          <option>Pagos</option>
+          <option>Productos</option>
+          <option>Cuenta</option>
+          <option>General</option>
+        </select>
+        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
+          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+        </button>
+      </div>
+    </div>
+    <div class="actions-section">
+      <button class="btn btn-primary">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        Nuevo ticket
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══ WORKSPACE ═══ -->
+  <section class="ticket-workspace">
+    <div class="ticket-main">
+      <div class="ticket-table-card">
+        <div class="table-card-header">
+          <div>
+            <h3>Tickets de soporte</h3>
+            <p>Selecciona un ticket para ver la conversación y detalles.</p>
+          </div>
+          <span class="table-count">{{ tickets.length }} tickets</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="ticket-table">
+            <thead>
+              <tr>
+                <th class="col-check">
+                  <input type="checkbox" [checked]="areAllTicketsSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllTickets($event)">
+                </th>
+                <th>Ticket</th>
+                <th>Cliente</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+                <th>Asignado</th>
+                <th>Actualización</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ticket of tickets" class="ticket-row" [class.active]="activeTicket?.id === ticket.id" [class.checked]="isTicketSelected(ticket)" (click)="showTicketDetails(ticket)">
+                <td class="col-check" (click)="$event.stopPropagation()">
+                  <input type="checkbox" [checked]="isTicketSelected(ticket)" (change)="toggleTicketSelection(ticket, $event)">
+                </td>
+                <td>
+                  <div class="ticket-cell">
+                    <strong>{{ ticket.subject }}</strong>
+                    <span>{{ ticket.id }} · {{ ticket.category }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div class="customer-cell">
+                    <strong>{{ ticket.customer }}</strong>
+                    <span>{{ ticket.customerEmail }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="priority-pill" [ngClass]="getPriorityClass(ticket.priority)">{{ ticket.priority }}</span>
+                </td>
+                <td>
+                  <span class="status-pill" [ngClass]="getStatusClass(ticket.status)">{{ ticket.status }}</span>
+                </td>
+                <td>
+                  <span class="assignee-text">{{ ticket.assignee || 'Sin asignar' }}</span>
+                </td>
+                <td>
+                  <span class="update-text">{{ ticket.lastUpdate }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Selección simple -->
+        <div class="selection-summary-panel" *ngIf="selectedTickets.length === 1">
+          <div>
+            <span class="section-kicker">Ticket marcado</span>
+            <h3>{{ selectedTickets[0].subject }}</h3>
+            <p>{{ selectedTickets[0].id }} · {{ selectedTickets[0].status }} · {{ selectedTickets[0].priority }}</p>
+          </div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="showTicketDetails(selectedTickets[0])">
+              <lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon> Ver detalle
+            </button>
+            <button class="tool-btn primary">
+              <lucide-icon [img]="MessageIcon" [size]="16"></lucide-icon> Responder
+            </button>
+            <button class="tool-btn success">
+              <lucide-icon [img]="CheckIcon" [size]="16"></lucide-icon> Resolver
+            </button>
+          </div>
+        </div>
+
+        <!-- Selección múltiple -->
+        <div class="selection-summary-panel bulk" *ngIf="selectedTickets.length > 1">
+          <div>
+            <span class="section-kicker">Selección múltiple</span>
+            <h3>{{ selectedTickets.length }} tickets seleccionados</h3>
+          </div>
+          <div class="crud-actions">
+            <button class="tool-btn" (click)="clearSelection()">
+              <lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon> Limpiar
+            </button>
+            <button class="tool-btn success">
+              <lucide-icon [img]="CheckIcon" [size]="16"></lucide-icon> Resolver lote
+            </button>
+            <button class="tool-btn danger">
+              <lucide-icon [img]="XCircleIcon" [size]="16"></lucide-icon> Cerrar lote
+            </button>
+          </div>
+        </div>
+
+        <div class="pagination">
+          <span class="page-info">Mostrando <strong>1-6</strong> de <strong>6</strong></span>
+          <div class="page-controls">
+            <button class="page-nav" disabled>Anterior</button>
+            <button class="page-btn active">1</button>
+            <button class="page-nav" disabled>Siguiente</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel lateral: detalle del ticket activo -->
+    <aside class="ticket-detail-panel" *ngIf="activeTicket as ticket">
+      <div class="detail-header">
+        <div class="detail-title">
+          <span class="section-kicker">{{ ticket.id }}</span>
+          <h3>{{ ticket.subject }}</h3>
+          <div class="detail-meta">
+            <span class="status-pill" [ngClass]="getStatusClass(ticket.status)">{{ ticket.status }}</span>
+            <span class="priority-pill" [ngClass]="getPriorityClass(ticket.priority)">{{ ticket.priority }}</span>
+          </div>
+        </div>
+        <button class="close-detail" (click)="closeTicketDetails()">
+          <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        </button>
+      </div>
+
+      <div class="detail-info-grid">
+        <div class="info-row">
+          <span class="info-label">Cliente</span>
+          <span class="info-value">{{ ticket.customer }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Email</span>
+          <span class="info-value">{{ ticket.customerEmail }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Categoría</span>
+          <span class="info-value">{{ ticket.category }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Asignado</span>
+          <span class="info-value">{{ ticket.assignee || 'Sin asignar' }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">Creado</span>
+          <span class="info-value">{{ ticket.createdAt }}</span>
+        </div>
+      </div>
+
+      <div class="chat-section">
+        <h4>Conversación</h4>
+        <div class="chat-messages">
+          <div class="chat-message" *ngFor="let msg of ticket.messages" [class.agent]="msg.role === 'agente'">
+            <div class="msg-header">
+              <strong>{{ msg.sender }}</strong>
+              <span>{{ msg.time }}</span>
+            </div>
+            <p>{{ msg.text }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply-box">
+        <input type="text" placeholder="Escribe una respuesta...">
+        <button class="send-btn">
+          <lucide-icon [img]="SendIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Panel vacío cuando no hay ticket seleccionado -->
+    <aside class="ticket-detail-panel empty" *ngIf="!activeTicket">
+      <div class="empty-state">
+        <div class="empty-icon">
+          <lucide-icon [img]="HeadphonesIcon" [size]="40" [strokeWidth]="1.5"></lucide-icon>
+        </div>
+        <h3>Selecciona un ticket</h3>
+        <p>Haz clic en un ticket de la tabla para ver la conversación y los detalles.</p>
+      </div>
+    </aside>
+  </section>
+
+</div>

@@ -13,6 +13,7 @@ export class PanelLayout implements OnInit {
   currentSection: string = 'Dashboard';
   currentDate: string = this.formatCurrentDate();
   isSidebarOpen: boolean = false;
+  isSidebarCollapsed: boolean = false;
   private router = inject(Router);
 
   ngOnInit() {
@@ -31,6 +32,10 @@ export class PanelLayout implements OnInit {
 
   closeSidebar() {
     this.isSidebarOpen = false;
+  }
+
+  toggleCollapse() {
+    this.isSidebarCollapsed = !this.isSidebarCollapsed;
   }
 
   private formatCurrentDate(): string {
@@ -56,6 +61,7 @@ export class PanelLayout implements OnInit {
     else if (url.includes('/panel/caja')) this.currentSection = 'Caja';
     else if (url.includes('/panel/promociones')) this.currentSection = 'Promociones';
     else if (url.includes('/panel/reportes')) this.currentSection = 'Reportes';
+    else if (url.includes('/panel/soporte')) this.currentSection = 'Soporte';
     else if (url.includes('/panel/configuracion')) this.currentSection = 'Configuración';
     else {
       // Capitalize first letter of path segment if possible

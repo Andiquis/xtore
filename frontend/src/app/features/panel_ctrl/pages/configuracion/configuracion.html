@@ -1,2 +1,381 @@
-<p>configuracion works!</p>
-<p>ESTO VA ESTAR INTERESANTE, AQUI SE MOSTRARAN LAS CONFIGURACIONES DE LA TIENDA, SE PODRA CONFIGURAR EL NOMBRE DE LA TIENDA, EL LOGO, EL COLOR, ETC. TAMBIEN SE PODRA VER LOS DETALLES DE CADA CONFIGURACION, COMO EL NOMBRE DE LA TIENDA, EL LOGO, EL COLOR, ETC.</p>
+<div class="config-page">
+
+  <!-- ═══ TABS DE NAVEGACIÓN ═══ -->
+  <nav class="config-tabs">
+    <button *ngFor="let tab of tabs" class="tab-btn" [class.active]="activeTab === tab.id" (click)="setTab(tab.id)">
+      <lucide-icon [img]="tab.icon" [size]="18" [strokeWidth]="2.2"></lucide-icon>
+      <span>{{ tab.label }}</span>
+    </button>
+  </nav>
+
+  <!-- ═══ CONTENIDO ═══ -->
+  <div class="config-content">
+
+    <!-- ── TAB: EMPRESA ── -->
+    <section class="config-section" *ngIf="activeTab === 'empresa'">
+      <div class="section-header">
+        <div>
+          <h2>Datos de la empresa</h2>
+          <p>Información básica del negocio que aparecerá en comprobantes y documentos.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="logo-upload">
+          <div class="logo-preview">
+            <span class="logo-placeholder">LOGO</span>
+          </div>
+          <div class="logo-actions">
+            <h4>Logo de la empresa</h4>
+            <p>Recomendado: 200x200px, formato PNG o JPG.</p>
+            <button class="btn btn-outline btn-sm">
+              <lucide-icon [img]="UploadIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+              Subir imagen
+            </button>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre comercial</label>
+            <input type="text" [(ngModel)]="empresa.nombre" placeholder="Nombre de tu tienda">
+          </div>
+          <div class="form-group">
+            <label>Razón social</label>
+            <input type="text" [(ngModel)]="empresa.razonSocial" placeholder="Razón social">
+          </div>
+          <div class="form-group">
+            <label>RUC</label>
+            <input type="text" [(ngModel)]="empresa.ruc" placeholder="20XXXXXXXXX">
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="empresa.telefono" placeholder="+51 999 999 999">
+          </div>
+          <div class="form-group full">
+            <label>Dirección</label>
+            <input type="text" [(ngModel)]="empresa.direccion" placeholder="Dirección completa">
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" [(ngModel)]="empresa.email" placeholder="admin@empresa.pe">
+          </div>
+          <div class="form-group">
+            <label>Sitio web</label>
+            <input type="text" [(ngModel)]="empresa.web" placeholder="www.empresa.pe">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: FISCAL ── -->
+    <section class="config-section" *ngIf="activeTab === 'fiscal'">
+      <div class="section-header">
+        <div>
+          <h2>Configuración fiscal</h2>
+          <p>Datos tributarios y clasificación de la empresa ante SUNAT.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Régimen tributario</label>
+            <select [(ngModel)]="fiscal.regimenTributario">
+              <option>Régimen MYPE Tributario</option>
+              <option>Régimen Especial</option>
+              <option>Régimen General</option>
+              <option>Nuevo RUS</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de contribuyente</label>
+            <select [(ngModel)]="fiscal.tipoContribuyente">
+              <option>Persona Jurídica</option>
+              <option>Persona Natural</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label>Actividad económica</label>
+            <input type="text" [(ngModel)]="fiscal.actividadEconomica" placeholder="Descripción de actividad">
+          </div>
+          <div class="form-group">
+            <label>Ubigeo</label>
+            <input type="text" [(ngModel)]="fiscal.ubigeo" placeholder="Código de ubigeo">
+          </div>
+          <div class="form-group">
+            <label>Código de establecimiento</label>
+            <input type="text" [(ngModel)]="fiscal.codigoEstablecimiento" placeholder="0001">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: MONEDA E IMPUESTOS ── -->
+    <section class="config-section" *ngIf="activeTab === 'moneda'">
+      <div class="section-header">
+        <div>
+          <h2>Moneda e Impuestos</h2>
+          <p>Configura la moneda principal y los impuestos aplicables.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Moneda principal</label>
+            <select [(ngModel)]="moneda.monedaPrincipal">
+              <option value="PEN">Sol Peruano (PEN)</option>
+              <option value="USD">Dólar (USD)</option>
+              <option value="EUR">Euro (EUR)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Símbolo</label>
+            <input type="text" [(ngModel)]="moneda.simbolo" placeholder="S/">
+          </div>
+          <div class="form-group">
+            <label>IGV (%)</label>
+            <input type="number" [(ngModel)]="moneda.igv" placeholder="18">
+          </div>
+          <div class="form-group">
+            <label>Decimales de redondeo</label>
+            <input type="number" [(ngModel)]="moneda.redondeo" placeholder="2">
+          </div>
+        </div>
+        <div class="switch-group">
+          <div class="switch-item">
+            <div><strong>Precios incluyen IGV</strong><span>Los precios se muestran con IGV incluido.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="moneda.igvIncluido"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: COMPROBANTES ── -->
+    <section class="config-section" *ngIf="activeTab === 'comprobantes'">
+      <div class="section-header">
+        <div>
+          <h2>Comprobantes</h2>
+          <p>Series, correlativos y configuración de documentos de venta.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Serie de Boleta</label>
+            <input type="text" [(ngModel)]="comprobantes.serieBoleta" placeholder="B001">
+          </div>
+          <div class="form-group">
+            <label>Correlativo actual (Boleta)</label>
+            <input type="number" [(ngModel)]="comprobantes.correlativoBoleta">
+          </div>
+          <div class="form-group">
+            <label>Serie de Factura</label>
+            <input type="text" [(ngModel)]="comprobantes.serieFactura" placeholder="F001">
+          </div>
+          <div class="form-group">
+            <label>Correlativo actual (Factura)</label>
+            <input type="number" [(ngModel)]="comprobantes.correlativoFactura">
+          </div>
+          <div class="form-group full">
+            <label>Pie de página del comprobante</label>
+            <textarea [(ngModel)]="comprobantes.piePagina" rows="3" placeholder="Texto al final del comprobante"></textarea>
+          </div>
+        </div>
+        <div class="switch-group">
+          <div class="switch-item">
+            <div><strong>Emisión electrónica</strong><span>Emitir comprobantes electrónicos vía SUNAT.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="comprobantes.emisionElectronica"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: INVENTARIO ── -->
+    <section class="config-section" *ngIf="activeTab === 'inventario'">
+      <div class="section-header">
+        <div>
+          <h2>Inventario</h2>
+          <p>Parámetros de control de stock y alertas.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Stock mínimo por defecto</label>
+            <input type="number" [(ngModel)]="inventarioConfig.stockMinimo" placeholder="5">
+          </div>
+          <div class="form-group">
+            <label>Método de valuación</label>
+            <select [(ngModel)]="inventarioConfig.metodoValuacion">
+              <option>PEPS</option>
+              <option>UEPS</option>
+              <option>Promedio</option>
+            </select>
+          </div>
+        </div>
+        <div class="switch-group">
+          <div class="switch-item">
+            <div><strong>Alertas de stock bajo</strong><span>Recibir notificaciones cuando un producto alcance el stock mínimo.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="inventarioConfig.alertaStock"><span class="slider"></span></label>
+          </div>
+          <div class="switch-item">
+            <div><strong>Permitir venta sin stock</strong><span>Permitir registrar ventas de productos con stock en cero.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="inventarioConfig.permitirVentaSinStock"><span class="slider"></span></label>
+          </div>
+          <div class="switch-item">
+            <div><strong>Ajuste automático por compra</strong><span>Actualizar stock automáticamente al confirmar una compra.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="inventarioConfig.autoAjusteCompra"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: VENTAS ── -->
+    <section class="config-section" *ngIf="activeTab === 'ventas'">
+      <div class="section-header">
+        <div>
+          <h2>Ventas</h2>
+          <p>Reglas y parámetros para el proceso de venta.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Descuento máximo permitido (%)</label>
+            <input type="number" [(ngModel)]="ventasConfig.descuentoMaximo" placeholder="30">
+          </div>
+          <div class="form-group">
+            <label>Monto mínimo para factura</label>
+            <input type="number" [(ngModel)]="ventasConfig.montoMinimoFactura" placeholder="0">
+          </div>
+        </div>
+        <div class="switch-group">
+          <div class="switch-item">
+            <div><strong>Permitir descuento manual</strong><span>Los vendedores pueden aplicar descuentos directamente.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="ventasConfig.permitirDescuentoManual"><span class="slider"></span></label>
+          </div>
+          <div class="switch-item">
+            <div><strong>Imprimir automáticamente</strong><span>Imprimir comprobante al confirmar la venta.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="ventasConfig.imprimirAutomatico"><span class="slider"></span></label>
+          </div>
+          <div class="switch-item">
+            <div><strong>Cliente obligatorio</strong><span>Requerir datos de cliente para registrar una venta.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="ventasConfig.clienteObligatorio"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: MÉTODOS DE PAGO ── -->
+    <section class="config-section" *ngIf="activeTab === 'pagos'">
+      <div class="section-header">
+        <div>
+          <h2>Métodos de Pago</h2>
+          <p>Administra los métodos de pago aceptados en tu negocio.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="payment-list">
+          <div class="payment-item" *ngFor="let mp of metodosPago">
+            <div class="payment-info">
+              <strong>{{ mp.nombre }}</strong>
+              <span *ngIf="mp.comision > 0">Comisión: {{ mp.comision }}%</span>
+              <span *ngIf="mp.comision === 0">Sin comisión</span>
+            </div>
+            <label class="switch">
+              <input type="checkbox" [(ngModel)]="mp.activo">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── TAB: SISTEMA ── -->
+    <section class="config-section" *ngIf="activeTab === 'sistema'">
+      <div class="section-header">
+        <div>
+          <h2>Sistema</h2>
+          <p>Preferencias generales de la aplicación.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Idioma</label>
+            <select [(ngModel)]="sistemaConfig.idioma">
+              <option>Español</option>
+              <option>English</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Zona horaria</label>
+            <select [(ngModel)]="sistemaConfig.zonaHoraria">
+              <option>America/Lima</option>
+              <option>America/Bogota</option>
+              <option>America/Mexico_City</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Formato de fecha</label>
+            <select [(ngModel)]="sistemaConfig.formatoFecha">
+              <option>DD/MM/YYYY</option>
+              <option>MM/DD/YYYY</option>
+              <option>YYYY-MM-DD</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Formato de hora</label>
+            <select [(ngModel)]="sistemaConfig.formatoHora">
+              <option>12h</option>
+              <option>24h</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Duración de sesión (horas)</label>
+            <input type="number" [(ngModel)]="sistemaConfig.sesionDuracion" placeholder="8">
+          </div>
+        </div>
+        <div class="switch-group">
+          <div class="switch-item">
+            <div><strong>Notificaciones</strong><span>Activar notificaciones push y alertas del sistema.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="sistemaConfig.notificaciones"><span class="slider"></span></label>
+          </div>
+          <div class="switch-item">
+            <div><strong>Sonido de alerta</strong><span>Reproducir sonido en alertas y notificaciones importantes.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="sistemaConfig.sonidoAlerta"><span class="slider"></span></label>
+          </div>
+          <div class="switch-item">
+            <div><strong>Modo oscuro</strong><span>Cambiar la apariencia del panel a tema oscuro.</span></div>
+            <label class="switch"><input type="checkbox" [(ngModel)]="sistemaConfig.modoOscuro"><span class="slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ BARRA DE ACCIONES ═══ -->
+    <div class="actions-bar">
+      <div class="save-feedback" *ngIf="isSaved">
+        <span class="save-success">✓ Configuración guardada correctamente</span>
+      </div>
+      <div class="actions-buttons">
+        <button class="btn btn-outline" (click)="setTab(activeTab)">
+          <lucide-icon [img]="ResetIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Restaurar
+        </button>
+        <button class="btn btn-primary" (click)="guardarConfiguracion()">
+          <lucide-icon [img]="SaveIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Guardar cambios
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
