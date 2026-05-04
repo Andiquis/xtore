@@ -1,98 +1,188 @@
-<div class="crud-container">
-  <!-- HEADER -->
-  <div class="crud-header">
-    <h2>Gestión CRUD</h2>
-    <p class="crud-subtitle">Administración de registros</p>
+<section class="theme-lab panel-ctrl {{ selectedTheme }}">
+  <header class="lab-header">
+    <div>
+      <span class="eyebrow">Theme inspector</span>
+      <h2>Prueba de temas</h2>
+      <p>Compara los tokens visuales disponibles sin acentos por pagina ni fondos decorativos.</p>
+    </div>
+
+    <div class="theme-current">
+      <span>Activo</span>
+      <strong>{{ selectedThemeName }}</strong>
+    </div>
+  </header>
+
+  <div class="lab-shell">
+    <aside class="theme-sidebar" aria-label="Temas disponibles">
+      @for (theme of themes; track theme.className) {
+        <button
+          type="button"
+          class="theme-row"
+          [class.active]="selectedTheme === theme.className"
+          (click)="selectTheme(theme.className)"
+        >
+          <span class="swatch panel-ctrl {{ theme.className }}">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+          <span class="theme-copy">
+            <strong>{{ theme.name }}</strong>
+            <small>{{ theme.description }}</small>
+          </span>
+        </button>
+      }
+    </aside>
+
+    <main class="preview-stack">
+      <article class="preview-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">Preview</span>
+            <h3>Componentes base</h3>
+          </div>
+          <span class="status-pill info">Sistema activo</span>
+        </div>
+
+        <div class="metrics-grid">
+          @for (metric of metrics; track metric.label) {
+            <div class="metric-card" [class]="metric.tone">
+              <span>{{ metric.label }}</span>
+              <strong>{{ metric.value }}</strong>
+            </div>
+          }
+        </div>
+
+        <div class="control-surface">
+          <div class="button-row">
+            <button class="lab-btn primary" type="button">Guardar</button>
+            <button class="lab-btn secondary" type="button">Publicar</button>
+            <button class="lab-btn tertiary" type="button">Promocionar</button>
+            <button class="lab-btn ghost" type="button">Cancelar</button>
+            <button class="lab-btn danger" type="button">Eliminar</button>
+          </div>
+
+          <div class="form-grid">
+            <label>
+              <span>Producto</span>
+              <input type="text" value="Zapatillas Urban Pro" aria-label="Producto de muestra">
+            </label>
+            <label>
+              <span>Estado</span>
+              <select aria-label="Estado de muestra">
+                <option>Activo</option>
+                <option>Revision</option>
+                <option>Agotado</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </article>
+
+      <div class="split-grid">
+        <article class="preview-panel">
+          <div class="panel-head compact">
+            <div>
+              <span class="eyebrow">Estados</span>
+              <h3>Semantica</h3>
+            </div>
+          </div>
+
+          <div class="state-list">
+            <span class="status-pill success">Success</span>
+            <span class="status-pill warning">Warning</span>
+            <span class="status-pill danger">Danger</span>
+            <span class="status-pill info">Info</span>
+          </div>
+
+          <div class="notice success">
+            <strong>Pago confirmado</strong>
+            <span>Fondo, borde y texto vienen de tokens de estado.</span>
+          </div>
+          <div class="notice warning">
+            <strong>Stock bajo</strong>
+            <span>El contraste debe mantenerse al cambiar de tema.</span>
+          </div>
+        </article>
+
+        <article class="preview-panel">
+          <div class="panel-head compact">
+            <div>
+              <span class="eyebrow">Tokens</span>
+              <h3>Paleta base</h3>
+            </div>
+          </div>
+
+          <div class="token-list">
+            <div><span class="token primary"></span><strong>Primary</strong><small>--pc-primary</small></div>
+            <div><span class="token secondary"></span><strong>Secondary</strong><small>--pc-secondary</small></div>
+            <div><span class="token tertiary"></span><strong>Tertiary</strong><small>--pc-tertiary</small></div>
+            <div><span class="token surface"></span><strong>Surface</strong><small>--pc-surface</small></div>
+            <div><span class="token border"></span><strong>Border</strong><small>--pc-border</small></div>
+          </div>
+        </article>
+      </div>
+
+      <article class="preview-panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">Tabla</span>
+            <h3>Inventario demo</h3>
+          </div>
+          <button class="lab-btn primary" type="button">Nuevo item</button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Estado</th>
+                <th>Stock</th>
+                <th>Precio</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of rows; track row.product) {
+                <tr>
+                  <td>
+                    <strong>{{ row.product }}</strong>
+                    <small>SKU-{{ $index + 1042 }}</small>
+                  </td>
+                  <td><span class="table-status">{{ row.status }}</span></td>
+                  <td>{{ row.stock }}</td>
+                  <td>{{ row.amount }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </main>
   </div>
 
-  <!-- TARJETAS REVEAL (DEMO) -->
-  <div class="reveal-cards-section">
-    <h3 class="section-title">Tarjetas con Hover Animado</h3>
-    <p class="section-subtitle">
-      Pase el cursor sobre las tarjetas para revelar el contenido dinámico
-    </p>
+  <article class="theme-board">
+    <div class="panel-head">
+      <div>
+        <span class="eyebrow">Comparativa</span>
+        <h3>Todos los temas</h3>
+      </div>
+    </div>
 
-    <div class="reveal-cards-grid">
-      @for (card of revealCards; track card.title; let i = $index) {
-        <app-reveal-card
-          [content]="card"
-          [variant]="i % 3 === 0 ? 'neon' : i % 3 === 1 ? 'glass' : 'default'"
-          [revealDirection]="getRevealDirection(i)"
-          [hoverScale]="1.03"
-          [enableGlow]="true"
-        />
+    <div class="mini-preview-grid">
+      @for (theme of themes; track theme.className) {
+        <button type="button" class="mini-preview panel-ctrl {{ theme.className }}" (click)="selectTheme(theme.className)">
+          <span class="mini-top">
+            <strong>{{ theme.name }}</strong>
+            <i></i>
+          </span>
+          <span class="mini-body">
+            <i></i>
+            <i></i>
+            <i></i>
+          </span>
+        </button>
       }
     </div>
-  </div>
-
-  <!-- TABLA MEJORADA -->
-  <div class="crud-card">
-    <app-list-table
-      [columns]="columns"
-      [data]="data"
-      [actions]="tableActions"
-      [config]="tableConfig"
-      [pagination]="paginationConfig"
-      [loading]="isLoading"
-      (rowClick)="onRowClick($event)"
-      (rowDoubleClick)="onRowDoubleClick($event)"
-      (selectionChange)="onSelectionChange($event)"
-      (sortChange)="onSortChange($event)"
-      (pageChange)="onPageChange($event)"
-    >
-      <!-- Slot para acciones adicionales en el header de la tabla -->
-      <div tableActions class="table-extra-actions">
-        <button class="btn-refresh" (click)="simulateLoading()" title="Recargar datos">🔄</button>
-      </div>
-    </app-list-table>
-  </div>
-
-  <!-- INFO DE SELECCIÓN -->
-  @if (selectedUsers.length > 0) {
-    <div class="selection-info">
-      <span class="selection-count">{{ selectedUsers.length }} usuario(s) seleccionado(s)</span>
-      <div class="selection-actions">
-        <button class="btn-selection" (click)="onAction('leer')">👁️ Ver</button>
-        <button class="btn-selection" (click)="onAction('actualizar')">✏️ Editar</button>
-        <button class="btn-selection btn-selection--danger" (click)="onAction('eliminar')">
-          🗑️ Eliminar
-        </button>
-      </div>
-    </div>
-  }
-
-  <!-- BOTONES CRUD -->
-  <div class="crud-card crud-actions">
-    <div class="crud-card-header">
-      <h3>Acciones Rápidas</h3>
-    </div>
-
-    <div class="crud-card-body">
-      <app-crud-buttons
-        [buttons]="[
-          { type: 'crear', label: '+ Nuevo Usuario', class: 'crear', confirm: false },
-          { type: 'leer', label: 'Ver Detalles', class: 'leer', confirm: false },
-          { type: 'actualizar', label: 'Editar', class: 'actualizar', confirm: false },
-          { type: 'eliminar', label: 'Eliminar', class: 'eliminar', confirm: true },
-        ]"
-        [confirmMessage]="'¿Deseas continuar con la acción de '"
-        (action)="onAction($event)"
-      >
-      </app-crud-buttons>
-    </div>
-  </div>
-
-  <!-- FORMULARIO MEJORADO -->
-  <div class="crud-card">
-    <app-form1
-      [fields]="formFields"
-      [model]="formModel"
-      [config]="formConfig"
-      (submitForm)="guardar($event)"
-      (resetForm)="onFormReset()"
-      (valueChange)="onFormValueChange($event)"
-      (validationChange)="onFormValidationChange($event)"
-    >
-    </app-form1>
-  </div>
-</div>
+  </article>
+</section>

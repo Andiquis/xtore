@@ -1,0 +1,68 @@
+<div class="product-form-backdrop" (click)="close.emit()">
+  <section class="product-form-modal" (click)="$event.stopPropagation()">
+    <header class="form-header">
+      <div>
+        <span class="form-eyebrow">{{ mode === 'create' ? 'Nuevo producto' : 'Editar producto' }}</span>
+        <h2>{{ mode === 'create' ? 'Añadir producto' : 'Editar producto' }}</h2>
+        <p>Registra los datos principales para mostrarlo en el inventario.</p>
+      </div>
+
+      <button class="close-btn" type="button" (click)="close.emit()" aria-label="Cerrar formulario">
+        <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+      </button>
+    </header>
+
+    <form class="product-form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label class="form-field">
+          <span>Nombre</span>
+          <input name="name" type="text" [(ngModel)]="form.name" placeholder="Nombre del producto" required>
+        </label>
+
+        <label class="form-field">
+          <span>SKU</span>
+          <input name="codigo" type="text" [(ngModel)]="form.codigo" placeholder="PRD-SKU-001" required>
+        </label>
+
+        <label class="form-field">
+          <span>Categoría</span>
+          <select name="category" [(ngModel)]="form.category">
+            <option *ngFor="let categoria of categorias" [value]="categoria">{{ categoria }}</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>Marca</span>
+          <select name="marca" [(ngModel)]="form.marca">
+            <option *ngFor="let marca of marcas" [value]="marca">{{ marca }}</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>Presentación</span>
+          <select name="presentacion" [(ngModel)]="form.presentacion">
+            <option *ngFor="let presentacion of presentaciones" [value]="presentacion">{{ presentacion }}</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>Precio</span>
+          <input name="price" type="number" min="0" step="0.01" [(ngModel)]="form.price" placeholder="0.00">
+        </label>
+
+        <label class="form-field full">
+          <span>Imagen URL</span>
+          <input name="image" type="url" [(ngModel)]="form.image" placeholder="https://...">
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <button class="form-btn ghost" type="button" (click)="close.emit()">Cancelar</button>
+        <button class="form-btn primary" type="submit">
+          <lucide-icon [img]="SaveIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Guardar producto
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

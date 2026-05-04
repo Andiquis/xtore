@@ -1,12 +1,12 @@
 <div class="reportes-page">
 
   <!-- ═══ TABS DE REPORTE ═══ -->
-  <nav class="report-tabs">
-    <button *ngFor="let tab of reportTabs" class="tab-btn" [class.active]="activeReport === tab.id" (click)="setReport(tab.id)">
-      <lucide-icon [img]="tab.icon" [size]="18" [strokeWidth]="2.2"></lucide-icon>
-      <span>{{ tab.label }}</span>
-    </button>
-  </nav>
+  <app-tab-button
+    [tabs]="reportTabs"
+    [activeTab]="activeReport"
+    ariaLabel="Secciones de reportes"
+    (tabChange)="setReport($event)"
+  ></app-tab-button>
 
   <!-- ═══ BARRA DE FILTROS ═══ -->
   <div class="top-bar">

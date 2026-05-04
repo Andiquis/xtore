@@ -1,0 +1,33 @@
+<div class="fade-in">
+  <div class="top-bar">
+    <div class="search-section">
+      <div class="search-box">
+        <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
+        <input type="text" placeholder="Buscar marca...">
+      </div>
+    </div>
+    <div class="actions-section">
+      <button class="btn btn-primary">
+        <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+        Nueva Marca
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-cards">
+    <div class="model-card" *ngFor="let marca of marcas">
+      <div class="brand-logo" [style.background]="marca.bg">
+        {{ marca.logo }}
+      </div>
+      <div class="info">
+        <h3>{{ marca.name }}</h3>
+        <p>{{ marca.count }} productos registrados</p>
+      </div>
+      <div class="card-actions">
+        <button class="icon-btn btn-view" title="Ver detalles"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon></button>
+        <button class="icon-btn btn-edit" title="Editar"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon></button>
+        <button class="icon-btn btn-danger" title="Eliminar"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon></button>
+      </div>
+    </div>
+  </div>
+</div>

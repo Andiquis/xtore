@@ -1,12 +1,12 @@
 <div class="config-page">
 
   <!-- ═══ TABS DE NAVEGACIÓN ═══ -->
-  <nav class="config-tabs">
-    <button *ngFor="let tab of tabs" class="tab-btn" [class.active]="activeTab === tab.id" (click)="setTab(tab.id)">
-      <lucide-icon [img]="tab.icon" [size]="18" [strokeWidth]="2.2"></lucide-icon>
-      <span>{{ tab.label }}</span>
-    </button>
-  </nav>
+  <app-tab-button
+    [tabs]="tabs"
+    [activeTab]="activeTab"
+    ariaLabel="Secciones de configuracion"
+    (tabChange)="setTab($event)"
+  ></app-tab-button>
 
   <!-- ═══ CONTENIDO ═══ -->
   <div class="config-content">

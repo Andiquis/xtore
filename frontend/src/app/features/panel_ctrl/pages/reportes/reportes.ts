@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TabButton, TabButtonItem } from '../../components/tab-button/tab-button';
+
 import {
   LucideAngularModule,
   BarChart3,
@@ -23,10 +25,12 @@ import {
   PieChart,
 } from 'lucide-angular';
 
+type ReportTabId = 'ventas' | 'inventario' | 'productos' | 'compras' | 'caja';
+
 @Component({
   selector: 'app-reportes',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, TabButton],
   templateUrl: './reportes.html',
   styleUrl: './reportes.scss',
 })
@@ -53,10 +57,10 @@ export class Reportes {
   PieIcon = PieChart;
 
   // ── Estado ──
-  activeReport: string = 'ventas';
+  activeReport: ReportTabId = 'ventas';
   selectedPeriod: string = 'Este mes';
 
-  reportTabs = [
+  reportTabs: TabButtonItem[] = [
     { id: 'ventas', label: 'Ventas', icon: ShoppingCart },
     { id: 'inventario', label: 'Inventario', icon: Package },
     { id: 'productos', label: 'Productos', icon: Layers },
@@ -65,36 +69,169 @@ export class Reportes {
   ];
 
   // ── KPIs dinámicos por tipo de reporte ──
-  kpiSets: Record<string, any[]> = {
+  kpiSets: Record<ReportTabId, any[]> = {
     ventas: [
-      { label: 'Ingresos totales', value: 'S/ 48,320', change: '+14.2%', positive: true, icon: DollarSign, tone: 'blue' },
-      { label: 'Ventas realizadas', value: '312', change: '+8.5%', positive: true, icon: ShoppingCart, tone: 'green' },
-      { label: 'Ticket promedio', value: 'S/ 154.87', change: '+3.1%', positive: true, icon: BarChart3, tone: 'amber' },
-      { label: 'Devoluciones', value: 'S/ 1,240', change: '-22%', positive: true, icon: TrendingDown, tone: 'rose' },
+      {
+        label: 'Ingresos totales',
+        value: 'S/ 48,320',
+        change: '+14.2%',
+        positive: true,
+        icon: DollarSign,
+        tone: 'blue',
+      },
+      {
+        label: 'Ventas realizadas',
+        value: '312',
+        change: '+8.5%',
+        positive: true,
+        icon: ShoppingCart,
+        tone: 'green',
+      },
+      {
+        label: 'Ticket promedio',
+        value: 'S/ 154.87',
+        change: '+3.1%',
+        positive: true,
+        icon: BarChart3,
+        tone: 'amber',
+      },
+      {
+        label: 'Devoluciones',
+        value: 'S/ 1,240',
+        change: '-22%',
+        positive: true,
+        icon: TrendingDown,
+        tone: 'rose',
+      },
     ],
     inventario: [
-      { label: 'Productos en stock', value: '1,520', change: '-2.4%', positive: false, icon: Package, tone: 'blue' },
-      { label: 'Bajo stock', value: '23', change: '+5', positive: false, icon: TrendingDown, tone: 'rose' },
+      {
+        label: 'Productos en stock',
+        value: '1,520',
+        change: '-2.4%',
+        positive: false,
+        icon: Package,
+        tone: 'blue',
+      },
+      {
+        label: 'Bajo stock',
+        value: '23',
+        change: '+5',
+        positive: false,
+        icon: TrendingDown,
+        tone: 'rose',
+      },
       { label: 'Agotados', value: '7', change: '-2', positive: true, icon: Layers, tone: 'amber' },
-      { label: 'Rotación promedio', value: '4.2x', change: '+0.3', positive: true, icon: TrendingUp, tone: 'green' },
+      {
+        label: 'Rotación promedio',
+        value: '4.2x',
+        change: '+0.3',
+        positive: true,
+        icon: TrendingUp,
+        tone: 'green',
+      },
     ],
     productos: [
-      { label: 'Total productos', value: '486', change: '+12', positive: true, icon: Package, tone: 'blue' },
-      { label: 'Más vendido', value: 'Zapatillas Urban', change: '142 uds', positive: true, icon: TrendingUp, tone: 'green' },
-      { label: 'Categorías activas', value: '8', change: '0', positive: true, icon: Layers, tone: 'amber' },
-      { label: 'Sin movimiento', value: '34', change: '+3', positive: false, icon: TrendingDown, tone: 'rose' },
+      {
+        label: 'Total productos',
+        value: '486',
+        change: '+12',
+        positive: true,
+        icon: Package,
+        tone: 'blue',
+      },
+      {
+        label: 'Más vendido',
+        value: 'Zapatillas Urban',
+        change: '142 uds',
+        positive: true,
+        icon: TrendingUp,
+        tone: 'green',
+      },
+      {
+        label: 'Categorías activas',
+        value: '8',
+        change: '0',
+        positive: true,
+        icon: Layers,
+        tone: 'amber',
+      },
+      {
+        label: 'Sin movimiento',
+        value: '34',
+        change: '+3',
+        positive: false,
+        icon: TrendingDown,
+        tone: 'rose',
+      },
     ],
     compras: [
-      { label: 'Total compras', value: 'S/ 22,180', change: '+6.8%', positive: true, icon: CreditCard, tone: 'blue' },
-      { label: 'Órdenes', value: '28', change: '+4', positive: true, icon: FileText, tone: 'green' },
-      { label: 'Proveedores activos', value: '12', change: '0', positive: true, icon: Users, tone: 'amber' },
-      { label: 'Pendientes de pago', value: 'S/ 3,400', change: '+2', positive: false, icon: Wallet, tone: 'rose' },
+      {
+        label: 'Total compras',
+        value: 'S/ 22,180',
+        change: '+6.8%',
+        positive: true,
+        icon: CreditCard,
+        tone: 'blue',
+      },
+      {
+        label: 'Órdenes',
+        value: '28',
+        change: '+4',
+        positive: true,
+        icon: FileText,
+        tone: 'green',
+      },
+      {
+        label: 'Proveedores activos',
+        value: '12',
+        change: '0',
+        positive: true,
+        icon: Users,
+        tone: 'amber',
+      },
+      {
+        label: 'Pendientes de pago',
+        value: 'S/ 3,400',
+        change: '+2',
+        positive: false,
+        icon: Wallet,
+        tone: 'rose',
+      },
     ],
     caja: [
-      { label: 'Ingresos caja', value: 'S/ 52,140', change: '+11.3%', positive: true, icon: DollarSign, tone: 'blue' },
-      { label: 'Egresos', value: 'S/ 8,420', change: '+3.2%', positive: false, icon: TrendingDown, tone: 'rose' },
-      { label: 'Saldo neto', value: 'S/ 43,720', change: '+15.1%', positive: true, icon: Wallet, tone: 'green' },
-      { label: 'Cierres realizados', value: '26', change: '100%', positive: true, icon: BarChart3, tone: 'amber' },
+      {
+        label: 'Ingresos caja',
+        value: 'S/ 52,140',
+        change: '+11.3%',
+        positive: true,
+        icon: DollarSign,
+        tone: 'blue',
+      },
+      {
+        label: 'Egresos',
+        value: 'S/ 8,420',
+        change: '+3.2%',
+        positive: false,
+        icon: TrendingDown,
+        tone: 'rose',
+      },
+      {
+        label: 'Saldo neto',
+        value: 'S/ 43,720',
+        change: '+15.1%',
+        positive: true,
+        icon: Wallet,
+        tone: 'green',
+      },
+      {
+        label: 'Cierres realizados',
+        value: '26',
+        change: '100%',
+        positive: true,
+        icon: BarChart3,
+        tone: 'amber',
+      },
     ],
   };
 
@@ -143,16 +280,22 @@ export class Reportes {
   // ── Ventas diarias (tabla de detalle) ──
   dailySales = [
     { date: '01 May', count: 18, total: 2840, avg: 157.78 },
-    { date: '02 May', count: 22, total: 3520, avg: 160.00 },
+    { date: '02 May', count: 22, total: 3520, avg: 160.0 },
     { date: '03 May', count: 15, total: 2180, avg: 145.33 },
     { date: '04 May', count: 28, total: 4650, avg: 166.07 },
     { date: '05 May', count: 12, total: 1420, avg: 118.33 },
     { date: '06 May', count: 32, total: 5240, avg: 163.75 },
-    { date: '07 May', count: 25, total: 3890, avg: 155.60 },
+    { date: '07 May', count: 25, total: 3890, avg: 155.6 },
   ];
 
   // ── Métodos ──
   setReport(reportId: string) {
-    this.activeReport = reportId;
+    if (this.isReportTab(reportId)) {
+      this.activeReport = reportId;
+    }
+  }
+
+  private isReportTab(reportId: string): reportId is ReportTabId {
+    return ['ventas', 'inventario', 'productos', 'compras', 'caja'].includes(reportId);
   }
 }

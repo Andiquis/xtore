@@ -21,6 +21,33 @@ export const PANEL_CTRL_ROUTES: Routes = [
       {
         path: 'productos',
         loadComponent: () => import('../pages/productos/productos').then((m) => m.Productos),
+        children: [
+          {
+            path: '',
+            redirectTo: 'lista',
+            pathMatch: 'full',
+          },
+          {
+            path: 'lista',
+            loadComponent: () =>
+              import('../pages/productos/productos-lista/productos-lista').then((m) => m.ProductosLista),
+          },
+          {
+            path: 'categorias',
+            loadComponent: () =>
+              import('../pages/productos/productos-categorias/productos-categorias').then((m) => m.ProductosCategorias),
+          },
+          {
+            path: 'marcas',
+            loadComponent: () =>
+              import('../pages/productos/productos-marcas/productos-marcas').then((m) => m.ProductosMarcas),
+          },
+          {
+            path: 'presentacion',
+            loadComponent: () =>
+              import('../pages/productos/productos-presentacion/productos-presentacion').then((m) => m.ProductosPresentacion),
+          },
+        ],
       },
       {
         path: 'inventario',
@@ -49,6 +76,10 @@ export const PANEL_CTRL_ROUTES: Routes = [
       {
         path: 'soporte',
         loadComponent: () => import('../pages/soporte/soporte').then((m) => m.Soporte),
+      },
+      {
+        path: 'crud',
+        loadComponent: () => import('../pages/crud/crud').then((m) => m.Crud),
       },
       {
         path: 'configuracion',

@@ -63,6 +63,7 @@ export class PanelLayout implements OnInit {
     else if (url.includes('/panel/reportes')) this.currentSection = 'Reportes';
     else if (url.includes('/panel/soporte')) this.currentSection = 'Soporte';
     else if (url.includes('/panel/configuracion')) this.currentSection = 'Configuración';
+    else if (url.includes('/panel/crud')) this.currentSection = 'Laboratorio de Temas';
     else {
       // Capitalize first letter of path segment if possible
       const segments = url.split('/').filter(s => s);

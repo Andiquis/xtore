@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TabButton, TabButtonItem } from '../../components/tab-button/tab-button';
 import {
   LucideAngularModule,
   Building2,
@@ -24,10 +25,20 @@ import {
   Palette,
 } from 'lucide-angular';
 
+type ConfigTabId =
+  | 'empresa'
+  | 'fiscal'
+  | 'moneda'
+  | 'comprobantes'
+  | 'inventario'
+  | 'ventas'
+  | 'pagos'
+  | 'sistema';
+
 @Component({
   selector: 'app-configuracion',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule],
+  imports: [CommonModule, LucideAngularModule, FormsModule, TabButton],
   templateUrl: './configuracion.html',
   styleUrl: './configuracion.scss',
 })
@@ -38,10 +49,10 @@ export class Configuracion {
   UploadIcon = Upload;
 
   // ── Estado ──
-  activeTab = 'empresa';
+  activeTab: ConfigTabId = 'empresa';
   isSaved = false;
 
-  tabs = [
+  tabs: TabButtonItem[] = [
     { id: 'empresa', label: 'Empresa', icon: Building2 },
     { id: 'fiscal', label: 'Fiscal', icon: Receipt },
     { id: 'moneda', label: 'Moneda e Impuestos', icon: Coins },
@@ -134,8 +145,23 @@ export class Configuracion {
 
   // ── Métodos ──
   setTab(tabId: string) {
-    this.activeTab = tabId;
-    this.isSaved = false;
+    if (this.isConfigTab(tabId)) {
+      this.activeTab = tabId;
+      this.isSaved = false;
+    }
+  }
+
+  private isConfigTab(tabId: string): tabId is ConfigTabId {
+    return [
+      'empresa',
+      'fiscal',
+      'moneda',
+      'comprobantes',
+      'inventario',
+      'ventas',
+      'pagos',
+      'sistema',
+    ].includes(tabId);
   }
 
   guardarConfiguracion() {

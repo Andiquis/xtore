@@ -55,44 +55,8 @@
 /* ══════════════════════════════════════════
    REPORT TABS
    ══════════════════════════════════════════ */
-.report-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 6px;
-  background: #ffffff;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 6px 18px rgba(112, 144, 176, 0.07);
-  overflow-x: auto;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar { display: none; }
-}
-
-.tab-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--muted);
-  font-family: inherit;
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-  flex-shrink: 0;
-
-  &:hover { background: var(--soft); color: var(--ink); }
-
-  &.active {
-    background: var(--accent);
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
-  }
+app-tab-button {
+  display: block;
 }
 
 /* ══════════════════════════════════════════
@@ -621,11 +585,6 @@
     justify-content: flex-end;
   }
 
-  .tab-btn {
-    padding: 10px 14px;
-    font-size: 12px;
-    span { display: none; }
-  }
 }
 
 @media (max-width: 768px) {
