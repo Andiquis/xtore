@@ -1,0 +1,142 @@
+model t_marcas {
+  id_marca           BigInt            @id @default(autoincrement())
+  nombre_marca       String            @unique(map: "uq_marcas_nombre") @db.VarChar(120)
+  descripcion_marca  String?           @db.Text
+  logo_url           String?           @db.VarChar(500)
+  estado_marca       t_estado_generico @default(activo)
+  fecha_registro     DateTime          @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime?         @db.DateTime(0)
+
+  t_productos t_productos[]
+}
+
+model t_categorias {
+  id_categoria       BigInt            @id @default(autoincrement())
+  nombre_categoria   String            @db.VarChar(120)
+  id_categoria_padre BigInt?
+  estado_categoria   t_estado_generico @default(activo)
+  fecha_registro     DateTime          @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime?         @db.DateTime(0)
+
+  categoria_padre t_categorias?  @relation("JerarquiaCategorias", fields: [id_categoria_padre], references: [id_categoria], onDelete: SetNull, onUpdate: Cascade, map: "fk_categoria_padre")
+  subcategorias   t_categorias[] @relation("JerarquiaCategorias")
+  t_productos     t_productos[]
+
+  @@unique([nombre_categoria, id_categoria_padre], map: "uq_categoria_nombre_padre")
+}
+
+model t_productos {
+  id_producto          BigInt  @id @default(autoincrement())
+  nombre_producto      String  @db.VarChar(200)
+  descripcion_producto String? @db.Text
+  id_marca             BigInt?
+  id_categoria         BigInt
+
+  tipo_producto t_tipo_producto @default(producto)
+  es_perecible  Boolean         @default(false)
+  requiere_lote Boolean         @default(false)
+
+  estado_producto t_estado_producto @default(activo)
+  imagen_url      String?           @db.VarChar(500)
+
+  fecha_registro     DateTime  @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime? @db.DateTime(0)
+
+  t_marcas     t_marcas?    @relation(fields: [id_marca], references: [id_marca], onDelete: SetNull, onUpdate: Cascade, map: "fk_producto_marca")
+  t_categorias t_categorias @relation(fields: [id_categoria], references: [id_categoria], onDelete: Restrict, onUpdate: Cascade, map: "fk_producto_categoria")
+
+  presentaciones t_producto_presentaciones[]
+
+  @@index([nombre_producto], map: "idx_productos_nombre")
+  @@index([id_marca], map: "idx_productos_marca")
+  @@index([id_categoria], map: "idx_productos_categoria")
+}
+
+model t_producto_presentaciones {
+  id_presentacion BigInt @id @default(autoincrement())
+  id_producto     BigInt
+
+  nombre_presentacion String @db.VarChar(160)
+
+  sku           String  @unique(map: "uq_presentacion_sku") @db.VarChar(80)
+  codigo_barras String? @db.VarChar(100)
+
+  unidad_medida     String  @default("NIU") @db.VarChar(20)
+  factor_conversion Decimal @default(1.0000) @db.Decimal(12, 4)
+
+  controla_stock Boolean @default(true)
+
+  estado_presentacion t_estado_producto @default(activo)
+
+  fecha_registro     DateTime  @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime? @db.DateTime(0)
+
+  t_productos t_productos @relation(fields: [id_producto], references: [id_producto], onDelete: Restrict, onUpdate: Cascade, map: "fk_presentacion_producto")
+
+  codigos_alternativos t_producto_codigos[]
+  precio               t_producto_precios?
+
+  @@index([codigo_barras], map: "idx_presentacion_codigo_barras")
+  @@index([id_producto], map: "idx_presentacion_producto")
+}
+
+model t_producto_codigos {
+  id_codigo       BigInt @id @default(autoincrement())
+  id_presentacion BigInt
+
+  tipo_codigo  t_tipo_codigo @default(EAN)
+  valor_codigo String        @unique(map: "uq_codigo_valor") @db.VarChar(100)
+
+  es_principal  Boolean           @default(false)
+  estado_codigo t_estado_generico @default(activo)
+
+  fecha_registro     DateTime  @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime? @db.DateTime(0)
+
+  presentacion t_producto_presentaciones @relation(fields: [id_presentacion], references: [id_presentacion], onDelete: Cascade, onUpdate: Cascade, map: "fk_codigo_presentacion")
+
+  @@index([id_presentacion], map: "idx_codigo_presentacion")
+}
+
+model t_producto_precios {
+  id_precio       BigInt @id @default(autoincrement())
+  id_presentacion BigInt @unique(map: "uq_precio_presentacion")
+
+  precio_compra             Decimal? @db.Decimal(10, 2)
+  precio_venta              Decimal  @db.Decimal(10, 2)
+  precio_mayorista          Decimal? @db.Decimal(10, 2)
+  cantidad_minima_mayorista Decimal? @db.Decimal(12, 3)
+
+  moneda      String  @default("PEN") @db.Char(3)
+  incluye_igv Boolean @default(true)
+
+  fecha_registro     DateTime  @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime? @db.DateTime(0)
+
+  presentacion t_producto_presentaciones @relation(fields: [id_presentacion], references: [id_presentacion], onDelete: Cascade, onUpdate: Cascade, map: "fk_precio_presentacion")
+}
+
+enum t_estado_generico {
+  activo
+  inactivo
+}
+
+enum t_estado_producto {
+  activo
+  inactivo
+  descontinuado
+}
+
+enum t_tipo_producto {
+  producto
+  servicio
+  insumo
+  combo
+}
+
+enum t_tipo_codigo {
+  EAN
+  UPC
+  proveedor
+  interno
+}

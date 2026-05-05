@@ -1,27 +1,16 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
-}
-
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model t_roles {
   id_rol             Int                 @id @default(autoincrement())
   nombre_rol         String              @unique(map: "nombre_rol") @db.VarChar(50)
   estado_rol         t_roles_estado_rol? @default(activo)
   descripcion_rol    String?             @db.Text
   fecha_creacion     DateTime?           @default(now()) @db.DateTime(0)
-  fecha_modificacion DateTime?           @default(now()) @db.DateTime(0)
+  fecha_modificacion DateTime?           @db.DateTime(0)
   t_usuario_roles    t_usuario_roles[]
 
   @@index([estado_rol], map: "idx_estado_rol")
   @@index([nombre_rol], map: "idx_nombre_rol")
 }
 
-/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model t_usuario_roles {
   id_usuario                                          BigInt
   id_rol                                              Int
