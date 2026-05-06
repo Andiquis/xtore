@@ -38,6 +38,9 @@ importers:
       '@capacitor/app':
         specifier: ^8.1.0
         version: 8.1.0(@capacitor/core@8.3.1)
+      '@capacitor/core':
+        specifier: ^8.3.1
+        version: 8.3.1
       '@nebular/eva-icons':
         specifier: 17.0.0
         version: 17.0.0(@nebular/theme@17.0.0(4e57fa83eb089ff33fa1e118367ee4cf))(eva-icons@1.1.3)

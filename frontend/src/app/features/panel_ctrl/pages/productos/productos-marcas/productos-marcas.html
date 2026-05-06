@@ -2,32 +2,284 @@
   <div class="top-bar">
     <div class="search-section">
       <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
-        <input type="text" placeholder="Buscar marca...">
+        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+        <input
+          type="text"
+          placeholder="Buscar por nombre, ID, estado o descripción"
+          [ngModel]="searchTerm()"
+          (ngModelChange)="setSearchTerm($event)"
+        >
       </div>
+      <div class="filter-group">
+        <select class="filter-select" [ngModel]="estadoFilter()" (ngModelChange)="setEstadoFilter($event)">
+          <option value="todos">Estado</option>
+          <option value="activo">Activo</option>
+          <option value="inactivo">Inactivo</option>
+        </select>
+      </div>
+      <button
+        class="btn btn-outline filter-clear-btn"
+        type="button"
+        title="Limpiar filtros"
+        aria-label="Limpiar filtros"
+        *ngIf="searchTerm() || estadoFilter() !== 'todos'"
+        (click)="clearSearch()"
+      >
+        <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.5"></lucide-icon>
+      </button>
     </div>
+
     <div class="actions-section">
-      <button class="btn btn-primary">
-        <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+      <button class="btn btn-primary" type="button" (click)="openForm()" [disabled]="loading()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
         Nueva Marca
       </button>
     </div>
   </div>
 
-  <div class="grid-cards">
-    <div class="model-card" *ngFor="let marca of marcas">
-      <div class="brand-logo" [style.background]="marca.bg">
-        {{ marca.logo }}
+  <div
+    class="notice-banner"
+    *ngIf="notice() as currentNotice"
+    [class.notice-banner--success]="currentNotice.type === 'success'"
+    [class.notice-banner--error]="currentNotice.type === 'error'"
+  >
+    <lucide-icon [img]="currentNotice.icon" [size]="20" [strokeWidth]="2.4"></lucide-icon>
+    <div>
+      <strong>{{ currentNotice.title }}</strong>
+      <span>{{ currentNotice.message }}</span>
+    </div>
+    <button type="button" (click)="clearMessages()" aria-label="Cerrar mensaje">
+      <lucide-icon [img]="CloseIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+    </button>
+  </div>
+
+  <div class="table-card">
+    <div class="table-card-header">
+      <div>
+        <h3>Directorio de marcas</h3>
+        <p>Selecciona una fila para ver detalles o usa los checks para acciones masivas.</p>
       </div>
-      <div class="info">
-        <h3>{{ marca.name }}</h3>
-        <p>{{ marca.count }} productos registrados</p>
+      <span class="table-count">{{ filteredTotal() }} de {{ total() }} marcas</span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="table-loading" *ngIf="loading()">
+      <span class="spinner"></span>
+      <span>Cargando marcas...</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <input
+                type="checkbox"
+                [checked]="areAllSelected()"
+                [indeterminate]="hasPartialSelection()"
+                (change)="toggleAll($event)"
+              >
+            </th>
+            <th>Marca</th>
+            <th>ID</th>
+            <th>Estado</th>
+            <th>Productos</th>
+            <th>Actualizado</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let marca of paginatedMarcas()"
+            class="table-row"
+            [class.active]="activeItem?.id_marca === marca.id_marca"
+            [class.checked]="isSelected(marca)"
+            (click)="showDetails(marca)"
+          >
+            <td class="col-check" (click)="$event.stopPropagation()">
+              <input
+                type="checkbox"
+                [checked]="isSelected(marca)"
+                (change)="toggleSelection(marca, $event)"
+              >
+            </td>
+            <td data-label="Marca">
+              <div class="product-cell">
+                <div class="product-copy">
+                  <span class="product-name font-bold text-dark">{{ marca.nombre_marca }}</span>
+                  <span class="product-meta">ID {{ marca.id_marca }} · {{ marca.estado_marca }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="font-mono text-gray" data-label="ID">{{ marca.id_marca }}</td>
+            <td data-label="Estado">
+              <span class="category-badge" [class.badge-inactive]="marca.estado_marca === 'inactivo'">
+                {{ marca.estado_marca }}
+              </span>
+            </td>
+            <td class="text-gray font-medium" data-label="Productos">{{ getProductCountLabel(marca) }}</td>
+            <td class="text-gray font-medium" data-label="Actualizado">
+              {{ marca.fecha_modificacion ? (marca.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
+            </td>
+            <td class="text-gray font-medium" data-label="Descripción">{{ marca.descripcion_marca || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="!loading() && filteredMarcas().length === 0">
+      <p>{{ searchTerm() ? 'No encontramos marcas para esa búsqueda.' : 'No hay marcas registradas.' }}</p>
+      <button class="btn btn-primary" type="button" (click)="openForm()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        {{ searchTerm() ? 'Crear marca' : 'Crear primera marca' }}
+      </button>
+    </div>
+
+    <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+      <div>
+        <span class="detail-eyebrow">Marca seleccionada</span>
+        <h3>{{ selectedItems[0].nombre_marca }}</h3>
+        <p>ID {{ selectedItems[0].id_marca }} · Estado: {{ selectedItems[0].estado_marca }}</p>
       </div>
-      <div class="card-actions">
-        <button class="icon-btn btn-view" title="Ver detalles"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon></button>
-        <button class="icon-btn btn-edit" title="Editar"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon></button>
-        <button class="icon-btn btn-danger" title="Eliminar"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon></button>
+      <div class="detail-actions">
+        <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
+          <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Ver detalle
+        </button>
+        <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])">
+          <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Editar
+        </button>
+        <button class="detail-btn detail-btn--danger" (click)="requestDeleteMarca(selectedItems[0])" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Eliminar
+        </button>
       </div>
     </div>
+
+    <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+      <div>
+        <span class="detail-eyebrow">Selección múltiple</span>
+        <h3>{{ selectedItems.length }} marcas seleccionadas</h3>
+        <p>Acciones masivas para los registros marcados con checklist.</p>
+      </div>
+      <div class="detail-actions">
+        <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Limpiar
+        </button>
+        <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Eliminar marcas
+        </button>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <div class="page-summary">
+        <span class="page-info">Mostrando <strong>{{ getRangeText() }}</strong> de <strong>{{ filteredTotal() }}</strong> marcas</span>
+        <label class="page-size">
+          <span>Por página</span>
+          <select [ngModel]="pageSize()" (ngModelChange)="setPageSize($event)">
+            <option *ngFor="let option of pageSizeOptions" [ngValue]="option">{{ option }}</option>
+          </select>
+        </label>
+      </div>
+      <div class="page-controls">
+        <button class="page-nav" type="button" [disabled]="isFirstPage()" (click)="previousPage()">Anterior</button>
+        <ng-container *ngFor="let page of visiblePages()">
+          <span class="page-dots" *ngIf="page === 'ellipsis'">...</span>
+          <button
+            *ngIf="page !== 'ellipsis'"
+            class="page-btn"
+            type="button"
+            [class.active]="page === safeCurrentPage()"
+            (click)="goToPage(page)"
+          >
+            {{ page }}
+          </button>
+        </ng-container>
+        <span class="page-status">Página {{ safeCurrentPage() }} de {{ totalPages() }}</span>
+        <button class="page-nav" type="button" [disabled]="isLastPage()" (click)="nextPage()">Siguiente</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="product-modal-backdrop" *ngIf="activeItem as marca" (click)="closeDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <div class="modal-media">
+        <img
+          *ngIf="getLogoUrl(marca) as logoUrl"
+          [src]="logoUrl"
+          [alt]="marca.nombre_marca"
+          (error)="markLogoAsMissing(marca)"
+        >
+        <div *ngIf="!getLogoUrl(marca)" class="brand-logo brand-logo--large" [style.background]="getBrandColor(marca)">
+          <lucide-icon [img]="ImageIcon" [size]="30" [strokeWidth]="2.4"></lucide-icon>
+          <span>{{ getBrandInitial(marca) }}</span>
+        </div>
+      </div>
+      <div class="modal-content">
+        <span class="detail-eyebrow">Detalle de marca</span>
+        <h2>{{ marca.nombre_marca }}</h2>
+        <p class="modal-subtitle">ID {{ marca.id_marca }} · {{ marca.estado_marca }}</p>
+        <div class="modal-detail-grid">
+          <span><strong>ID</strong>{{ marca.id_marca }}</span>
+          <span><strong>Nombre</strong>{{ marca.nombre_marca }}</span>
+          <span><strong>Estado</strong>{{ marca.estado_marca }}</span>
+          <span><strong>Logo</strong>{{ marca.logo_url ? 'Logo registrado' : 'Sin logo registrado' }}</span>
+          <span><strong>Descripción</strong>{{ marca.descripcion_marca || 'Sin descripción' }}</span>
+          <span><strong>Fecha registro</strong>{{ marca.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span><strong>Última modificación</strong>{{ marca.fecha_modificacion ? (marca.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(marca); closeDetails()">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar marca
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteMarca(marca); closeDetails()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-marca-form
+    *ngIf="isFormOpen"
+    [mode]="editingMarca ? 'edit' : 'create'"
+    [marca]="editingMarca"
+    (close)="closeForm()"
+    (save)="saveMarca($event)"
+  ></app-marca-form>
+
+  <div class="confirm-modal-backdrop" *ngIf="deleteDialog as dialog" (click)="closeDeleteDialog()">
+    <section class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger">
+        <lucide-icon [img]="TrashIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+      </div>
+      <div class="confirm-content">
+        <span class="detail-eyebrow">Confirmar eliminación</span>
+        <h2>{{ dialog.mode === 'single' ? 'Eliminar marca' : 'Eliminar marcas seleccionadas' }}</h2>
+        <p *ngIf="dialog.mode === 'single'">
+          Esta acción eliminará <strong>{{ dialog.marcas[0].nombre_marca }}</strong> del directorio de marcas.
+        </p>
+        <p *ngIf="dialog.mode === 'bulk'">
+          Esta acción eliminará <strong>{{ dialog.marcas.length }}</strong> marcas seleccionadas del directorio.
+        </p>
+      </div>
+      <div class="confirm-actions">
+        <button class="detail-btn detail-btn--ghost" type="button" (click)="closeDeleteDialog()" [disabled]="loading()">
+          Cancelar
+        </button>
+        <button class="detail-btn detail-btn--danger" type="button" (click)="confirmDelete()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
   </div>
 </div>

@@ -1,15 +1,38 @@
 services:
+  mysql:
+    image: mysql:8.4
+    container_name: xtore_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Admin942
+      MYSQL_DATABASE: db_xtore
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p$${MYSQL_ROOT_PASSWORD} --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: xtore_backend
+    depends_on:
+      mysql:
+        condition: service_healthy
     ports:
       - "3000:3000"
+    environment:
+      - DATABASE_URL=mysql://root:Admin942@mysql:3306/db_xtore
+      - API_PREFIX=api
+      - CORS_ORIGIN=http://localhost:4200,http://localhost:4201
     volumes:
       - ./backend:/app
       - /app/node_modules
-    command: npm run start:dev
+    command: sh -c "pnpm prisma migrate deploy --schema prisma/schema && pnpm run start"
 
   frontend:
     build:
@@ -21,4 +44,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-    command: npm start -- --host 0.0.0.0 --port 4200 --poll 2000
+    command: pnpm start --host 0.0.0.0 --port 4200 --poll 2000
+
+volumes:
+  mysql_data:

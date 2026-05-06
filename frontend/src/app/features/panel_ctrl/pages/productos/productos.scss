@@ -124,6 +124,13 @@ app-tab-button {
   transition: all 0.2s ease;
   border: none;
 
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+
   &-primary {
     background: #4318ff;
     color: #ffffff;
@@ -158,6 +165,85 @@ app-tab-button {
     color: #0ea5e9;
     border-color: #9bd6f2;
     background: #f0f9ff;
+  }
+}
+
+.notice-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 14px 16px;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: #1e3a8a;
+  box-shadow: 0 10px 24px rgba(112, 144, 176, 0.08);
+
+  lucide-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  div {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  strong {
+    color: #1b2559;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  span {
+    color: #52637f;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.45;
+  }
+
+  button {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: #64748b;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.78);
+      border-color: rgba(148, 163, 184, 0.22);
+      color: #1b2559;
+    }
+  }
+}
+
+.notice-banner--success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #047857;
+
+  strong {
+    color: #065f46;
+  }
+}
+
+.notice-banner--error {
+  border-color: #fecaca;
+  background: #fff7f7;
+  color: #dc2626;
+
+  strong {
+    color: #991b1b;
   }
 }
 
@@ -328,6 +414,56 @@ app-tab-button {
   font-weight: 800;
 }
 
+.badge-inactive {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+  color: #64748b;
+}
+
+.table-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #e6edf7;
+  background: #fbfcff;
+  color: #52637f;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #dbeafe;
+  border-top-color: #0ea5e9;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 14px;
+  padding: 36px 20px;
+  color: #64748b;
+  text-align: center;
+
+  p {
+    margin: 0;
+    color: #52637f;
+    font-size: 14px;
+    font-weight: 800;
+  }
+}
+
 .selection-summary-panel {
   margin: 16px 24px 0;
   padding: 14px 16px;
@@ -392,6 +528,11 @@ app-tab-button {
   cursor: pointer;
   transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
 
+  &:disabled {
+    opacity: 0.58;
+    cursor: not-allowed;
+  }
+
   &:hover {
     background: #eef7ff;
     border-color: #bae6fd;
@@ -421,6 +562,20 @@ app-tab-button {
       background: #fee2e2;
     }
   }
+}
+
+.brand-logo--large {
+  width: 86px;
+  height: 86px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  color: #ffffff;
+  font-size: 30px;
+  font-weight: 900;
 }
 
 .product-modal-backdrop {
@@ -535,6 +690,74 @@ app-tab-button {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.confirm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(11, 20, 55, 0.45);
+  backdrop-filter: blur(6px);
+}
+
+.confirm-modal {
+  width: min(440px, 100%);
+  border: 1px solid #dce5f2;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 28px 70px rgba(11, 20, 55, 0.24);
+  padding: 22px;
+  display: grid;
+  gap: 16px;
+}
+
+.confirm-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &--danger {
+    border: 1px solid #fecaca;
+    background: #fff5f5;
+    color: #dc2626;
+  }
+}
+
+.confirm-content {
+  h2 {
+    margin: 6px 0 8px;
+    color: var(--text-dark);
+    font-size: 20px;
+    font-weight: 900;
+  }
+
+  p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  strong {
+    color: #1b2559;
+    font-weight: 900;
+  }
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
   flex-wrap: wrap;
 }
 
@@ -654,6 +877,12 @@ app-tab-button {
       font-size: 13px;
       font-weight: 800;
       cursor: pointer;
+      outline: none;
+
+      &:focus {
+        border-color: #0ea5e9;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.12);
+      }
     }
   }
 
@@ -661,6 +890,7 @@ app-tab-button {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
 
     .page-btn,
     .page-nav {
@@ -682,6 +912,19 @@ app-tab-button {
         color: #0369a1;
         box-shadow: 0 6px 14px rgba(112, 144, 176, 0.1);
       }
+
+      &:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        box-shadow: none;
+        color: var(--text-gray);
+
+        &:hover {
+          border-color: var(--border-color);
+          color: var(--text-gray);
+          box-shadow: none;
+        }
+      }
     }
 
     .page-btn {
@@ -697,19 +940,20 @@ app-tab-button {
 
     .page-nav {
       padding: 0 12px;
-
-      &:disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
-        box-shadow: none;
-        color: var(--text-gray);
-      }
     }
 
     .page-dots {
       color: var(--text-gray);
       font-weight: 800;
       padding: 0 4px;
+    }
+
+    .page-status {
+      padding: 0 4px;
+      color: #7182a3;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
     }
   }
 }

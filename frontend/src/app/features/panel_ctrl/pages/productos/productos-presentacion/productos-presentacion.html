@@ -2,32 +2,167 @@
   <div class="top-bar">
     <div class="search-section">
       <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
-        <input type="text" placeholder="Buscar presentación...">
+        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+        <input type="text" placeholder="Buscar por nombre de presentación">
       </div>
     </div>
+
     <div class="actions-section">
-      <button class="btn btn-primary">
-        <lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>
+      <button class="btn btn-primary" type="button" (click)="openForm()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
         Nueva Presentación
       </button>
     </div>
   </div>
 
-  <div class="grid-cards">
-    <div class="model-card" *ngFor="let pres of presentaciones">
-      <div class="icon-box" [style.background]="pres.bg" [style.color]="pres.color">
-        <lucide-icon [img]="TabPresentacionIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+  <div class="table-card">
+    <div class="table-card-header">
+      <div>
+        <h3>Catálogo de presentaciones</h3>
+        <p>Selecciona una fila para ver detalles o usa los checks para acciones masivas.</p>
       </div>
-      <div class="info">
-        <h3>{{ pres.name }}</h3>
-        <p>{{ pres.count }} productos • <span [style.color]="pres.status === 'Activo' ? '#05cd99' : '#ff5b5b'">{{ pres.status }}</span></p>
+      <span class="table-count">{{ presentaciones.length }} presentaciones</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th class="col-check">
+              <input
+                type="checkbox"
+                [checked]="areAllSelected()"
+                [indeterminate]="hasPartialSelection()"
+                (change)="toggleAll($event)"
+              >
+            </th>
+            <th>Presentación</th>
+            <th>ID</th>
+            <th>Productos</th>
+            <th>Estado</th>
+            <th>Descripción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let pres of presentaciones"
+            class="table-row"
+            [class.active]="activeItem?.id === pres.id"
+            [class.checked]="isSelected(pres)"
+            (click)="showDetails(pres)"
+          >
+            <td class="col-check" (click)="$event.stopPropagation()">
+              <input
+                type="checkbox"
+                [checked]="isSelected(pres)"
+                (change)="toggleSelection(pres, $event)"
+              >
+            </td>
+            <td data-label="Presentación">
+              <div class="product-cell">
+                <div class="product-copy">
+                  <span class="product-name font-bold text-dark">{{ pres.name }}</span>
+                  <span class="product-meta">{{ pres.id }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="font-mono text-gray" data-label="ID">{{ pres.id }}</td>
+            <td data-label="Productos"><span class="category-badge">{{ pres.count }} productos</span></td>
+            <td data-label="Estado">
+              <span class="status-pill" [ngClass]="pres.status === 'Activo' ? 'status-success' : 'status-danger'">
+                {{ pres.status }}
+              </span>
+            </td>
+            <td class="text-gray font-medium" data-label="Descripción">{{ pres.description || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+      <div>
+        <span class="detail-eyebrow">Presentación seleccionada</span>
+        <h3>{{ selectedItems[0].name }}</h3>
+        <p>{{ selectedItems[0].id }} · {{ selectedItems[0].count }} productos · {{ selectedItems[0].status }}</p>
       </div>
-      <div class="card-actions">
-        <button class="icon-btn btn-view" title="Ver detalles"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon></button>
-        <button class="icon-btn btn-edit" title="Editar"><lucide-icon [img]="EditIcon" [size]="16"></lucide-icon></button>
-        <button class="icon-btn btn-danger" title="Eliminar"><lucide-icon [img]="TrashIcon" [size]="16"></lucide-icon></button>
+      <div class="detail-actions">
+        <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
+          <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Ver detalle
+        </button>
+        <button class="detail-btn detail-btn--primary">
+          <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Editar
+        </button>
+        <button class="detail-btn detail-btn--danger">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Eliminar
+        </button>
+      </div>
+    </div>
+
+    <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+      <div>
+        <span class="detail-eyebrow">Selección múltiple</span>
+        <h3>{{ selectedItems.length }} presentaciones seleccionadas</h3>
+        <p>Acciones masivas para los registros marcados con checklist.</p>
+      </div>
+      <div class="detail-actions">
+        <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Limpiar
+        </button>
+        <button class="detail-btn detail-btn--danger">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          Eliminar presentaciones
+        </button>
+      </div>
+    </div>
+
+    <div class="pagination">
+      <div class="page-summary">
+        <span class="page-info">Mostrando <strong>1-{{ presentaciones.length }}</strong> de <strong>{{ presentaciones.length }}</strong> presentaciones</span>
+      </div>
+      <div class="page-controls">
+        <button class="page-nav" disabled>Anterior</button>
+        <button class="page-btn active">1</button>
+        <button class="page-nav" disabled>Siguiente</button>
       </div>
     </div>
   </div>
+
+  <div class="product-modal-backdrop" *ngIf="activeItem as pres" (click)="closeDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()" style="grid-template-columns: 1fr;">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <div class="modal-content" style="padding: 8px 42px 4px 0;">
+        <span class="detail-eyebrow">Detalle de presentación</span>
+        <h2>{{ pres.name }}</h2>
+        <p class="modal-subtitle">{{ pres.id }} · {{ pres.count }} productos · {{ pres.status }}</p>
+        <div class="modal-detail-grid">
+          <span><strong>ID</strong>{{ pres.id }}</span>
+          <span><strong>Nombre</strong>{{ pres.name }}</span>
+          <span><strong>Productos</strong>{{ pres.count }}</span>
+          <span><strong>Estado</strong>{{ pres.status }}</span>
+          <span><strong>Descripción</strong>{{ pres.description || 'Sin descripción' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar presentación
+          </button>
+          <button class="detail-btn detail-btn--danger">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-presentacion-form
+    *ngIf="isFormOpen"
+    mode="create"
+    (close)="closeForm()"
+    (save)="savePresentacion($event)"
+  ></app-presentacion-form>
 </div>
