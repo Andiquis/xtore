@@ -75,6 +75,45 @@ if [ "$BACKEND_STATUS" != "running" ] || [ "$FRONTEND_STATUS" != "running" ]; th
     echo ""
 fi
 
-# 5. Finalizar con limpieza
-echo -e "${GREEN}✨ ¡Todo listo! El reporte se queda en tu pantalla. Usa 'docker compose logs -f' si necesitas ver los logs. ${NC}"
+# 5. Menú Interactivo de Logs
+echo -e "${GREEN}✨ ¡Los servicios se han levantado!${NC}"
+echo ""
+
+while true; do
+    echo -e "${BLUE}==========================================${NC}"
+    echo -e "¿Qué logs deseas monitorear en tiempo real?"
+    echo -e "${BLUE}==========================================${NC}"
+    echo "1) 🌐 Todos los servicios"
+    echo "2) 🟢 Backend (NestJS)"
+    echo "3) 🟠 Frontend (Angular)"
+    echo "4) ❌ Salir"
+    echo -e "   ${YELLOW}(Tip: Usa Ctrl+C para dejar de ver los logs y volver a la terminal)${NC}"
+    
+    read -p "Selecciona una opción [1-4]: " OPCION
+
+    case $OPCION in
+        1)
+            echo -e "${YELLOW}Mostrando todos los logs... (Ctrl+C para salir)${NC}"
+            docker compose logs -f
+            break
+            ;;
+        2)
+            echo -e "${YELLOW}Mostrando logs del Backend... (Ctrl+C para salir)${NC}"
+            docker compose logs -f backend
+            break
+            ;;
+        3)
+            echo -e "${YELLOW}Mostrando logs del Frontend... (Ctrl+C para salir)${NC}"
+            docker compose logs -f frontend
+            break
+            ;;
+        4|"")
+            echo -e "${GREEN}¡Listo! Puedes ver los logs manualmente en el futuro con: ${YELLOW}docker compose logs -f${NC}"
+            break
+            ;;
+        *)
+            echo -e "${RED}Opción no válida. Por favor selecciona del 1 al 4.${NC}"
+            ;;
+    esac
+done
 echo ""

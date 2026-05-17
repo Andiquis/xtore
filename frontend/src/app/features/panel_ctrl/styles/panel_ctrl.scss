@@ -1,10 +1,11 @@
 /* panel_ctrl.scss */
-@use './themes';
 @use './tokens';
+@use './themes';
 @use './layout';
-@use './button';
-@use './table';
-@use './card';
-@use './form';
-
+@use './base';
+@use './buttons';
+@use './cards';
+@use './forms';
+@use './tables';
+@use './utilities';
 

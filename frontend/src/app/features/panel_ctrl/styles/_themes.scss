@@ -1,520 +1,116 @@
 /* ============================================================
-   panel-ctrl — Complete Theme System
-   Tokens: bg, surface, surface-alt, border, text, text-muted,
-           primary, primary-hover, primary-fg,
-           accent, accent-hover, accent-fg,
-           success, warning, danger, info
+   panel-ctrl - sistema de temas
+   Define solo el contrato de variables y las 5 paletas activas.
+   Los estilos de componentes viven en parciales separados.
    ============================================================ */
 
 /* ──────────────────────────────────────────────
-   BASE RESET & GLOBAL RULES
+   Contrato comun
+   Cada tema define su paleta base; este bloque crea los tokens derivados
+   para layout, componentes, estados, sombras y compatibilidad legacy.
 ────────────────────────────────────────────── */
-.panel-ctrl *,
-.panel-ctrl *::before,
-.panel-ctrl *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-.panel-ctrl {
-  background-color: var(--pc-bg);
-  color: var(--pc-text);
-  font-family: var(--pc-font, "Inter", "Segoe UI", system-ui, sans-serif);
-  font-size: var(--pc-font-size, 15px);
-  line-height: var(--pc-line-height, 1.6);
-  transition:
-    background-color 0.25s ease,
-    color 0.25s ease;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 01 · LIGHT — Slate & Azure
-   Limpio, profesional, alta legibilidad
-────────────────────────────────────────────── */
-.panel-ctrl.theme-light {
-  --pc-bg:             #f0f4f8;
-  --pc-surface:        #ffffff;
-  --pc-surface-alt:    #e8edf3;
-  --pc-border:         #cbd5e1;
-  --pc-text:           #0f172a;
-  --pc-text-muted:     #64748b;
-  --pc-primary:        #2563eb;
-  --pc-primary-hover:  #1d4ed8;
-  --pc-primary-fg:     #ffffff;
-  --pc-accent:         #7c3aed;
-  --pc-accent-hover:   #6d28d9;
-  --pc-accent-fg:      #ffffff;
-  --pc-success:        #059669;
-  --pc-success-bg:     #d1fae5;
-  --pc-warning:        #d97706;
-  --pc-warning-bg:     #fef3c7;
-  --pc-danger:         #dc2626;
-  --pc-danger-bg:      #fee2e2;
-  --pc-info:           #0891b2;
-  --pc-info-bg:        #cffafe;
-  --pc-shadow:         0 1px 3px rgba(15,23,42,0.10), 0 4px 12px rgba(15,23,42,0.06);
-  --pc-radius:         10px;
-  --pc-radius-sm:      6px;
-  --pc-radius-lg:      16px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 02 · DARK — Midnight Slate
-   Elegante, oscuro, ojos descansados
-────────────────────────────────────────────── */
-.panel-ctrl.theme-dark {
-  --pc-bg:             #020617;
-  --pc-surface:        #0f172a;
-  --pc-surface-alt:    #1e293b;
-  --pc-border:         #334155;
-  --pc-text:           #f1f5f9;
-  --pc-text-muted:     #94a3b8;
-  --pc-primary:        #38bdf8;
-  --pc-primary-hover:  #7dd3fc;
-  --pc-primary-fg:     #0c1424;
-  --pc-accent:         #a78bfa;
-  --pc-accent-hover:   #c4b5fd;
-  --pc-accent-fg:      #1a0a3a;
-  --pc-success:        #34d399;
-  --pc-success-bg:     #064e3b;
-  --pc-warning:        #fbbf24;
-  --pc-warning-bg:     #451a03;
-  --pc-danger:         #f87171;
-  --pc-danger-bg:      #450a0a;
-  --pc-info:           #22d3ee;
-  --pc-info-bg:        #083344;
-  --pc-shadow:         0 1px 3px rgba(0,0,0,0.50), 0 4px 16px rgba(0,0,0,0.35);
-  --pc-radius:         10px;
-  --pc-radius-sm:      6px;
-  --pc-radius-lg:      16px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 03 · AURORA — Boreal Twilight
-   Verdes y azules nórdicos sobre oscuro profundo
-────────────────────────────────────────────── */
-.panel-ctrl.theme-aurora {
-  --pc-bg:             #050d12;
-  --pc-surface:        #081a20;
-  --pc-surface-alt:    #0d2a35;
-  --pc-border:         #134455;
-  --pc-text:           #e0f7f4;
-  --pc-text-muted:     #7cb9b3;
-  --pc-primary:        #00e5c8;
-  --pc-primary-hover:  #33edd5;
-  --pc-primary-fg:     #021018;
-  --pc-accent:         #7b63ff;
-  --pc-accent-hover:   #9b87ff;
-  --pc-accent-fg:      #08021c;
-  --pc-success:        #00e5c8;
-  --pc-success-bg:     #03302c;
-  --pc-warning:        #f4d03f;
-  --pc-warning-bg:     #2a2003;
-  --pc-danger:         #ff6b9d;
-  --pc-danger-bg:      #2d0212;
-  --pc-info:           #45b4ff;
-  --pc-info-bg:        #041525;
-  --pc-shadow:         0 2px 8px rgba(0,229,200,0.08), 0 8px 24px rgba(0,0,0,0.55);
-  --pc-radius:         12px;
-  --pc-radius-sm:      7px;
-  --pc-radius-lg:      20px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 04 · SAKURA — Blossom & Ink
-   Rosados suaves, melocotón y tinta oscura
-────────────────────────────────────────────── */
+.panel-ctrl.theme-panel-current,
+.panel-ctrl.theme-light,
+.panel-ctrl.theme-dark,
+.panel-ctrl.theme-aurora,
 .panel-ctrl.theme-sakura {
-  --pc-bg:             #fff5f7;
-  --pc-surface:        #ffffff;
-  --pc-surface-alt:    #ffe8ee;
-  --pc-border:         #f9b8c6;
-  --pc-text:           #1a0d12;
-  --pc-text-muted:     #9d6475;
-  --pc-primary:        #e01b6c;
-  --pc-primary-hover:  #c01560;
-  --pc-primary-fg:     #ffffff;
-  --pc-accent:         #7e3af2;
-  --pc-accent-hover:   #6c2fe0;
-  --pc-accent-fg:      #ffffff;
-  --pc-success:        #0f9c7a;
-  --pc-success-bg:     #d6f5ed;
-  --pc-warning:        #e0850a;
-  --pc-warning-bg:     #fdf0da;
-  --pc-danger:         #c7000c;
-  --pc-danger-bg:      #fee0e1;
-  --pc-info:           #0578b9;
-  --pc-info-bg:        #daeef9;
-  --pc-shadow:         0 1px 4px rgba(224,27,108,0.08), 0 6px 16px rgba(26,13,18,0.07);
-  --pc-radius:         12px;
-  --pc-radius-sm:      6px;
-  --pc-radius-lg:      20px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 05 · OBSIDIAN — Void & Gold
-   Negro carbono, detalles áureos
-────────────────────────────────────────────── */
-.panel-ctrl.theme-obsidian {
-  --pc-bg:             #0a0a0b;
-  --pc-surface:        #141415;
-  --pc-surface-alt:    #1e1e20;
-  --pc-border:         #2e2e32;
-  --pc-text:           #f5f3ee;
-  --pc-text-muted:     #8a8880;
-  --pc-primary:        #d4a017;
-  --pc-primary-hover:  #e6b52b;
-  --pc-primary-fg:     #0a0800;
-  --pc-accent:         #c26bff;
-  --pc-accent-hover:   #d48aff;
-  --pc-accent-fg:      #110020;
-  --pc-success:        #52c97a;
-  --pc-success-bg:     #0a1f12;
-  --pc-warning:        #e8a020;
-  --pc-warning-bg:     #1e1200;
-  --pc-danger:         #ff5a5a;
-  --pc-danger-bg:      #1f0606;
-  --pc-info:           #5ab4ff;
-  --pc-info-bg:        #041324;
-  --pc-shadow:         0 2px 6px rgba(0,0,0,0.70), 0 8px 28px rgba(0,0,0,0.55);
-  --pc-radius:         8px;
-  --pc-radius-sm:      4px;
-  --pc-radius-lg:      14px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 06 · FOREST — Mossy & Earthy
-   Verdes oliva, tierra y madera cálida
-────────────────────────────────────────────── */
-.panel-ctrl.theme-forest {
-  --pc-bg:             #f2f4ee;
-  --pc-surface:        #fafaf7;
-  --pc-surface-alt:    #e6eade;
-  --pc-border:         #c5ccb5;
-  --pc-text:           #1c2110;
-  --pc-text-muted:     #5e6b4a;
-  --pc-primary:        #3d7a2e;
-  --pc-primary-hover:  #326624;
-  --pc-primary-fg:     #f9fdf8;
-  --pc-accent:         #a05c28;
-  --pc-accent-hover:   #8a4e20;
-  --pc-accent-fg:      #fdf5ee;
-  --pc-success:        #2a7b2a;
-  --pc-success-bg:     #d8f0d4;
-  --pc-warning:        #c97b0a;
-  --pc-warning-bg:     #fbeece;
-  --pc-danger:         #c0391b;
-  --pc-danger-bg:      #f9ddd6;
-  --pc-info:           #2166a0;
-  --pc-info-bg:        #d6e8f6;
-  --pc-shadow:         0 1px 3px rgba(28,33,16,0.10), 0 4px 14px rgba(28,33,16,0.06);
-  --pc-radius:         10px;
-  --pc-radius-sm:      5px;
-  --pc-radius-lg:      18px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 07 · CANDY — Pop & Vibrant
-   Paleta pop, colores saturados y alegres
-────────────────────────────────────────────── */
-.panel-ctrl.theme-candy {
-  --pc-bg:             #fef0fb;
-  --pc-surface:        #ffffff;
-  --pc-surface-alt:    #fde4f9;
-  --pc-border:         #f0a8e8;
-  --pc-text:           #1a0820;
-  --pc-text-muted:     #8b4da0;
-  --pc-primary:        #d020c8;
-  --pc-primary-hover:  #b01aac;
-  --pc-primary-fg:     #ffffff;
-  --pc-accent:         #f07020;
-  --pc-accent-hover:   #d86018;
-  --pc-accent-fg:      #ffffff;
-  --pc-success:        #00b86e;
-  --pc-success-bg:     #ccf7e6;
-  --pc-warning:        #f0b000;
-  --pc-warning-bg:     #fef5cc;
-  --pc-danger:         #f01028;
-  --pc-danger-bg:      #fee0e4;
-  --pc-info:           #00a8e0;
-  --pc-info-bg:        #cceefc;
-  --pc-shadow:         0 2px 8px rgba(208,32,200,0.10), 0 6px 20px rgba(26,8,32,0.08);
-  --pc-radius:         14px;
-  --pc-radius-sm:      8px;
-  --pc-radius-lg:      24px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 08 · DUSK — Purple Haze
-   Atardecer morado, transiciones cálidas
-────────────────────────────────────────────── */
-.panel-ctrl.theme-dusk {
-  --pc-bg:             #1a0d2e;
-  --pc-surface:        #261540;
-  --pc-surface-alt:    #341d54;
-  --pc-border:         #4a2d72;
-  --pc-text:           #f3ecff;
-  --pc-text-muted:     #b08ee0;
-  --pc-primary:        #e040fb;
-  --pc-primary-hover:  #ea6afc;
-  --pc-primary-fg:     #1a0030;
-  --pc-accent:         #ff7043;
-  --pc-accent-hover:   #ff8a65;
-  --pc-accent-fg:      #200800;
-  --pc-success:        #69f0ae;
-  --pc-success-bg:     #003321;
-  --pc-warning:        #ffcc02;
-  --pc-warning-bg:     #2a1e00;
-  --pc-danger:         #ff5252;
-  --pc-danger-bg:      #2d0808;
-  --pc-info:           #40c4ff;
-  --pc-info-bg:        #001f33;
-  --pc-shadow:         0 2px 8px rgba(224,64,251,0.15), 0 8px 28px rgba(0,0,0,0.60);
-  --pc-radius:         12px;
-  --pc-radius-sm:      6px;
-  --pc-radius-lg:      20px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 09 · ARCTIC — Ice & Steel
-   Azules hielo, neutros fríos, muy limpio
-────────────────────────────────────────────── */
-.panel-ctrl.theme-arctic {
-  --pc-bg:             #eef3f8;
-  --pc-surface:        #f8fbff;
-  --pc-surface-alt:    #ddeaf4;
-  --pc-border:         #aec9de;
-  --pc-text:           #0a1824;
-  --pc-text-muted:     #4e7590;
-  --pc-primary:        #0067b8;
-  --pc-primary-hover:  #005299;
-  --pc-primary-fg:     #ffffff;
-  --pc-accent:         #00b0a0;
-  --pc-accent-hover:   #009488;
-  --pc-accent-fg:      #ffffff;
-  --pc-success:        #007d5e;
-  --pc-success-bg:     #d0ede5;
-  --pc-warning:        #a06400;
-  --pc-warning-bg:     #f5eacc;
-  --pc-danger:         #c0001c;
-  --pc-danger-bg:      #f5d5da;
-  --pc-info:           #006ab0;
-  --pc-info-bg:        #d0e7f5;
-  --pc-shadow:         0 1px 3px rgba(10,24,36,0.10), 0 5px 14px rgba(10,24,36,0.06);
-  --pc-radius:         8px;
-  --pc-radius-sm:      4px;
-  --pc-radius-lg:      14px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 10 · EMBER — Warm Charcoal
-   Carbón cálido, naranjas y bronces ígneos
-────────────────────────────────────────────── */
-.panel-ctrl.theme-ember {
-  --pc-bg:             #141009;
-  --pc-surface:        #1e170e;
-  --pc-surface-alt:    #2a2015;
-  --pc-border:         #3d3020;
-  --pc-text:           #f5ede0;
-  --pc-text-muted:     #a08060;
-  --pc-primary:        #ff7e30;
-  --pc-primary-hover:  #ff9a55;
-  --pc-primary-fg:     #1a0800;
-  --pc-accent:         #ff3860;
-  --pc-accent-hover:   #ff5c7a;
-  --pc-accent-fg:      #1a0010;
-  --pc-success:        #8cdd60;
-  --pc-success-bg:     #121f08;
-  --pc-warning:        #ffc108;
-  --pc-warning-bg:     #1f1600;
-  --pc-danger:         #ff4444;
-  --pc-danger-bg:      #200404;
-  --pc-info:           #60c8ff;
-  --pc-info-bg:        #04141f;
-  --pc-shadow:         0 2px 8px rgba(255,126,48,0.10), 0 8px 28px rgba(0,0,0,0.60);
-  --pc-radius:         9px;
-  --pc-radius-sm:      5px;
-  --pc-radius-lg:      16px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 11 · MINT — Fresh & Serene
-   Verdes menta suaves, muy refrescante
-────────────────────────────────────────────── */
-.panel-ctrl.theme-mint {
-  --pc-bg:             #f0faf6;
-  --pc-surface:        #ffffff;
-  --pc-surface-alt:    #e2f5ed;
-  --pc-border:         #a8dbc4;
-  --pc-text:           #0c2018;
-  --pc-text-muted:     #4a8068;
-  --pc-primary:        #059669;
-  --pc-primary-hover:  #047857;
-  --pc-primary-fg:     #ffffff;
-  --pc-accent:         #6366f1;
-  --pc-accent-hover:   #4f46e5;
-  --pc-accent-fg:      #ffffff;
-  --pc-success:        #10b981;
-  --pc-success-bg:     #ccf5e8;
-  --pc-warning:        #d97706;
-  --pc-warning-bg:     #fef3c7;
-  --pc-danger:         #ef4444;
-  --pc-danger-bg:      #fee2e2;
-  --pc-info:           #0ea5e9;
-  --pc-info-bg:        #e0f2fe;
-  --pc-shadow:         0 1px 4px rgba(5,150,105,0.08), 0 5px 16px rgba(12,32,24,0.06);
-  --pc-radius:         10px;
-  --pc-radius-sm:      6px;
-  --pc-radius-lg:      18px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 12 · NOIR — Grayscale Luxury
-   Blancos y negros absolutos, contraste máximo
-────────────────────────────────────────────── */
-.panel-ctrl.theme-noir {
-  --pc-bg:             #080808;
-  --pc-surface:        #111111;
-  --pc-surface-alt:    #1c1c1c;
-  --pc-border:         #333333;
-  --pc-text:           #f8f8f8;
-  --pc-text-muted:     #888888;
-  --pc-primary:        #f8f8f8;
-  --pc-primary-hover:  #ffffff;
-  --pc-primary-fg:     #000000;
-  --pc-accent:         #aaaaaa;
-  --pc-accent-hover:   #cccccc;
-  --pc-accent-fg:      #000000;
-  --pc-success:        #7fcf7f;
-  --pc-success-bg:     #0a1a0a;
-  --pc-warning:        #cfcf4f;
-  --pc-warning-bg:     #1a1a05;
-  --pc-danger:         #cf5050;
-  --pc-danger-bg:      #1a0505;
-  --pc-info:           #7fafcf;
-  --pc-info-bg:        #050f1a;
-  --pc-shadow:         0 2px 6px rgba(0,0,0,0.80), 0 8px 28px rgba(0,0,0,0.65);
-  --pc-radius:         6px;
-  --pc-radius-sm:      3px;
-  --pc-radius-lg:      12px;
-}
-
-/* ──────────────────────────────────────────────
-   THEME 13 · PANEL CURRENT — Admin Blue
-   Contrato normalizado del look actual de layout/* y pages/*.
-   Usar tokens --pc-* en codigo nuevo; aliases legacy quedan para migracion.
-────────────────────────────────────────────── */
-.panel-ctrl.theme-panel-current {
-  /* Foundation */
+  /* Tipografia */
   --pc-font:                 "DM Sans", "Inter", "Segoe UI", system-ui, sans-serif;
   --pc-font-display:         "Syne", "Inter", "Segoe UI", system-ui, sans-serif;
   --pc-font-size:            15px;
   --pc-line-height:          1.6;
 
-  --pc-bg:                   #edf3f8;
-  --pc-bg-soft:              #f6f9fc;
-  --pc-surface:              #ffffff;
-  --pc-surface-alt:          #f8fafc;
-  --pc-surface-raised:       #ffffff;
-  --pc-border:               #d7e0ec;
-  --pc-border-strong:        #c7d3e2;
-
-  --pc-text:                 #172033;
-  --pc-text-strong:          #0f172a;
-  --pc-text-body:            #334155;
-  --pc-text-muted:           #64748b;
-  --pc-text-subtle:          #94a3b8;
-  --pc-text-placeholder:     #94a3b8;
+  /* Superficies y texto */
+  --pc-bg-soft:              var(--pc-surface-alt);
+  --pc-surface-raised:       var(--pc-surface);
+  --pc-surface-glass:        color-mix(in srgb, var(--pc-surface) 84%, transparent);
+  --pc-border-strong:        color-mix(in srgb, var(--pc-border) 82%, var(--pc-text));
+  --pc-text-strong:          var(--pc-text);
+  --pc-text-body:            color-mix(in srgb, var(--pc-text) 88%, var(--pc-text-muted));
+  --pc-text-subtle:          color-mix(in srgb, var(--pc-text-muted) 82%, var(--pc-bg));
+  --pc-text-placeholder:     color-mix(in srgb, var(--pc-text-muted) 76%, transparent);
   --pc-text-on-color:        #ffffff;
 
-  /* Brand and actions */
-  --pc-primary:              #2563eb;
-  --pc-primary-hover:        #1d4ed8;
-  --pc-primary-soft:         rgba(37,99,235,0.10);
-  --pc-primary-soft-strong:  rgba(37,99,235,0.14);
-  --pc-primary-focus-ring:   rgba(37,99,235,0.14);
-  --pc-primary-fg:           var(--pc-text-on-color);
-
-  --pc-accent:               #14b8a6;
-  --pc-accent-hover:         #0f766e;
-  --pc-accent-soft:          rgba(20,184,166,0.12);
-  --pc-accent-fg:            var(--pc-text-on-color);
+  /* Color de marca */
+  --pc-primary-soft:         color-mix(in srgb, var(--pc-primary) 12%, transparent);
+  --pc-primary-soft-strong:  color-mix(in srgb, var(--pc-primary) 18%, transparent);
+  --pc-primary-focus-ring:   color-mix(in srgb, var(--pc-primary) 24%, transparent);
+  --pc-accent-soft:          color-mix(in srgb, var(--pc-accent) 14%, transparent);
   --pc-brand-gradient:       linear-gradient(135deg, var(--pc-primary) 0%, var(--pc-accent) 100%);
+  --pc-ambient-gradient:     radial-gradient(circle at top left, var(--pc-primary-soft-strong), transparent 34%),
+                              radial-gradient(circle at bottom right, var(--pc-accent-soft), transparent 32%);
 
-  --pc-secondary:            #14b8a6;
-  --pc-secondary-hover:      #0f766e;
-  --pc-secondary-soft:       rgba(20,184,166,0.12);
-  --pc-secondary-fg:         #ffffff;
+  /* Estados */
+  --pc-success-hover:        color-mix(in srgb, var(--pc-success) 84%, #000000);
+  --pc-success-border:       color-mix(in srgb, var(--pc-success) 30%, var(--pc-success-bg));
+  --pc-warning-hover:        color-mix(in srgb, var(--pc-warning) 84%, #000000);
+  --pc-warning-border:       color-mix(in srgb, var(--pc-warning) 30%, var(--pc-warning-bg));
+  --pc-danger-hover:         color-mix(in srgb, var(--pc-danger) 84%, #000000);
+  --pc-danger-border:        color-mix(in srgb, var(--pc-danger) 30%, var(--pc-danger-bg));
+  --pc-info-hover:           color-mix(in srgb, var(--pc-info) 84%, #000000);
+  --pc-info-border:          color-mix(in srgb, var(--pc-info) 30%, var(--pc-info-bg));
 
-  --pc-tertiary:             #f97316;
-  --pc-tertiary-hover:       #c2410c;
-  --pc-tertiary-soft:        rgba(249,115,22,0.13);
-  --pc-tertiary-fg:          #ffffff;
-
-  /* Semantic colors */
-  --pc-success:              #059669;
-  --pc-success-hover:        #047857;
-  --pc-success-bg:           #ecfdf5;
-  --pc-success-border:       #bbf7d0;
-
-  --pc-warning:              #f97316;
-  --pc-warning-hover:        #c2410c;
-  --pc-warning-bg:           #fff7ed;
-  --pc-warning-border:       #fed7aa;
-
-  --pc-danger:               #dc2626;
-  --pc-danger-hover:         #b91c1c;
-  --pc-danger-bg:            #fff5f5;
-  --pc-danger-border:        #fecaca;
-
-  --pc-info:                 #0284c7;
-  --pc-info-hover:           #075985;
-  --pc-info-bg:              #e0f2fe;
-  --pc-info-border:          #bae6fd;
-
-  /* Shape, elevation and motion */
+  /* Forma, elevacion y movimiento */
   --pc-radius-xs:            6px;
   --pc-radius-sm:            10px;
   --pc-radius:               14px;
-  --pc-radius-md:            14px;
-  --pc-radius-lg:            16px;
-  --pc-radius-xl:            18px;
+  --pc-radius-md:            var(--pc-radius);
+  --pc-radius-lg:            18px;
+  --pc-radius-xl:            22px;
   --pc-radius-pill:          999px;
+  --pc-shadow-sm:            0 4px 14px color-mix(in srgb, var(--pc-text) 8%, transparent);
+  --pc-shadow:               0 8px 24px color-mix(in srgb, var(--pc-text) 10%, transparent);
+  --pc-shadow-md:            0 12px 32px color-mix(in srgb, var(--pc-text) 12%, transparent);
+  --pc-shadow-lg:            0 18px 42px color-mix(in srgb, var(--pc-text) 16%, transparent);
+  --pc-shadow-modal:         0 30px 70px color-mix(in srgb, var(--pc-text) 24%, transparent);
+  --pc-transition:           all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 
-  --pc-shadow-sm:            0 4px 15px rgba(112,144,176,0.08);
-  --pc-shadow:               0 6px 18px rgba(112,144,176,0.07);
-  --pc-shadow-md:            0 8px 24px rgba(112,144,176,0.08);
-  --pc-shadow-lg:            0 18px 40px rgba(112,144,176,0.12);
-  --pc-shadow-modal:         0 30px 70px rgba(11,20,55,0.24);
-  --pc-transition:           all 0.3s cubic-bezier(0.25,0.8,0.25,1);
-
-  /* Shell/layout */
+  /* Layout del panel */
   --pc-shell-bg:             var(--pc-bg);
   --pc-shell-content-bg:     var(--pc-bg);
   --pc-shell-header-bg:      var(--pc-surface);
   --pc-shell-header-border:  var(--pc-border-strong);
-  --pc-shell-overlay-bg:     rgba(11,20,55,0.60);
-
-  --pc-sidebar-bg:           #0e1529;
-  --pc-sidebar-brand-bg:     #0b1437;
-  --pc-sidebar-border:       rgba(255,255,255,0.04);
-  --pc-sidebar-text:         #a3aed1;
+  --pc-shell-overlay-bg:     color-mix(in srgb, var(--pc-text) 58%, transparent);
+  --pc-sidebar-bg:           color-mix(in srgb, var(--pc-text) 92%, var(--pc-primary));
+  --pc-sidebar-brand-bg:     color-mix(in srgb, var(--pc-text) 96%, var(--pc-primary));
+  --pc-sidebar-border:       color-mix(in srgb, var(--pc-surface) 12%, transparent);
+  --pc-sidebar-text:         color-mix(in srgb, var(--pc-surface) 72%, var(--pc-text-muted));
   --pc-sidebar-text-hover:   #ffffff;
-  --pc-sidebar-hover-bg:     rgba(255,255,255,0.04);
-  --pc-sidebar-active-bg:    rgba(255,255,255,0.05);
-  --pc-sidebar-active-icon:  #93c5fd;
-  --pc-sidebar-footer-line:  rgba(255,255,255,0.06);
-  --pc-sidebar-control-bg:   rgba(255,255,255,0.03);
-  --pc-sidebar-control-hover-bg: rgba(255,255,255,0.06);
+  --pc-sidebar-hover-bg:     color-mix(in srgb, var(--pc-surface) 8%, transparent);
+  --pc-sidebar-active-bg:    color-mix(in srgb, var(--pc-primary) 18%, transparent);
+  --pc-sidebar-active-icon:  color-mix(in srgb, var(--pc-primary) 68%, #ffffff);
+  --pc-sidebar-footer-line:  color-mix(in srgb, var(--pc-surface) 12%, transparent);
+  --pc-sidebar-control-bg:   color-mix(in srgb, var(--pc-surface) 7%, transparent);
+  --pc-sidebar-control-hover-bg: color-mix(in srgb, var(--pc-surface) 12%, transparent);
+  --pc-search-bg:            var(--pc-surface-raised);
+  --pc-search-border:        var(--pc-border);
+  --pc-search-border-hover:  var(--pc-border-strong);
+  --pc-search-icon:          var(--pc-text-muted);
+  --pc-notification-bg:      var(--pc-danger);
 
-  --pc-search-bg:            #f8faff;
-  --pc-search-border:        #dfe7f5;
-  --pc-search-border-hover:  #cdd8ee;
-  --pc-search-icon:          #7b8bad;
-  --pc-notification-bg:      #ef4444;
+  /* Roles de botones */
+  --pc-secondary:            var(--pc-accent);
+  --pc-secondary-hover:      var(--pc-accent-hover);
+  --pc-secondary-fg:         var(--pc-accent-fg);
+  --pc-secondary-soft:       var(--pc-accent-soft);
+  --pc-tertiary:             var(--pc-info);
+  --pc-tertiary-hover:       var(--pc-info-hover);
+  --pc-tertiary-fg:          var(--pc-primary-fg);
+  --pc-tertiary-soft:        var(--pc-info-bg);
+  --pc-button-primary-bg:    var(--pc-primary);
+  --pc-button-primary-hover: var(--pc-primary-hover);
+  --pc-button-primary-fg:    var(--pc-primary-fg);
+  --pc-button-primary-soft:  var(--pc-primary-soft);
+  --pc-button-secondary-bg:  var(--pc-secondary);
+  --pc-button-secondary-hover: var(--pc-secondary-hover);
+  --pc-button-secondary-fg:  var(--pc-secondary-fg);
+  --pc-button-secondary-soft: var(--pc-secondary-soft);
+  --pc-button-tertiary-bg:   var(--pc-tertiary);
+  --pc-button-tertiary-hover: var(--pc-tertiary-hover);
+  --pc-button-tertiary-fg:   var(--pc-tertiary-fg);
+  --pc-button-tertiary-soft: var(--pc-tertiary-soft);
 
-  /* Legacy aliases: keep while layout/pages migrate to --pc-* */
+  /* Aliases legacy mientras se migran paginas antiguas */
   --sidebar-bg:              var(--pc-sidebar-bg);
   --sidebar-brand-bg:        var(--pc-sidebar-brand-bg);
   --sidebar-border:          var(--pc-sidebar-border);
@@ -526,7 +122,6 @@
   --sidebar-footer-line:     var(--pc-sidebar-footer-line);
   --sidebar-control-bg:      var(--pc-sidebar-control-bg);
   --sidebar-control-hover-bg: var(--pc-sidebar-control-hover-bg);
-
   --header-bg:               var(--pc-shell-header-bg);
   --header-border:           var(--pc-shell-header-border);
   --content-bg:              var(--pc-shell-content-bg);
@@ -537,7 +132,6 @@
   --search-placeholder:      var(--pc-text-placeholder);
   --notification-bg:         var(--pc-notification-bg);
   --overlay-bg:              var(--pc-shell-overlay-bg);
-
   --accent-primary:          var(--pc-primary);
   --accent-light:            var(--pc-primary-soft-strong);
   --accent-gradient:         var(--pc-brand-gradient);
@@ -547,7 +141,6 @@
   --shadow-header:           var(--pc-shadow-lg);
   --shadow-card:             var(--pc-shadow-sm);
   --transition:              var(--pc-transition);
-
   --accent:                  var(--pc-primary);
   --accent-dark:             var(--pc-primary-hover);
   --accent-light-page:       var(--pc-primary-hover);
@@ -556,7 +149,7 @@
   --red:                     var(--pc-danger);
   --rose:                    var(--pc-danger);
   --amber:                   var(--pc-warning);
-  --orange:                  #ffb01a;
+  --orange:                  var(--pc-tertiary);
   --ink:                     var(--pc-text-strong);
   --muted:                   var(--pc-text-muted);
   --line:                    var(--pc-border);
@@ -565,833 +158,167 @@
   --bg-page:                 var(--pc-bg-soft);
   --bg-app:                  var(--pc-bg-soft);
   --border-color:            var(--pc-border-strong);
-  --text-gray:               #8f9bb8;
+  --text-gray:               var(--pc-text-muted);
   --radius:                  var(--pc-radius-lg);
   --shadow:                  var(--pc-shadow-md);
 }
 
 /* ──────────────────────────────────────────────
-   PALETTE REFINEMENTS — balanced color combinations
+   Tema 1: Panel actual
+   Claro administrativo, azul sobrio y acento verde.
 ────────────────────────────────────────────── */
-.panel-ctrl.theme-light {
-  --pc-bg:             #f4f7fb;
-  --pc-surface-alt:    #eef3f9;
-  --pc-border:         #d6e0ec;
-  --pc-primary:        #2563eb;
-  --pc-primary-hover:  #1d4ed8;
-  --pc-accent:         #14b8a6;
-  --pc-accent-hover:   #0f766e;
-  --pc-info:           #7c3aed;
-  --pc-info-bg:        #ede9fe;
-}
-
-.panel-ctrl.theme-dark {
-  --pc-bg:             #090f1d;
-  --pc-surface:        #111827;
-  --pc-surface-alt:    #1f2937;
-  --pc-border:         #334155;
-  --pc-text:           #e5edf7;
-  --pc-text-muted:     #9aa8bd;
-  --pc-primary:        #60a5fa;
-  --pc-primary-hover:  #93c5fd;
-  --pc-accent:         #a78bfa;
-  --pc-accent-hover:   #c4b5fd;
-  --pc-info:           #22d3ee;
-  --pc-info-bg:        #083344;
-}
-
-.panel-ctrl.theme-aurora {
-  --pc-bg:             #061316;
-  --pc-surface:        #0b2024;
-  --pc-surface-alt:    #12313a;
-  --pc-border:         #1d4f5b;
-  --pc-primary:        #2dd4bf;
-  --pc-primary-hover:  #5eead4;
-  --pc-accent:         #818cf8;
-  --pc-accent-hover:   #a5b4fc;
-  --pc-info:           #38bdf8;
-}
-
-.panel-ctrl.theme-sakura {
-  --pc-bg:             #fff7f8;
-  --pc-surface-alt:    #fff0f3;
-  --pc-border:         #f3c6d1;
-  --pc-text:           #251018;
-  --pc-text-muted:     #8f5f6f;
-  --pc-primary:        #db2777;
-  --pc-primary-hover:  #be185d;
-  --pc-accent:         #7c3aed;
-  --pc-accent-hover:   #6d28d9;
-  --pc-info:           #0891b2;
-}
-
-.panel-ctrl.theme-obsidian {
-  --pc-bg:             #09090b;
-  --pc-surface:        #151518;
-  --pc-surface-alt:    #202024;
-  --pc-border:         #34343a;
-  --pc-primary:        #f5b84b;
-  --pc-primary-hover:  #facc15;
-  --pc-accent:         #22d3ee;
-  --pc-accent-hover:   #67e8f9;
-  --pc-info:           #a78bfa;
-}
-
-.panel-ctrl.theme-forest {
-  --pc-bg:             #f3f7ef;
-  --pc-surface:        #ffffff;
-  --pc-surface-alt:    #eaf2e2;
-  --pc-border:         #c9d8bd;
-  --pc-primary:        #2f7d32;
-  --pc-primary-hover:  #256629;
-  --pc-accent:         #0f766e;
-  --pc-accent-hover:   #115e59;
-  --pc-info:           #8b5e34;
-}
-
-.panel-ctrl.theme-candy {
-  --pc-bg:             #fff5fb;
-  --pc-surface-alt:    #ffe8f5;
-  --pc-border:         #f5b9df;
-  --pc-primary:        #c026d3;
-  --pc-primary-hover:  #a21caf;
-  --pc-accent:         #f97316;
-  --pc-accent-hover:   #ea580c;
-  --pc-info:           #06b6d4;
-  --pc-info-bg:        #cffafe;
-}
-
-.panel-ctrl.theme-dusk {
-  --pc-bg:             #171124;
-  --pc-surface:        #231a35;
-  --pc-surface-alt:    #31244b;
-  --pc-border:         #4c3a70;
-  --pc-primary:        #c084fc;
-  --pc-primary-hover:  #d8b4fe;
-  --pc-accent:         #fb7185;
-  --pc-accent-hover:   #fda4af;
-  --pc-info:           #38bdf8;
-}
-
-.panel-ctrl.theme-arctic {
-  --pc-bg:             #eef6fb;
-  --pc-surface:        #fbfdff;
-  --pc-surface-alt:    #e2eef7;
-  --pc-border:         #bfd4e6;
-  --pc-primary:        #0f75bc;
-  --pc-primary-hover:  #075985;
-  --pc-accent:         #0d9488;
-  --pc-accent-hover:   #0f766e;
-  --pc-info:           #6366f1;
-}
-
-.panel-ctrl.theme-ember {
-  --pc-bg:             #130f0b;
-  --pc-surface:        #1f1811;
-  --pc-surface-alt:    #2c2116;
-  --pc-border:         #4a3722;
-  --pc-primary:        #fb923c;
-  --pc-primary-hover:  #fdba74;
-  --pc-accent:         #f43f5e;
-  --pc-accent-hover:   #fb7185;
-  --pc-info:           #38bdf8;
-}
-
-.panel-ctrl.theme-mint {
-  --pc-bg:             #f0fbf7;
-  --pc-surface-alt:    #def7ec;
-  --pc-border:         #a9dec6;
-  --pc-primary:        #059669;
-  --pc-primary-hover:  #047857;
-  --pc-accent:         #4f46e5;
-  --pc-accent-hover:   #4338ca;
-  --pc-info:           #0284c7;
-}
-
-.panel-ctrl.theme-noir {
-  --pc-bg:             #070707;
-  --pc-surface:        #111111;
-  --pc-surface-alt:    #1d1d1d;
-  --pc-border:         #343434;
-  --pc-primary:        #f5f5f5;
-  --pc-primary-hover:  #ffffff;
-  --pc-accent:         #22d3ee;
-  --pc-accent-hover:   #67e8f9;
-  --pc-info:           #f59e0b;
+.panel-ctrl.theme-panel-current {
+  --pc-bg:                   #edf3f8;
+  --pc-surface:              #ffffff;
+  --pc-surface-alt:          #f6f9fc;
+  --pc-border:               #d7e0ec;
+  --pc-text:                 #172033;
+  --pc-text-muted:           #64748b;
+  --pc-primary:              #2563eb;
+  --pc-primary-hover:        #1d4ed8;
+  --pc-primary-fg:           #ffffff;
+  --pc-accent:               #14b8a6;
+  --pc-accent-hover:         #0f766e;
+  --pc-accent-fg:            #ffffff;
+  --pc-success:              #059669;
+  --pc-success-bg:           #ecfdf5;
+  --pc-warning:              #f97316;
+  --pc-warning-bg:           #fff7ed;
+  --pc-danger:               #dc2626;
+  --pc-danger-bg:            #fff5f5;
+  --pc-info:                 #0284c7;
+  --pc-info-bg:              #e0f2fe;
+  --pc-bg-soft:              #f6f9fc;
+  --pc-border-strong:        #c7d3e2;
+  --pc-text-strong:          #0f172a;
+  --pc-text-body:            #334155;
+  --pc-text-subtle:          #94a3b8;
+  --pc-sidebar-bg:           #0e1529;
+  --pc-sidebar-brand-bg:     #0b1437;
+  --pc-sidebar-text:         #a3aed1;
+  --pc-sidebar-active-icon:  #93c5fd;
 }
 
 /* ──────────────────────────────────────────────
-   BUTTON ROLES — normalized across themes
-   primary: main action, secondary: complementary action,
-   tertiary: vivid alternative action.
+   Tema 2: Claro nítido
+   Superficies limpias, azul profundo y acento turquesa.
 ────────────────────────────────────────────── */
-.panel-ctrl.theme-light,
-.panel-ctrl.theme-dark,
-.panel-ctrl.theme-aurora,
-.panel-ctrl.theme-sakura,
-.panel-ctrl.theme-obsidian,
-.panel-ctrl.theme-forest,
-.panel-ctrl.theme-candy,
-.panel-ctrl.theme-dusk,
-.panel-ctrl.theme-arctic,
-.panel-ctrl.theme-ember,
-.panel-ctrl.theme-mint,
-.panel-ctrl.theme-noir,
-.panel-ctrl.theme-panel-current {
-  --pc-secondary:       var(--pc-accent);
-  --pc-secondary-hover: var(--pc-accent-hover);
-  --pc-secondary-fg:    var(--pc-accent-fg);
-  --pc-secondary-soft:  var(--pc-accent-soft, var(--pc-info-bg));
-
-  --pc-tertiary:        var(--pc-info);
-  --pc-tertiary-hover:  var(--pc-info-hover, var(--pc-info));
-  --pc-tertiary-fg:     var(--pc-primary-fg);
-  --pc-tertiary-soft:   var(--pc-info-bg);
-
-  --pc-button-primary-bg:       var(--pc-primary);
-  --pc-button-primary-hover:    var(--pc-primary-hover);
-  --pc-button-primary-fg:       var(--pc-primary-fg);
-  --pc-button-primary-soft:     var(--pc-primary-soft, var(--pc-info-bg));
-
-  --pc-button-secondary-bg:     var(--pc-secondary);
-  --pc-button-secondary-hover:  var(--pc-secondary-hover);
-  --pc-button-secondary-fg:     var(--pc-secondary-fg);
-  --pc-button-secondary-soft:   var(--pc-secondary-soft);
-
-  --pc-button-tertiary-bg:      var(--pc-tertiary);
-  --pc-button-tertiary-hover:   var(--pc-tertiary-hover);
-  --pc-button-tertiary-fg:      var(--pc-tertiary-fg);
-  --pc-button-tertiary-soft:    var(--pc-tertiary-soft);
+.panel-ctrl.theme-light {
+  --pc-bg:                   #f4f7fb;
+  --pc-surface:              #ffffff;
+  --pc-surface-alt:          #eef3f9;
+  --pc-border:               #d6e0ec;
+  --pc-text:                 #0f172a;
+  --pc-text-muted:           #64748b;
+  --pc-primary:              #2563eb;
+  --pc-primary-hover:        #1d4ed8;
+  --pc-primary-fg:           #ffffff;
+  --pc-accent:               #14b8a6;
+  --pc-accent-hover:         #0f766e;
+  --pc-accent-fg:            #ffffff;
+  --pc-success:              #059669;
+  --pc-success-bg:           #d1fae5;
+  --pc-warning:              #d97706;
+  --pc-warning-bg:           #fef3c7;
+  --pc-danger:               #dc2626;
+  --pc-danger-bg:            #fee2e2;
+  --pc-info:                 #7c3aed;
+  --pc-info-bg:              #ede9fe;
 }
 
-.panel-ctrl.theme-panel-current {
-  --pc-secondary:       #14b8a6;
-  --pc-secondary-hover: #0f766e;
-  --pc-secondary-fg:    #ffffff;
-  --pc-secondary-soft:  rgba(20,184,166,0.12);
-  --pc-tertiary:        #f97316;
-  --pc-tertiary-hover:  #c2410c;
-  --pc-tertiary-fg:     #ffffff;
-  --pc-tertiary-soft:   rgba(249,115,22,0.13);
-}
-
+/* ──────────────────────────────────────────────
+   Tema 3: Medianoche
+   Oscuro profesional con azules suaves y violeta.
+────────────────────────────────────────────── */
 .panel-ctrl.theme-dark {
-  --pc-secondary:       #a78bfa;
-  --pc-secondary-hover: #c4b5fd;
-  --pc-secondary-fg:    #1f1140;
-  --pc-secondary-soft:  #2e2154;
-  --pc-tertiary:        #f59e0b;
-  --pc-tertiary-hover:  #fbbf24;
-  --pc-tertiary-fg:     #241300;
-  --pc-tertiary-soft:   #3b2608;
+  --pc-bg:                   #090f1d;
+  --pc-surface:              #111827;
+  --pc-surface-alt:          #1f2937;
+  --pc-border:               #334155;
+  --pc-text:                 #e5edf7;
+  --pc-text-muted:           #9aa8bd;
+  --pc-primary:              #60a5fa;
+  --pc-primary-hover:        #93c5fd;
+  --pc-primary-fg:           #0c1424;
+  --pc-accent:               #a78bfa;
+  --pc-accent-hover:         #c4b5fd;
+  --pc-accent-fg:            #1f1140;
+  --pc-success:              #34d399;
+  --pc-success-bg:           #064e3b;
+  --pc-warning:              #f59e0b;
+  --pc-warning-bg:           #3b2608;
+  --pc-danger:               #f87171;
+  --pc-danger-bg:            #450a0a;
+  --pc-info:                 #22d3ee;
+  --pc-info-bg:              #083344;
+  --pc-secondary:            #a78bfa;
+  --pc-secondary-hover:      #c4b5fd;
+  --pc-secondary-fg:         #1f1140;
+  --pc-secondary-soft:       #2e2154;
+  --pc-tertiary:             #f59e0b;
+  --pc-tertiary-hover:       #fbbf24;
+  --pc-tertiary-fg:          #241300;
+  --pc-tertiary-soft:        #3b2608;
 }
 
+/* ──────────────────────────────────────────────
+   Tema 4: Aurora
+   Oscuro mineral con verde boreal y azul electrico.
+────────────────────────────────────────────── */
 .panel-ctrl.theme-aurora {
-  --pc-secondary:       #7c3aed;
-  --pc-secondary-hover: #a78bfa;
-  --pc-secondary-fg:    #120422;
-  --pc-secondary-soft:  #1e1240;
-  --pc-tertiary:        #f59e0b;
-  --pc-tertiary-hover:  #fcd34d;
-  --pc-tertiary-fg:     #1f1300;
-  --pc-tertiary-soft:   #2d2105;
+  --pc-bg:                   #061316;
+  --pc-surface:              #0b2024;
+  --pc-surface-alt:          #12313a;
+  --pc-border:               #1d4f5b;
+  --pc-text:                 #e0f7f4;
+  --pc-text-muted:           #7cb9b3;
+  --pc-primary:              #2dd4bf;
+  --pc-primary-hover:        #5eead4;
+  --pc-primary-fg:           #021018;
+  --pc-accent:               #818cf8;
+  --pc-accent-hover:         #a5b4fc;
+  --pc-accent-fg:            #120422;
+  --pc-success:              #2dd4bf;
+  --pc-success-bg:           #03302c;
+  --pc-warning:              #f59e0b;
+  --pc-warning-bg:           #2d2105;
+  --pc-danger:               #fb7185;
+  --pc-danger-bg:            #2d0212;
+  --pc-info:                 #38bdf8;
+  --pc-info-bg:              #041525;
+  --pc-secondary:            #818cf8;
+  --pc-secondary-hover:      #a5b4fc;
+  --pc-secondary-fg:         #120422;
+  --pc-secondary-soft:       #1e1240;
+  --pc-tertiary:             #f59e0b;
+  --pc-tertiary-hover:       #fcd34d;
+  --pc-tertiary-fg:          #1f1300;
+  --pc-tertiary-soft:        #2d2105;
+}
+
+/* ──────────────────────────────────────────────
+   Tema 5: Sakura
+   Claro editorial, rosado elegante y contraste de tinta.
+────────────────────────────────────────────── */
+.panel-ctrl.theme-sakura {
+  --pc-bg:                   #fff7f8;
+  --pc-surface:              #ffffff;
+  --pc-surface-alt:          #fff0f3;
+  --pc-border:               #f3c6d1;
+  --pc-text:                 #251018;
+  --pc-text-muted:           #8f5f6f;
+  --pc-primary:              #db2777;
+  --pc-primary-hover:        #be185d;
+  --pc-primary-fg:           #ffffff;
+  --pc-accent:               #7c3aed;
+  --pc-accent-hover:         #6d28d9;
+  --pc-accent-fg:            #ffffff;
+  --pc-success:              #0f9c7a;
+  --pc-success-bg:           #d6f5ed;
+  --pc-warning:              #e0850a;
+  --pc-warning-bg:           #fdf0da;
+  --pc-danger:               #c7000c;
+  --pc-danger-bg:            #fee0e1;
+  --pc-info:                 #0891b2;
+  --pc-info-bg:              #daeef9;
 }
-
-.panel-ctrl.theme-obsidian {
-  --pc-secondary:       #22d3ee;
-  --pc-secondary-hover: #67e8f9;
-  --pc-secondary-fg:    #03141a;
-  --pc-secondary-soft:  #062932;
-  --pc-tertiary:        #f97316;
-  --pc-tertiary-hover:  #fb923c;
-  --pc-tertiary-fg:     #1e0a00;
-  --pc-tertiary-soft:   #2b1405;
-}
-
-.panel-ctrl.theme-dusk {
-  --pc-secondary:       #38bdf8;
-  --pc-secondary-hover: #7dd3fc;
-  --pc-secondary-fg:    #071426;
-  --pc-secondary-soft:  #122847;
-  --pc-tertiary:        #facc15;
-  --pc-tertiary-hover:  #fde047;
-  --pc-tertiary-fg:     #241b00;
-  --pc-tertiary-soft:   #342806;
-}
-
-.panel-ctrl.theme-ember {
-  --pc-secondary:       #22d3ee;
-  --pc-secondary-hover: #67e8f9;
-  --pc-secondary-fg:    #03141a;
-  --pc-secondary-soft:  #082833;
-  --pc-tertiary:        #a78bfa;
-  --pc-tertiary-hover:  #c4b5fd;
-  --pc-tertiary-fg:     #170b32;
-  --pc-tertiary-soft:   #25183f;
-}
-
-.panel-ctrl.theme-noir {
-  --pc-secondary:       #22d3ee;
-  --pc-secondary-hover: #67e8f9;
-  --pc-secondary-fg:    #03141a;
-  --pc-secondary-soft:  #08252b;
-  --pc-tertiary:        #f59e0b;
-  --pc-tertiary-hover:  #fbbf24;
-  --pc-tertiary-fg:     #1f1300;
-  --pc-tertiary-soft:   #2a1d08;
-}
-
-/* ══════════════════════════════════════════════
-   COMPONENT LIBRARY — shared across all themes
-   ══════════════════════════════════════════════ */
-
-/* Card / Panel */
-.panel-ctrl .pc-card {
-  background: var(--pc-surface);
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius);
-  box-shadow: var(--pc-shadow);
-  padding: 1.25rem 1.5rem;
-  transition: box-shadow 0.2s ease;
-}
-
-.panel-ctrl .pc-card:hover {
-  box-shadow: var(--pc-shadow), 0 0 0 2px var(--pc-primary);
-}
-
-.panel-ctrl .pc-card--alt {
-  background: var(--pc-surface-alt);
-}
-
-/* Divider */
-.panel-ctrl .pc-divider {
-  border: none;
-  border-top: 1px solid var(--pc-border);
-  margin: 1rem 0;
-}
-
-/* Typography */
-.panel-ctrl .pc-title {
-  color: var(--pc-text);
-  font-size: 1.25rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.panel-ctrl .pc-subtitle {
-  color: var(--pc-text-muted);
-  font-size: 0.875rem;
-  line-height: 1.5;
-}
-
-.panel-ctrl .pc-label {
-  color: var(--pc-text-muted);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-/* Buttons */
-.panel-ctrl .pc-btn {
-  align-items: center;
-  border: none;
-  border-radius: var(--pc-radius-sm);
-  cursor: pointer;
-  display: inline-flex;
-  font-size: 0.9rem;
-  font-weight: 500;
-  gap: 0.5rem;
-  justify-content: center;
-  padding: 0.5rem 1.125rem;
-  text-decoration: none;
-  transition: background-color 0.15s ease, opacity 0.15s ease, transform 0.1s ease;
-  white-space: nowrap;
-  user-select: none;
-}
-
-.panel-ctrl .pc-btn:active {
-  transform: scale(0.97);
-}
-
-.panel-ctrl .pc-btn--primary {
-  background: var(--pc-button-primary-bg, var(--pc-primary));
-  color: var(--pc-button-primary-fg, var(--pc-primary-fg));
-}
-
-.panel-ctrl .pc-btn--primary:hover {
-  background: var(--pc-button-primary-hover, var(--pc-primary-hover));
-}
-
-.panel-ctrl .pc-btn--secondary {
-  background: var(--pc-button-secondary-bg, var(--pc-secondary));
-  color: var(--pc-button-secondary-fg, var(--pc-secondary-fg));
-}
-
-.panel-ctrl .pc-btn--secondary:hover {
-  background: var(--pc-button-secondary-hover, var(--pc-secondary-hover));
-}
-
-.panel-ctrl .pc-btn--tertiary {
-  background: var(--pc-button-tertiary-bg, var(--pc-tertiary));
-  color: var(--pc-button-tertiary-fg, var(--pc-tertiary-fg));
-}
-
-.panel-ctrl .pc-btn--tertiary:hover {
-  background: var(--pc-button-tertiary-hover, var(--pc-tertiary-hover));
-}
-
-.panel-ctrl .pc-btn--accent {
-  background: var(--pc-button-secondary-bg, var(--pc-accent));
-  color: var(--pc-button-secondary-fg, var(--pc-accent-fg));
-}
-
-.panel-ctrl .pc-btn--accent:hover {
-  background: var(--pc-button-secondary-hover, var(--pc-accent-hover));
-}
-
-.panel-ctrl .pc-btn--ghost {
-  background: transparent;
-  border: 1px solid var(--pc-border);
-  color: var(--pc-text);
-}
-
-.panel-ctrl .pc-btn--ghost:hover {
-  border-color: var(--pc-primary);
-  color: var(--pc-primary);
-}
-
-.panel-ctrl .pc-btn--danger {
-  background: var(--pc-danger);
-  color: #fff;
-}
-
-.panel-ctrl .pc-btn--danger:hover {
-  opacity: 0.88;
-}
-
-.panel-ctrl .pc-btn[disabled],
-.panel-ctrl .pc-btn--disabled {
-  cursor: not-allowed;
-  opacity: 0.42;
-  pointer-events: none;
-}
-
-/* Form inputs */
-.panel-ctrl .pc-input {
-  background: var(--pc-surface);
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-sm);
-  color: var(--pc-text);
-  font-size: 0.925rem;
-  outline: none;
-  padding: 0.5rem 0.875rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  width: 100%;
-}
-
-.panel-ctrl .pc-input::placeholder {
-  color: var(--pc-text-muted);
-  opacity: 0.7;
-}
-
-.panel-ctrl .pc-input:focus {
-  border-color: var(--pc-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-primary) 20%, transparent);
-}
-
-.panel-ctrl .pc-input:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.panel-ctrl .pc-input--error {
-  border-color: var(--pc-danger);
-}
-
-.panel-ctrl .pc-input--error:focus {
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-danger) 20%, transparent);
-}
-
-/* Select */
-.panel-ctrl .pc-select {
-  appearance: none;
-  background-color: var(--pc-surface);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-position: right 0.75rem center;
-  background-repeat: no-repeat;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-sm);
-  color: var(--pc-text);
-  cursor: pointer;
-  font-size: 0.925rem;
-  outline: none;
-  padding: 0.5rem 2.25rem 0.5rem 0.875rem;
-  width: 100%;
-}
-
-.panel-ctrl .pc-select:focus {
-  border-color: var(--pc-primary);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pc-primary) 20%, transparent);
-}
-
-/* Checkbox & Radio */
-.panel-ctrl .pc-check {
-  accent-color: var(--pc-primary);
-  cursor: pointer;
-  height: 1rem;
-  width: 1rem;
-}
-
-/* Badge / Chip */
-.panel-ctrl .pc-badge {
-  border-radius: var(--pc-radius-lg);
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  line-height: 1;
-  padding: 0.3em 0.7em;
-}
-
-.panel-ctrl .pc-badge--primary {
-  background: color-mix(in srgb, var(--pc-primary) 18%, transparent);
-  color: var(--pc-primary);
-}
-
-.panel-ctrl .pc-badge--accent {
-  background: color-mix(in srgb, var(--pc-accent) 18%, transparent);
-  color: var(--pc-accent);
-}
-
-.panel-ctrl .pc-badge--success {
-  background: var(--pc-success-bg);
-  color: var(--pc-success);
-}
-
-.panel-ctrl .pc-badge--warning {
-  background: var(--pc-warning-bg);
-  color: var(--pc-warning);
-}
-
-.panel-ctrl .pc-badge--danger {
-  background: var(--pc-danger-bg);
-  color: var(--pc-danger);
-}
-
-.panel-ctrl .pc-badge--info {
-  background: var(--pc-info-bg);
-  color: var(--pc-info);
-}
-
-/* Alert / Banner */
-.panel-ctrl .pc-alert {
-  border-left: 3px solid;
-  border-radius: var(--pc-radius-sm);
-  font-size: 0.9rem;
-  line-height: 1.55;
-  padding: 0.75rem 1rem;
-}
-
-.panel-ctrl .pc-alert--success {
-  background: var(--pc-success-bg);
-  border-color: var(--pc-success);
-  color: var(--pc-success);
-}
-
-.panel-ctrl .pc-alert--warning {
-  background: var(--pc-warning-bg);
-  border-color: var(--pc-warning);
-  color: var(--pc-warning);
-}
-
-.panel-ctrl .pc-alert--danger {
-  background: var(--pc-danger-bg);
-  border-color: var(--pc-danger);
-  color: var(--pc-danger);
-}
-
-.panel-ctrl .pc-alert--info {
-  background: var(--pc-info-bg);
-  border-color: var(--pc-info);
-  color: var(--pc-info);
-}
-
-/* Progress bar */
-.panel-ctrl .pc-progress {
-  background: var(--pc-surface-alt);
-  border-radius: var(--pc-radius-lg);
-  height: 6px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.panel-ctrl .pc-progress__bar {
-  background: var(--pc-primary);
-  border-radius: inherit;
-  height: 100%;
-  transition: width 0.4s ease;
-}
-
-.panel-ctrl .pc-progress__bar--accent {
-  background: var(--pc-accent);
-}
-
-.panel-ctrl .pc-progress__bar--success {
-  background: var(--pc-success);
-}
-
-/* Tooltip */
-.panel-ctrl [data-tooltip] {
-  position: relative;
-}
-
-.panel-ctrl [data-tooltip]::after {
-  background: var(--pc-text);
-  border-radius: var(--pc-radius-sm);
-  bottom: calc(100% + 6px);
-  color: var(--pc-bg);
-  content: attr(data-tooltip);
-  font-size: 0.78rem;
-  left: 50%;
-  opacity: 0;
-  padding: 0.3em 0.65em;
-  pointer-events: none;
-  position: absolute;
-  transform: translateX(-50%);
-  transition: opacity 0.18s ease;
-  white-space: nowrap;
-}
-
-.panel-ctrl [data-tooltip]:hover::after {
-  opacity: 1;
-}
-
-/* Skeleton loader */
-.panel-ctrl .pc-skeleton {
-  animation: pc-shimmer 1.6s infinite linear;
-  background: linear-gradient(
-    90deg,
-    var(--pc-surface-alt) 0%,
-    var(--pc-border) 50%,
-    var(--pc-surface-alt) 100%
-  );
-  background-size: 200% 100%;
-  border-radius: var(--pc-radius-sm);
-}
-
-@keyframes pc-shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-/* Avatar */
-.panel-ctrl .pc-avatar {
-  align-items: center;
-  background: color-mix(in srgb, var(--pc-primary) 18%, transparent);
-  border-radius: 50%;
-  color: var(--pc-primary);
-  display: inline-flex;
-  font-size: 0.85rem;
-  font-weight: 600;
-  height: 2.25rem;
-  justify-content: center;
-  overflow: hidden;
-  width: 2.25rem;
-}
-
-.panel-ctrl .pc-avatar img {
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-}
-
-/* Navigation / Tabs */
-.panel-ctrl .pc-tabs {
-  border-bottom: 1px solid var(--pc-border);
-  display: flex;
-  gap: 0;
-  list-style: none;
-}
-
-.panel-ctrl .pc-tabs__item {
-  border-bottom: 2px solid transparent;
-  color: var(--pc-text-muted);
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin-bottom: -1px;
-  padding: 0.625rem 1rem;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.panel-ctrl .pc-tabs__item:hover {
-  color: var(--pc-text);
-}
-
-.panel-ctrl .pc-tabs__item--active {
-  border-color: var(--pc-primary);
-  color: var(--pc-primary);
-}
-
-/* Table */
-.panel-ctrl .pc-table {
-  border-collapse: collapse;
-  font-size: 0.9rem;
-  width: 100%;
-}
-
-.panel-ctrl .pc-table th {
-  background: var(--pc-surface-alt);
-  border-bottom: 1px solid var(--pc-border);
-  color: var(--pc-text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 0.6rem 1rem;
-  text-align: left;
-  text-transform: uppercase;
-}
-
-.panel-ctrl .pc-table td {
-  border-bottom: 1px solid var(--pc-border);
-  color: var(--pc-text);
-  padding: 0.75rem 1rem;
-  vertical-align: middle;
-}
-
-.panel-ctrl .pc-table tr:last-child td {
-  border-bottom: none;
-}
-
-.panel-ctrl .pc-table tr:hover td {
-  background: color-mix(in srgb, var(--pc-primary) 6%, transparent);
-}
-
-/* Toggle / Switch */
-.panel-ctrl .pc-toggle {
-  cursor: pointer;
-  display: inline-block;
-  height: 1.25rem;
-  position: relative;
-  width: 2.25rem;
-}
-
-.panel-ctrl .pc-toggle input {
-  height: 0;
-  opacity: 0;
-  width: 0;
-}
-
-.panel-ctrl .pc-toggle__track {
-  background: var(--pc-border);
-  border-radius: var(--pc-radius-lg);
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  transition: background 0.2s ease;
-}
-
-.panel-ctrl .pc-toggle input:checked ~ .pc-toggle__track {
-  background: var(--pc-primary);
-}
-
-.panel-ctrl .pc-toggle__knob {
-  background: #fff;
-  border-radius: 50%;
-  bottom: 2px;
-  height: 0.85rem;
-  left: 2px;
-  position: absolute;
-  transition: transform 0.2s ease;
-  width: 0.85rem;
-}
-
-.panel-ctrl .pc-toggle input:checked ~ .pc-toggle__track .pc-toggle__knob {
-  transform: translateX(1rem);
-}
-
-/* Sidebar / Nav */
-.panel-ctrl .pc-sidebar {
-  background: var(--pc-surface);
-  border-right: 1px solid var(--pc-border);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  min-height: 100%;
-  padding: 1rem 0.75rem;
-  width: 14rem;
-}
-
-.panel-ctrl .pc-sidebar__item {
-  align-items: center;
-  border-radius: var(--pc-radius-sm);
-  color: var(--pc-text-muted);
-  cursor: pointer;
-  display: flex;
-  font-size: 0.9rem;
-  gap: 0.625rem;
-  padding: 0.5rem 0.75rem;
-  text-decoration: none;
-  transition: background 0.15s ease, color 0.15s ease;
-}
-
-.panel-ctrl .pc-sidebar__item:hover {
-  background: var(--pc-surface-alt);
-  color: var(--pc-text);
-}
-
-.panel-ctrl .pc-sidebar__item--active {
-  background: color-mix(in srgb, var(--pc-primary) 12%, transparent);
-  color: var(--pc-primary);
-  font-weight: 500;
-}
-
-/* Scrollbar (Webkit) */
-.panel-ctrl ::-webkit-scrollbar {
-  height: 6px;
-  width: 6px;
-}
-
-.panel-ctrl ::-webkit-scrollbar-track {
-  background: var(--pc-surface-alt);
-  border-radius: 3px;
-}
-
-.panel-ctrl ::-webkit-scrollbar-thumb {
-  background: var(--pc-border);
-  border-radius: 3px;
-}
-
-.panel-ctrl ::-webkit-scrollbar-thumb:hover {
-  background: var(--pc-text-muted);
-}
-
-/* Focus ring (accessibility) */
-.panel-ctrl :focus-visible {
-  outline: 2px solid var(--pc-primary);
-  outline-offset: 2px;
-}
-
-/* ══════════════════════════════════════════════
-   LAYOUT UTILITIES
-   ══════════════════════════════════════════════ */
-.panel-ctrl .pc-flex        { display: flex; }
-.panel-ctrl .pc-flex-col    { display: flex; flex-direction: column; }
-.panel-ctrl .pc-items-center { align-items: center; }
-.panel-ctrl .pc-justify-between { justify-content: space-between; }
-.panel-ctrl .pc-gap-1       { gap: 0.25rem; }
-.panel-ctrl .pc-gap-2       { gap: 0.5rem; }
-.panel-ctrl .pc-gap-3       { gap: 0.75rem; }
-.panel-ctrl .pc-gap-4       { gap: 1rem; }
-.panel-ctrl .pc-p-2         { padding: 0.5rem; }
-.panel-ctrl .pc-p-4         { padding: 1rem; }
-.panel-ctrl .pc-p-6         { padding: 1.5rem; }
-.panel-ctrl .pc-mt-1        { margin-top: 0.25rem; }
-.panel-ctrl .pc-mt-2        { margin-top: 0.5rem; }
-.panel-ctrl .pc-mt-4        { margin-top: 1rem; }
-.panel-ctrl .pc-w-full      { width: 100%; }
-.panel-ctrl .pc-text-sm     { font-size: 0.875rem; }
-.panel-ctrl .pc-text-muted  { color: var(--pc-text-muted); }
-.panel-ctrl .pc-font-medium { font-weight: 500; }

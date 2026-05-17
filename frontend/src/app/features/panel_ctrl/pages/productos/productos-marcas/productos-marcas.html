@@ -1,41 +1,9 @@
 <div class="fade-in">
-  <div class="top-bar">
-    <div class="search-section">
-      <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
-        <input
-          type="text"
-          placeholder="Buscar por nombre, ID, estado o descripción"
-          [ngModel]="searchTerm()"
-          (ngModelChange)="setSearchTerm($event)"
-        >
-      </div>
-      <div class="filter-group">
-        <select class="filter-select" [ngModel]="estadoFilter()" (ngModelChange)="setEstadoFilter($event)">
-          <option value="todos">Estado</option>
-          <option value="activo">Activo</option>
-          <option value="inactivo">Inactivo</option>
-        </select>
-      </div>
-      <button
-        class="btn btn-outline filter-clear-btn"
-        type="button"
-        title="Limpiar filtros"
-        aria-label="Limpiar filtros"
-        *ngIf="searchTerm() || estadoFilter() !== 'todos'"
-        (click)="clearSearch()"
-      >
-        <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.5"></lucide-icon>
-      </button>
-    </div>
-
-    <div class="actions-section">
-      <button class="btn btn-primary" type="button" (click)="openForm()" [disabled]="loading()">
-        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
-        Nueva Marca
-      </button>
-    </div>
-  </div>
+  <app-barra-filtros
+    [config]="brandFilterConfig()"
+    (stateChange)="setBrandFilterState($event)"
+    (actionClick)="openForm()"
+  ></app-barra-filtros>
 
   <div
     class="notice-banner"
@@ -113,11 +81,11 @@
             </td>
             <td class="font-mono text-gray" data-label="ID">{{ marca.id_marca }}</td>
             <td data-label="Estado">
-              <span class="category-badge" [class.badge-inactive]="marca.estado_marca === 'inactivo'">
+              <span class="status-pill" [class.status-success]="marca.estado_marca === 'activo'" [class.status-danger]="marca.estado_marca === 'inactivo'">
                 {{ marca.estado_marca }}
               </span>
             </td>
-            <td class="text-gray font-medium" data-label="Productos">{{ getProductCountLabel(marca) }}</td>
+            <td data-label="Productos"><span class="category-badge">{{ getProductCountLabel(marca) }}</span></td>
             <td class="text-gray font-medium" data-label="Actualizado">
               {{ marca.fecha_modificacion ? (marca.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
             </td>

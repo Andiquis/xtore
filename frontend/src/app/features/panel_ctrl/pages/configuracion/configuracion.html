@@ -3,9 +3,9 @@
   <!-- ═══ TABS DE NAVEGACIÓN ═══ -->
   <app-tab-button
     [tabs]="tabs"
-    [activeTab]="activeTab"
+    [(activeTab)]="activeTab"
     ariaLabel="Secciones de configuracion"
-    (tabChange)="setTab($event)"
+    (tabChange)="markUnsaved()"
   ></app-tab-button>
 
   <!-- ═══ CONTENIDO ═══ -->
@@ -366,7 +366,7 @@
         <span class="save-success">✓ Configuración guardada correctamente</span>
       </div>
       <div class="actions-buttons">
-        <button class="btn btn-outline" (click)="setTab(activeTab)">
+        <button class="btn btn-outline" (click)="markUnsaved()">
           <lucide-icon [img]="ResetIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
           Restaurar
         </button>

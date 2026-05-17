@@ -4,7 +4,16 @@ import { filter } from 'rxjs';
 import { TabButton, TabButtonItem } from '../../components/tab-button/tab-button';
 import { Box, Layers, Package, Tag } from 'lucide-angular';
 
-type ProductRouteTabId = 'lista' | 'categorias' | 'marcas' | 'presentacion';
+const PRODUCT_TABS = [
+  { id: 'lista', label: 'Productos', icon: Package },
+  { id: 'categorias', label: 'Categorías', icon: Layers },
+  { id: 'marcas', label: 'Marcas', icon: Tag },
+  { id: 'presentacion', label: 'Presentación', icon: Box },
+] as const satisfies readonly TabButtonItem[];
+
+type ProductRouteTabId = (typeof PRODUCT_TABS)[number]['id'];
+
+const PRODUCT_TAB_IDS = new Set<string>(PRODUCT_TABS.map(({ id }) => id));
 
 @Component({
   selector: 'app-productos',
@@ -15,13 +24,7 @@ type ProductRouteTabId = 'lista' | 'categorias' | 'marcas' | 'presentacion';
 })
 export class Productos implements OnInit {
   activeTab: ProductRouteTabId = 'lista';
-
-  readonly productTabs: TabButtonItem[] = [
-    { id: 'lista', label: 'Productos', icon: Package },
-    { id: 'categorias', label: 'Categorías', icon: Layers },
-    { id: 'marcas', label: 'Marcas', icon: Tag },
-    { id: 'presentacion', label: 'Presentación', icon: Box },
-  ];
+  readonly productTabs = PRODUCT_TABS;
 
   private readonly router = inject(Router);
 
@@ -44,6 +47,6 @@ export class Productos implements OnInit {
   }
 
   private isProductRouteTab(tab: string): tab is ProductRouteTabId {
-    return ['lista', 'categorias', 'marcas', 'presentacion'].includes(tab);
+    return PRODUCT_TAB_IDS.has(tab);
   }
 }

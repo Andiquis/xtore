@@ -25,7 +25,15 @@ import {
   PieChart,
 } from 'lucide-angular';
 
-type ReportTabId = 'ventas' | 'inventario' | 'productos' | 'compras' | 'caja';
+const REPORT_TABS = [
+  { id: 'ventas', label: 'Ventas', icon: ShoppingCart },
+  { id: 'inventario', label: 'Inventario', icon: Package },
+  { id: 'productos', label: 'Productos', icon: Layers },
+  { id: 'compras', label: 'Compras', icon: CreditCard },
+  { id: 'caja', label: 'Caja', icon: Wallet },
+] as const satisfies readonly TabButtonItem[];
+
+type ReportTabId = (typeof REPORT_TABS)[number]['id'];
 
 @Component({
   selector: 'app-reportes',
@@ -59,14 +67,11 @@ export class Reportes {
   // ── Estado ──
   activeReport: ReportTabId = 'ventas';
   selectedPeriod: string = 'Este mes';
+  readonly reportTabs = REPORT_TABS;
 
-  reportTabs: TabButtonItem[] = [
-    { id: 'ventas', label: 'Ventas', icon: ShoppingCart },
-    { id: 'inventario', label: 'Inventario', icon: Package },
-    { id: 'productos', label: 'Productos', icon: Layers },
-    { id: 'compras', label: 'Compras', icon: CreditCard },
-    { id: 'caja', label: 'Caja', icon: Wallet },
-  ];
+  get currentKpis() {
+    return this.kpiSets[this.activeReport] || this.kpiSets['ventas'];
+  }
 
   // ── KPIs dinámicos por tipo de reporte ──
   kpiSets: Record<ReportTabId, any[]> = {
@@ -235,10 +240,6 @@ export class Reportes {
     ],
   };
 
-  get currentKpis() {
-    return this.kpiSets[this.activeReport] || this.kpiSets['ventas'];
-  }
-
   // ── Gráfico de barras (ventas semanales) ──
   weeklyBars = [
     { label: 'Sem 1', value: 8420, percent: 62 },
@@ -288,14 +289,4 @@ export class Reportes {
     { date: '07 May', count: 25, total: 3890, avg: 155.6 },
   ];
 
-  // ── Métodos ──
-  setReport(reportId: string) {
-    if (this.isReportTab(reportId)) {
-      this.activeReport = reportId;
-    }
-  }
-
-  private isReportTab(reportId: string): reportId is ReportTabId {
-    return ['ventas', 'inventario', 'productos', 'compras', 'caja'].includes(reportId);
-  }
 }

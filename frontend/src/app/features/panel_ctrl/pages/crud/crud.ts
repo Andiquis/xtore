@@ -23,19 +23,11 @@ export class Crud {
   selectedTheme = 'theme-panel-current';
 
   readonly themes: ThemeOption[] = [
-    { className: 'theme-panel-current', name: 'Panel Current', description: 'Tema normalizado del panel actual.' },
-    { className: 'theme-light', name: 'Light', description: 'Slate claro con acento azul.' },
-    { className: 'theme-dark', name: 'Dark', description: 'Modo oscuro de alto contraste.' },
-    { className: 'theme-aurora', name: 'Aurora', description: 'Oscuro con verde boreal.' },
-    { className: 'theme-sakura', name: 'Sakura', description: 'Claro con rosados suaves.' },
-    { className: 'theme-obsidian', name: 'Obsidian', description: 'Carbono con acento dorado.' },
-    { className: 'theme-forest', name: 'Forest', description: 'Verdes y tonos tierra.' },
-    { className: 'theme-candy', name: 'Candy', description: 'Paleta pop saturada.' },
-    { className: 'theme-dusk', name: 'Dusk', description: 'Oscuro morado y cálido.' },
-    { className: 'theme-arctic', name: 'Arctic', description: 'Azules hielo y acero.' },
-    { className: 'theme-ember', name: 'Ember', description: 'Carbon cálido con naranja.' },
-    { className: 'theme-mint', name: 'Mint', description: 'Menta clara y serena.' },
-    { className: 'theme-noir', name: 'Noir', description: 'Escala de grises con contraste.' },
+    { className: 'theme-panel-current', name: 'Panel actual', description: 'Claro administrativo, azul sobrio y acento verde.' },
+    { className: 'theme-light', name: 'Claro nítido', description: 'Superficies limpias, azul profundo y acento turquesa.' },
+    { className: 'theme-dark', name: 'Medianoche', description: 'Oscuro profesional con azules suaves y violeta.' },
+    { className: 'theme-aurora', name: 'Aurora', description: 'Oscuro mineral con verde boreal y azul eléctrico.' },
+    { className: 'theme-sakura', name: 'Sakura', description: 'Claro editorial, rosado elegante y contraste de tinta.' },
   ];
 
   readonly metrics: PreviewMetric[] = [

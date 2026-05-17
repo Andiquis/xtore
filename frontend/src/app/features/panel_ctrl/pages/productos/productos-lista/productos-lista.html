@@ -1,40 +1,9 @@
 <div class="fade-in">
-  <div class="top-bar">
-    <div class="search-section">
-      <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
-        <input type="text" placeholder="Buscar por nombre o código de producto">
-      </div>
-
-      <div class="filter-group">
-        <select class="filter-select">
-          <option value="" disabled selected>Categoría</option>
-          <option *ngFor="let cat of categorias" [value]="cat.id">{{ cat.name }}</option>
-        </select>
-
-        <select class="filter-select">
-          <option value="" disabled selected>Marca</option>
-          <option *ngFor="let m of marcas" [value]="m.id">{{ m.name }}</option>
-        </select>
-
-        <select class="filter-select">
-          <option value="" disabled selected>Presentación</option>
-          <option *ngFor="let p of presentaciones" [value]="p.id">{{ p.name }}</option>
-        </select>
-
-        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
-          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.5"></lucide-icon>
-        </button>
-      </div>
-    </div>
-
-    <div class="actions-section">
-      <button class="btn btn-primary" type="button" (click)="openProductForm()">
-        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
-        Añadir Producto
-      </button>
-    </div>
-  </div>
+  <app-barra-filtros
+    [config]="productFilterConfig"
+    (stateChange)="setProductFilterState($event)"
+    (actionClick)="openProductForm()"
+  ></app-barra-filtros>
 
   <div class="table-card">
     <div class="table-card-header">
@@ -42,7 +11,7 @@
         <h3>Inventario de productos</h3>
         <p>Selecciona una fila para ver detalles o usa los checks para acciones masivas.</p>
       </div>
-      <span class="table-count">{{ products.length }} productos</span>
+      <span class="table-count">{{ filteredProducts.length }} de {{ products.length }} productos</span>
     </div>
 
     <div class="table-responsive">
@@ -67,7 +36,7 @@
         </thead>
         <tbody>
           <tr
-            *ngFor="let product of products"
+            *ngFor="let product of filteredProducts"
             class="table-row"
             [class.active]="activeProduct?.id === product.id"
             [class.checked]="isProductSelected(product)"

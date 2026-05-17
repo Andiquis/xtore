@@ -3,9 +3,8 @@
   <!-- ═══ TABS DE REPORTE ═══ -->
   <app-tab-button
     [tabs]="reportTabs"
-    [activeTab]="activeReport"
+    [(activeTab)]="activeReport"
     ariaLabel="Secciones de reportes"
-    (tabChange)="setReport($event)"
   ></app-tab-button>
 
   <!-- ═══ BARRA DE FILTROS ═══ -->

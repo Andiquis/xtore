@@ -9,11 +9,11 @@
   max-width: 100%;
   padding: 6px;
   overflow-x: auto;
-  background: var(--pc-surface);
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius);
-  box-shadow: var(--pc-shadow-sm, var(--pc-shadow));
-  font-family: var(--pc-font);
+  background: var(--tab-bg);
+  border: 1px solid var(--tab-border);
+  border-radius: var(--tab-radius);
+  box-shadow: var(--tab-shadow);
+  font-family: var(--tab-font);
 }
 
 .tab-trigger {
@@ -24,9 +24,9 @@
   min-height: 42px;
   padding: 0 16px;
   border: 1px solid transparent;
-  border-radius: var(--pc-radius-sm);
+  border-radius: var(--tab-radius-sm);
   background: transparent;
-  color: var(--pc-text-muted);
+  color: var(--tab-text);
   cursor: pointer;
   flex: 0 0 auto;
   font: inherit;
@@ -40,16 +40,16 @@
     box-shadow 0.18s ease;
 
   &:hover {
-    background: var(--pc-button-primary-soft, var(--pc-primary-soft));
-    border-color: var(--pc-primary);
-    color: var(--pc-primary);
+    background: var(--tab-accent-soft);
+    border-color: var(--tab-accent);
+    color: var(--tab-accent);
   }
 
   &.active {
-    background: var(--pc-button-primary-bg, var(--pc-primary));
-    border-color: var(--pc-button-primary-bg, var(--pc-primary));
-    color: var(--pc-button-primary-fg, var(--pc-primary-fg));
-    box-shadow: 0 8px 18px var(--pc-button-primary-soft, var(--pc-primary-soft));
+    background: var(--tab-accent);
+    border-color: var(--tab-accent);
+    color: var(--tab-accent-fg);
+    box-shadow: 0 8px 18px var(--tab-accent-soft);
   }
 }
 

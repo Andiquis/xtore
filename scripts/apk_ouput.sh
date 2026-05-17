@@ -76,10 +76,34 @@ if [ "$DEVICE_CONNECTED" -eq 0 ]; then
     echo "👉 Solución: Conecta un dispositivo Android y habilita la depuración USB en las opciones de desarrollador."
     echo "El APK se encuentra en: $ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
     exit 1
+elif [ "$DEVICE_CONNECTED" -gt 1 ]; then
+    echo "📱 Se detectaron múltiples dispositivos/emuladores:"
+    
+    # Obtener los IDs de los dispositivos conectados
+    DEVICES=($(adb devices | grep -w "device" | awk '{print $1}'))
+    
+    echo "Por favor, selecciona un dispositivo para instalar el APK:"
+    # Configurar el prompt para el comando select
+    PS3="Introduce el número del dispositivo (o selecciona Cancelar): "
+    select TARGET_DEVICE in "${DEVICES[@]}" "Cancelar"; do
+        if [ "$TARGET_DEVICE" == "Cancelar" ]; then
+            echo "Instalación cancelada por el usuario."
+            echo "El APK se encuentra en: $ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
+            exit 0
+        elif [ -n "$TARGET_DEVICE" ]; then
+            echo "Seleccionaste: $TARGET_DEVICE"
+            break
+        else
+            echo "Opción inválida. Intenta de nuevo."
+        fi
+    done
+    
+    # Intentar instalar el APK en el dispositivo seleccionado
+    adb -s "$TARGET_DEVICE" install -r "$ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
+else
+    # Intentar instalar el APK en el único dispositivo conectado
+    adb install -r "$ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
 fi
-
-# Intentar instalar el APK
-adb install -r "$ANDROID_DIR/app/build/outputs/apk/debug/app-debug.apk"
 
 if [ $? -ne 0 ]; then
     echo "❌ Error: No se pudo instalar el APK en el dispositivo. Verifica los permisos y el estado del dispositivo."

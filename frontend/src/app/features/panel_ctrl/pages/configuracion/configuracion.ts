@@ -25,15 +25,18 @@ import {
   Palette,
 } from 'lucide-angular';
 
-type ConfigTabId =
-  | 'empresa'
-  | 'fiscal'
-  | 'moneda'
-  | 'comprobantes'
-  | 'inventario'
-  | 'ventas'
-  | 'pagos'
-  | 'sistema';
+const CONFIG_TABS = [
+  { id: 'empresa', label: 'Empresa', icon: Building2 },
+  { id: 'fiscal', label: 'Fiscal', icon: Receipt },
+  { id: 'moneda', label: 'Moneda e Impuestos', icon: Coins },
+  { id: 'comprobantes', label: 'Comprobantes', icon: FileText },
+  { id: 'inventario', label: 'Inventario', icon: Package },
+  { id: 'ventas', label: 'Ventas', icon: ShoppingCart },
+  { id: 'pagos', label: 'Métodos de Pago', icon: CreditCard },
+  { id: 'sistema', label: 'Sistema', icon: Settings },
+] as const satisfies readonly TabButtonItem[];
+
+type ConfigTabId = (typeof CONFIG_TABS)[number]['id'];
 
 @Component({
   selector: 'app-configuracion',
@@ -51,17 +54,7 @@ export class Configuracion {
   // ── Estado ──
   activeTab: ConfigTabId = 'empresa';
   isSaved = false;
-
-  tabs: TabButtonItem[] = [
-    { id: 'empresa', label: 'Empresa', icon: Building2 },
-    { id: 'fiscal', label: 'Fiscal', icon: Receipt },
-    { id: 'moneda', label: 'Moneda e Impuestos', icon: Coins },
-    { id: 'comprobantes', label: 'Comprobantes', icon: FileText },
-    { id: 'inventario', label: 'Inventario', icon: Package },
-    { id: 'ventas', label: 'Ventas', icon: ShoppingCart },
-    { id: 'pagos', label: 'Métodos de Pago', icon: CreditCard },
-    { id: 'sistema', label: 'Sistema', icon: Settings },
-  ];
+  readonly tabs = CONFIG_TABS;
 
   // ── Datos Mock: Empresa ──
   empresa = {
@@ -143,25 +136,8 @@ export class Configuracion {
     sesionDuracion: 8,
   };
 
-  // ── Métodos ──
-  setTab(tabId: string) {
-    if (this.isConfigTab(tabId)) {
-      this.activeTab = tabId;
-      this.isSaved = false;
-    }
-  }
-
-  private isConfigTab(tabId: string): tabId is ConfigTabId {
-    return [
-      'empresa',
-      'fiscal',
-      'moneda',
-      'comprobantes',
-      'inventario',
-      'ventas',
-      'pagos',
-      'sistema',
-    ].includes(tabId);
+  markUnsaved() {
+    this.isSaved = false;
   }
 
   guardarConfiguracion() {

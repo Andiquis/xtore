@@ -1,0 +1,144 @@
+/* ============================================================
+   PANEL CTRL - MODOS
+   ------------------------------------------------------------
+   Este archivo define modos de color, no temas.
+   Para crear otro modo:
+   1. Clona el mixin mode-light.
+   2. Cambia los valores.
+   3. Agrega sus selectores al final.
+   ============================================================ */
+
+@mixin mode-light {
+  color-scheme: light;
+
+  /* ─────────────────────────────────────────────
+     01. Shell / layout principal
+     ───────────────────────────────────────────── */
+  --content-bg: #e7eef8;
+  --header-bg: #ffffff;
+  --header-border: #e2e8f0;
+  --overlay-bg: rgba(11, 20, 55, 0.6);
+
+  /* ─────────────────────────────────────────────
+     02. Sidebar
+     Nota: debe mantenerse bastante estable entre modos.
+     ───────────────────────────────────────────── */
+  --sidebar-bg: #0e1529;
+  --sidebar-border: rgba(255, 255, 255, 0.04);
+  --sidebar-divider: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  --sidebar-text: #a3aed1;
+  --sidebar-text-hover: #ffffff;
+  --sidebar-hover-bg: rgba(255, 255, 255, 0.04);
+  --sidebar-active-bg: rgba(255, 255, 255, 0.05);
+  --sidebar-active-icon: #8cafff;
+  --sidebar-footer-line: rgba(255, 255, 255, 0.06);
+  --sidebar-control-bg: rgba(255, 255, 255, 0.03);
+  --sidebar-control-hover-bg: rgba(255, 255, 255, 0.06);
+  --sidebar-mobile-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+
+  /* ─────────────────────────────────────────────
+     03. Marca / acentos
+     ───────────────────────────────────────────── */
+  --accent-primary: #49379b;
+  --accent-light: rgba(67, 24, 255, 0.1);
+  --accent-focus: rgba(67, 24, 255, 0.38);
+  --accent-focus-ring: rgba(67, 24, 255, 0.08);
+  --accent-gradient: linear-gradient(135deg, #4318ff 0%, #868cff 100%);
+
+  /* ─────────────────────────────────────────────
+     04. Logo
+     ───────────────────────────────────────────── */
+  --logo-mark-bg: linear-gradient(135deg, var(--accent-primary) 0%, #7c5cff 100%);
+  --logo-mark-shadow: 0 4px 14px rgba(67, 24, 255, 0.35);
+  --logo-mark-fg: #ffffff;
+  --logo-text: #ffffff;
+  --logo-accent: #868cff;
+
+  /* ─────────────────────────────────────────────
+     05. Texto
+     ───────────────────────────────────────────── */
+  --text-primary: #2b3674;
+  --text-secondary: #a3aed1;
+  --text-dark: #1b2559;
+
+  /* ─────────────────────────────────────────────
+     06. Header / controles superiores
+     ───────────────────────────────────────────── */
+  --search-bg: #f8faff;
+  --search-bg-hover: #ffffff;
+  --search-border: #dfe7f5;
+  --search-border-hover: #cdd8ee;
+  --search-icon: #7b8bad;
+  --search-placeholder: #8d9cbc;
+  --icon-btn-border: #e2e8f0;
+  --icon-btn-color: #64748b;
+  --notification-bg: #ff5b5b;
+  --notification-ring: #ffffff;
+  --user-role-text: #64748b;
+
+  /* ─────────────────────────────────────────────
+     07. Tokens legacy para paginas hijas
+     ───────────────────────────────────────────── */
+  --accent: var(--accent-primary);
+  --accent-dark: #3211cc;
+  --accent-soft: var(--accent-light);
+  --green: #059669;
+  --red: #dc2626;
+  --rose: #dc2626;
+  --amber: #d97706;
+  --orange: #ea580c;
+  --ink: var(--text-dark);
+  --muted: #8795b3;
+  --line: #dce5f2;
+  --soft: #f6f9fd;
+  --bg-card: #ffffff;
+  --bg-page: var(--content-bg);
+  --bg-app: var(--content-bg);
+  --border-color: var(--header-border);
+  --text-gray: #64748b;
+
+  /* ─────────────────────────────────────────────
+     08. Componentes hijos / tab-button
+     ───────────────────────────────────────────── */
+  --tab-bg: #ffffff;
+  --tab-border: #d6e0ec;
+  --tab-radius: 14px;
+  --tab-radius-sm: 10px;
+  --tab-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --tab-font: "DM Sans", "Inter", "Segoe UI", system-ui, sans-serif;
+  --tab-text: #64748b;
+  --tab-accent: #0077B6;
+  //--tab-accent: #003B5C;
+  //--tab-accent: #90E0EF;
+  --tab-accent-fg: #ffffff;
+  --tab-accent-soft: rgba(37, 99, 235, 0.12);
+
+  /* ─────────────────────────────────────────────
+     09. Elevacion / movimiento
+     ───────────────────────────────────────────── */
+  --shadow-header: 0 18px 40px rgba(112, 144, 176, 0.12);
+  --shadow-card: 0 4px 15px rgba(112, 144, 176, 0.08);
+  --shadow: 0 12px 32px rgba(112, 144, 176, 0.12);
+  --radius: 14px;
+  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ============================================================
+   APLICACION DEL MODO
+   ------------------------------------------------------------
+   Privado de panel-layout. Las variables se heredan hacia las
+   paginas renderizadas dentro del router-outlet.
+   ============================================================ */
+
+:host,
+:host(.mode-light),
+:host-context(.mode-light),
+.panel.mode-light,
+.panel[data-mode='light'] {
+  @include mode-light;
+}

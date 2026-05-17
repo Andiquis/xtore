@@ -26,11 +26,58 @@ import {
   Receipt,
   Smartphone,
 } from 'lucide-angular';
+import {
+  BarraFiltroItem,
+  BarraFiltros,
+  BarraFiltrosConfig,
+  BarraFiltrosState,
+} from '../../components/barra-filtros/barra-filtros';
+
+type SalesFilterId = 'periodo' | 'estado' | 'metodo';
+
+const DEFAULT_SALES_FILTERS: Record<SalesFilterId, string> = {
+  periodo: 'hoy',
+  estado: 'todos',
+  metodo: 'todos',
+};
+
+const SALES_PERIOD_OPTIONS = [
+  { label: 'Hoy', value: 'hoy' },
+  { label: 'Esta semana', value: 'semana' },
+  { label: 'Este mes', value: 'mes' },
+] as const;
+const SALES_STATUS_OPTIONS = ['Pagada', 'Emitida', 'Pendiente', 'Anulada'] as const;
+const SALES_PAYMENT_OPTIONS = ['Efectivo', 'Tarjeta', 'Transferencia', 'Yape'] as const;
+
+const SALES_FILTERS = [
+  {
+    id: 'periodo',
+    ariaLabel: 'Periodo',
+    options: SALES_PERIOD_OPTIONS,
+    value: DEFAULT_SALES_FILTERS.periodo,
+  },
+  {
+    id: 'estado',
+    ariaLabel: 'Estado',
+    options: [
+      { label: 'Todos los estados', value: DEFAULT_SALES_FILTERS.estado },
+      ...SALES_STATUS_OPTIONS,
+    ],
+  },
+  {
+    id: 'metodo',
+    ariaLabel: 'Método de pago',
+    options: [
+      { label: 'Método de pago', value: DEFAULT_SALES_FILTERS.metodo },
+      ...SALES_PAYMENT_OPTIONS,
+    ],
+  },
+] as const satisfies readonly BarraFiltroItem[];
 
 @Component({
   selector: 'app-ventas',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, FormsModule],
+  imports: [CommonModule, LucideAngularModule, FormsModule, BarraFiltros],
   templateUrl: './ventas.html',
   styleUrl: './ventas.scss',
 })
@@ -159,6 +206,62 @@ export class Ventas {
 
   activeSale: any = null;
   selectedSales: any[] = [];
+  searchTerm = '';
+  salesFilterValues: Record<SalesFilterId, string> = { ...DEFAULT_SALES_FILTERS };
+
+  get salesFilterConfig(): BarraFiltrosConfig {
+    return {
+      filters: SALES_FILTERS,
+      filterValues: this.salesFilterValues,
+      searchValue: this.searchTerm,
+      showClearButton: this.hasActiveSalesFilters,
+      searchPlaceholder: 'Buscar por comprobante, cliente o vendedor',
+      actionLabel: 'Nueva venta',
+    };
+  }
+
+  get hasActiveSalesFilters(): boolean {
+    return Boolean(this.searchTerm) || Object.entries(this.salesFilterValues).some(
+      ([key, value]) => value !== DEFAULT_SALES_FILTERS[key as SalesFilterId]
+    );
+  }
+
+  get filteredSales() {
+    const term = this.normalizeText(this.searchTerm);
+
+    return this.sales.filter((sale) => {
+      const searchable = [
+        sale.id,
+        sale.comprobante,
+        sale.cliente,
+        sale.vendedor,
+        sale.metodo,
+        sale.estado,
+      ].join(' ');
+      const matchesSearch = !term || this.normalizeText(searchable).includes(term);
+      const matchesPeriod = this.matchesPeriodFilter(sale.fecha, this.salesFilterValues.periodo);
+      const matchesStatus =
+        this.salesFilterValues.estado === DEFAULT_SALES_FILTERS.estado ||
+        sale.estado === this.salesFilterValues.estado;
+      const matchesPayment =
+        this.salesFilterValues.metodo === DEFAULT_SALES_FILTERS.metodo ||
+        sale.metodo === this.salesFilterValues.metodo;
+
+      return matchesSearch && matchesPeriod && matchesStatus && matchesPayment;
+    });
+  }
+
+  setSalesFilterState(state: BarraFiltrosState) {
+    this.searchTerm = state.search;
+    this.salesFilterValues = {
+      periodo: state.filters['periodo'] ?? DEFAULT_SALES_FILTERS.periodo,
+      estado: state.filters['estado'] ?? DEFAULT_SALES_FILTERS.estado,
+      metodo: state.filters['metodo'] ?? DEFAULT_SALES_FILTERS.metodo,
+    };
+    this.selectedSales = this.selectedSales.filter((selected) =>
+      this.filteredSales.some((sale) => sale.id === selected.id)
+    );
+  }
 
   // ── Cálculos del carrito ──
   get subtotal() {
@@ -243,11 +346,11 @@ export class Ventas {
 
   toggleAllSales(event: Event) {
     const checked = (event.target as HTMLInputElement).checked;
-    this.selectedSales = checked ? [...this.sales] : [];
+    this.selectedSales = checked ? [...this.filteredSales] : [];
   }
 
   areAllSalesSelected() {
-    return this.sales.length > 0 && this.selectedSales.length === this.sales.length;
+    return this.filteredSales.length > 0 && this.selectedSales.length === this.filteredSales.length;
   }
 
   hasPartialSelection() {
@@ -272,5 +375,25 @@ export class Ventas {
     if (method === 'Transferencia') return Banknote;
     if (method === 'Yape') return CheckCircle2;
     return CreditCard;
+  }
+
+  private matchesPeriodFilter(fecha: string, filter: string): boolean {
+    if (filter === 'hoy') {
+      return fecha === '24 Abr 2026';
+    }
+
+    if (filter === 'semana') {
+      return ['23 Abr 2026', '24 Abr 2026'].includes(fecha);
+    }
+
+    return filter === 'mes';
+  }
+
+  private normalizeText(value: string): string {
+    return value
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
   }
 }

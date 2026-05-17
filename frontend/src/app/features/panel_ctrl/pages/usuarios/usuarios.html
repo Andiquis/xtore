@@ -6,28 +6,20 @@
     </article>
   </section>
 
-  <div class="top-bar">
-    <div class="search-section">
-      <div class="search-box"><lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon><input placeholder="Buscar por nombre, correo o usuario"></div>
-      <div class="filter-group">
-        <select class="filter-select"><option>Todos los roles</option><option>Administrador</option><option>Vendedor</option><option>Cajero</option></select>
-        <select class="filter-select"><option>Todos los estados</option><option>Activo</option><option>Pendiente</option><option>Bloqueado</option></select>
-        <select class="filter-select"><option>Último acceso</option><option>Hoy</option><option>Esta semana</option></select>
-        <button class="btn btn-outline filter-clear-btn"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon></button>
-      </div>
-    </div>
-    <div class="actions-section"><button class="btn btn-primary"><lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>Nuevo usuario</button></div>
-  </div>
+  <app-barra-filtros
+    [config]="userFilterConfig"
+    (stateChange)="setUserFilterState($event)"
+  ></app-barra-filtros>
 
   <section class="workspace">
     <div class="main-column">
       <div class="table-card">
-        <div class="table-card-header"><div><h3>Usuarios del sistema</h3><p>Gestiona roles, permisos, acceso y estado de cuenta.</p></div><span class="table-count">{{ users.length }} usuarios</span></div>
+        <div class="table-card-header"><div><h3>Usuarios del sistema</h3><p>Gestiona roles, permisos, acceso y estado de cuenta.</p></div><span class="table-count">{{ filteredUsers.length }} de {{ users.length }} usuarios</span></div>
         <div class="table-responsive">
           <table class="data-table">
             <thead><tr><th class="col-check"><input type="checkbox" [checked]="areAllUsersSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllUsers($event)"></th><th>Usuario</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Último acceso</th></tr></thead>
             <tbody>
-              <tr *ngFor="let user of users" class="data-row" [class.active]="activeUser?.id === user.id" [class.checked]="isUserSelected(user)" (click)="showUserDetails(user)">
+              <tr *ngFor="let user of filteredUsers" class="data-row" [class.active]="activeUser?.id === user.id" [class.checked]="isUserSelected(user)" (click)="showUserDetails(user)">
                 <td class="col-check" (click)="$event.stopPropagation()"><input type="checkbox" [checked]="isUserSelected(user)" (change)="toggleUserSelection(user, $event)"></td>
                 <td><div class="user-cell"><span>{{ user.name.charAt(0) }}</span><div><strong>{{ user.name }}</strong><small>{{ user.username }}</small></div></div></td>
                 <td class="muted-cell">{{ user.email }}</td>

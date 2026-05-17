@@ -1,0 +1,45 @@
+<div class="top-bar">
+  <div class="search-section">
+    <div class="search-box">
+      <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
+      <input
+        type="text"
+        [placeholder]="resolvedSearchPlaceholder"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+      >
+    </div>
+
+    @if (resolvedFilters.length) {
+      <div class="filter-group">
+        @for (filter of resolvedFilters; track filter.id) {
+          <select
+            class="filter-select"
+            [attr.aria-label]="filter.ariaLabel ?? filter.id"
+            [(ngModel)]="selectedFilters[filter.id]"
+            (ngModelChange)="onFilterChange()"
+          >
+            @for (option of filter.options; track option) {
+              <option [value]="getOptionValue(option)">{{ getOptionLabel(option) }}</option>
+            }
+          </select>
+        }
+
+        @if (resolvedShowClearButton) {
+          <button class="btn btn-outline filter-clear-btn" type="button" title="Limpiar filtros" (click)="resetFilters()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (resolvedActionLabel) {
+    <div class="actions-section">
+      <button class="btn btn-primary" type="button" [disabled]="resolvedActionDisabled" (click)="actionClick.emit()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        {{ resolvedActionLabel }}
+      </button>
+    </div>
+  }
+</div>

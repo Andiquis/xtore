@@ -12,43 +12,10 @@
     </article>
   </section>
 
-  <div class="top-bar">
-    <div class="search-section">
-      <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
-        <input type="text" placeholder="Buscar por comprobante, cliente o vendedor">
-      </div>
-      <div class="filter-group">
-        <select class="filter-select">
-          <option>Hoy</option>
-          <option>Esta semana</option>
-          <option>Este mes</option>
-        </select>
-        <select class="filter-select">
-          <option>Todos los estados</option>
-          <option>Pagada</option>
-          <option>Pendiente</option>
-          <option>Anulada</option>
-        </select>
-        <select class="filter-select">
-          <option>Método de pago</option>
-          <option>Efectivo</option>
-          <option>Tarjeta</option>
-          <option>Transferencia</option>
-          <option>Yape</option>
-        </select>
-        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros">
-          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
-        </button>
-      </div>
-    </div>
-    <div class="actions-section">
-      <button class="btn btn-primary">
-        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
-        Nueva venta
-      </button>
-    </div>
-  </div>
+  <app-barra-filtros
+    [config]="salesFilterConfig"
+    (stateChange)="setSalesFilterState($event)"
+  ></app-barra-filtros>
 
   <section class="sales-workspace">
     <div class="sales-main">
@@ -58,7 +25,7 @@
             <h3>Listado de ventas</h3>
             <p>Selecciona una fila para ver el detalle completo del comprobante.</p>
           </div>
-          <span class="table-count">{{ sales.length }} ventas</span>
+          <span class="table-count">{{ filteredSales.length }} de {{ sales.length }} ventas</span>
         </div>
 
         <div class="table-responsive">
@@ -77,7 +44,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let sale of sales" class="sales-row" [class.active]="activeSale?.id === sale.id" [class.checked]="isSaleSelected(sale)" (click)="showSaleDetails(sale)">
+              <tr *ngFor="let sale of filteredSales" class="sales-row" [class.active]="activeSale?.id === sale.id" [class.checked]="isSaleSelected(sale)" (click)="showSaleDetails(sale)">
                 <td class="col-check" (click)="$event.stopPropagation()">
                   <input type="checkbox" [checked]="isSaleSelected(sale)" (change)="toggleSaleSelection(sale, $event)">
                 </td>
