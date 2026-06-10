@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-
 export const routes: Routes = [
   {
     path: '',
@@ -10,14 +9,12 @@ export const routes: Routes = [
   {
     path: 'landing',
     loadChildren: () =>
-      import('./features/landing/routes/landing.routes')
-        .then((m) => m.LANDING_ROUTES),
+      import('./app/features/landing/routes/landing.routes').then((m) => m.LANDING_ROUTES),
   },
   {
     path: 'panel',
     loadChildren: () =>
-      import('./features/panel_ctrl/routes/panel_ctrl.routes')
-        .then((m) => m.PANEL_CTRL_ROUTES),
+      import('./app/features/panel_ctrl/routes/panel_ctrl.routes').then((m) => m.PANEL_CTRL_ROUTES),
   },
   {
     path: '**',
