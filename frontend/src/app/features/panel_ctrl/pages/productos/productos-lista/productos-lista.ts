@@ -19,6 +19,12 @@ import {
   BarraFiltrosConfig,
   BarraFiltrosState,
 } from '../../../components/barra-filtros/barra-filtros';
+import {
+  Table,
+  TableCellTemplate,
+  TableColumn,
+  TableRowEvent,
+} from '../../../components/table/table';
 import { ProductoForm, ProductoFormValue } from './producto-form/producto-form';
 
 type ProductFilterId = 'categoria' | 'marca' | 'presentacion';
@@ -29,10 +35,21 @@ const DEFAULT_PRODUCT_FILTERS: Record<ProductFilterId, string> = {
   presentacion: 'todos',
 };
 
+interface Producto {
+  id: string;
+  codigo: string;
+  name: string;
+  category: string;
+  marca: string;
+  presentacion: string;
+  price: number;
+  image: string | null;
+}
+
 @Component({
   selector: 'app-productos-lista',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule, ProductoForm, BarraFiltros],
+  imports: [CommonModule, LucideAngularModule, ProductoForm, BarraFiltros, Table, TableCellTemplate],
   templateUrl: './productos-lista.html',
   styleUrl: '../productos.scss',
 })
@@ -48,13 +65,25 @@ export class ProductosLista {
   EyeIcon = Eye;
   PackageIcon = Package;
 
-  activeProduct: any = null;
-  selectedProducts: any[] = [];
+  activeProduct: Producto | null = null;
+  selectedProducts: Producto[] = [];
   isProductFormOpen = false;
   searchTerm = '';
+  currentPage = 1;
+  pageSize = 5;
   productFilterValues: Record<ProductFilterId, string> = { ...DEFAULT_PRODUCT_FILTERS };
+  readonly pageSizeOptions = [5, 10, 20];
 
-  products = [
+  readonly productColumns: TableColumn<Producto>[] = [
+    { key: 'name', label: 'Producto' },
+    { key: 'codigo', label: 'Código (SKU)', cellClass: 'font-mono text-gray', width: '150px' },
+    { key: 'category', label: 'Categoría', width: '140px' },
+    { key: 'marca', label: 'Marca', cellClass: 'font-medium text-dark', width: '130px' },
+    { key: 'presentacion', label: 'Presentación', cellClass: 'text-gray font-medium', width: '150px' },
+    { key: 'price', label: 'Precio', cellClass: 'text-right font-medium text-dark', headerClass: 'text-right', align: 'right', width: '120px' },
+  ];
+
+  products: Producto[] = [
     {
       id: 'PRD-001',
       codigo: 'ZPT-URB-01',
@@ -233,6 +262,19 @@ export class ProductosLista {
     });
   }
 
+  get paginatedProducts(): Producto[] {
+    const start = (this.safeCurrentPage - 1) * this.pageSize;
+    return this.filteredProducts.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredProducts.length / this.pageSize));
+  }
+
+  get safeCurrentPage(): number {
+    return Math.min(this.currentPage, this.totalPages);
+  }
+
   get categoriaNames(): string[] {
     return this.categorias.map((categoria) => categoria.name);
   }
@@ -267,11 +309,16 @@ export class ProductosLista {
     };
 
     this.products = [product, ...this.products];
+    this.currentPage = 1;
     this.closeProductForm();
   }
 
-  showProductDetails(product: any): void {
+  showProductDetails(product: Producto): void {
     this.activeProduct = product;
+  }
+
+  showProductRowDetails(event: TableRowEvent<Producto>): void {
+    this.showProductDetails(event.item);
   }
 
   closeProductDetails(): void {
@@ -285,42 +332,24 @@ export class ProductosLista {
       marca: state.filters['marca'] ?? DEFAULT_PRODUCT_FILTERS.marca,
       presentacion: state.filters['presentacion'] ?? DEFAULT_PRODUCT_FILTERS.presentacion,
     };
+    this.currentPage = 1;
     this.selectedProducts = this.selectedProducts.filter((selected) =>
       this.filteredProducts.some((product) => product.id === selected.id),
     );
   }
 
-  isProductSelected(product: any): boolean {
-    return this.selectedProducts.some((selected) => selected.id === product.id);
-  }
-
-  toggleProductSelection(product: any, event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.selectedProducts = checked
-      ? this.isProductSelected(product)
-        ? this.selectedProducts
-        : [...this.selectedProducts, product]
-      : this.selectedProducts.filter((selected) => selected.id !== product.id);
-  }
-
-  toggleAllProducts(event: Event): void {
-    const checked = (event.target as HTMLInputElement).checked;
-    this.selectedProducts = checked ? [...this.filteredProducts] : [];
-  }
-
-  areAllProductsSelected(): boolean {
-    return (
-      this.filteredProducts.length > 0 &&
-      this.selectedProducts.length === this.filteredProducts.length
-    );
-  }
-
-  hasPartialSelection(): boolean {
-    return this.selectedProducts.length > 0 && !this.areAllProductsSelected();
-  }
-
   clearProductSelection(): void {
     this.selectedProducts = [];
+  }
+
+  setPage(page: number): void {
+    this.currentPage = Math.min(Math.max(page, 1), this.totalPages);
+  }
+
+  setPageSize(value: number): void {
+    this.pageSize = Number(value);
+    this.currentPage = 1;
+    this.clearProductSelection();
   }
 
   private normalizeText(value: string): string {

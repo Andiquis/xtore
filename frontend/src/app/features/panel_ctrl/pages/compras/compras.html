@@ -6,72 +6,73 @@
     </article>
   </section>
 
-  <div class="top-bar">
-    <div class="search-section">
-      <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" class="icon-gray"></lucide-icon>
-        <input type="text" placeholder="Buscar por proveedor, orden o documento">
-      </div>
-      <div class="filter-group">
-        <select class="filter-select"><option>Este mes</option><option>Hoy</option><option>Esta semana</option></select>
-        <select class="filter-select"><option>Todos los estados</option><option>Pendiente</option><option>Recibida</option><option>Confirmada</option></select>
-        <select class="filter-select"><option>Estado de pago</option><option>Pagada</option><option>Por pagar</option><option>Parcial</option></select>
-        <button class="btn btn-outline filter-clear-btn" title="Limpiar filtros"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon></button>
-      </div>
-    </div>
-    <div class="actions-section">
-      <button class="btn btn-primary"><lucide-icon [img]="PlusIcon" [size]="18"></lucide-icon>Nueva compra</button>
-    </div>
-  </div>
+  <app-barra-filtros
+    [config]="purchaseFilterConfig"
+    (stateChange)="setPurchaseFilterState($event)"
+  ></app-barra-filtros>
 
   <section class="workspace">
     <div class="main-column">
-      <div class="table-card">
-        <div class="table-card-header">
-          <div><h3>Listado de compras</h3><p>Consulta órdenes, recepción, pagos y actualización de inventario.</p></div>
-          <span class="table-count">{{ purchases.length }} compras</span>
-        </div>
-        <div class="table-responsive">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th class="col-check"><input type="checkbox" [checked]="areAllPurchasesSelected()" [indeterminate]="hasPartialSelection()" (change)="toggleAllPurchases($event)"></th>
-                <th>Documento</th><th>Proveedor</th><th>Fecha</th><th>Recepción</th><th>Pago</th><th class="text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let purchase of purchases" class="data-row" [class.active]="activePurchase?.id === purchase.id" [class.checked]="isPurchaseSelected(purchase)" (click)="showPurchaseDetails(purchase)">
-                <td class="col-check" (click)="$event.stopPropagation()"><input type="checkbox" [checked]="isPurchaseSelected(purchase)" (change)="togglePurchaseSelection(purchase, $event)"></td>
-                <td><div class="main-cell"><strong>{{ purchase.doc }}</strong><span>{{ purchase.id }}</span></div></td>
-                <td><div class="main-cell"><strong>{{ purchase.supplier }}</strong><span>{{ purchase.responsible }}</span></div></td>
-                <td class="muted-cell">{{ purchase.date }}</td>
-                <td><span class="status-pill" [ngClass]="getStatusClass(purchase.status)">{{ purchase.status }}</span></td>
-                <td><span class="status-pill" [ngClass]="getPaymentClass(purchase.payment)">{{ purchase.payment }}</span></td>
-                <td class="text-right total-cell">S/ {{ purchase.total | number:'1.2-2' }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="selection-summary-panel" *ngIf="selectedPurchases.length === 1">
-          <div><span class="section-kicker">Compra marcada</span><h3>{{ selectedPurchases[0].doc }}</h3><p>{{ selectedPurchases[0].supplier }} · S/ {{ selectedPurchases[0].total | number:'1.2-2' }}</p></div>
-          <div class="crud-actions">
-            <button class="tool-btn" (click)="showPurchaseDetails(selectedPurchases[0])"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>Ver detalle</button>
-            <button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar</button>
-            <button class="tool-btn danger"><lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>Anular</button>
+      <app-table
+        title="Listado de compras"
+        description="Consulta órdenes, recepción, pagos y actualización de inventario."
+        [countLabel]="filteredPurchases.length + ' de ' + purchases.length + ' compras'"
+        [items]="paginatedPurchases"
+        [columns]="purchaseColumns"
+        [(selectedItems)]="selectedPurchases"
+        [(activeItem)]="activePurchase"
+        [selectable]="true"
+        [showPagination]="true"
+        [totalItems]="filteredPurchases.length"
+        [currentPage]="safeCurrentPage"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [showPageSize]="true"
+        [showPageStatus]="true"
+        itemLabel="compras"
+        keyField="id"
+        (rowClick)="showPurchaseRowDetails($event)"
+        (pageChange)="setPage($event)"
+        (pageSizeChange)="setPageSize($event)"
+      >
+        <ng-template appTableCell="doc" let-purchase>
+          <div class="main-cell"><strong>{{ purchase.doc }}</strong><span>{{ purchase.id }}</span></div>
+        </ng-template>
+
+        <ng-template appTableCell="supplier" let-purchase>
+          <div class="main-cell"><strong>{{ purchase.supplier }}</strong><span>{{ purchase.responsible }}</span></div>
+        </ng-template>
+
+        <ng-template appTableCell="status" let-purchase>
+          <span class="status-pill" [ngClass]="getStatusClass(purchase.status)">{{ purchase.status }}</span>
+        </ng-template>
+
+        <ng-template appTableCell="payment" let-purchase>
+          <span class="status-pill" [ngClass]="getPaymentClass(purchase.payment)">{{ purchase.payment }}</span>
+        </ng-template>
+
+        <ng-template appTableCell="total" let-purchase>
+          S/ {{ purchase.total | number:'1.2-2' }}
+        </ng-template>
+
+        <div table-selection>
+          <div class="selection-summary-panel" *ngIf="selectedPurchases.length === 1">
+            <div><span class="section-kicker">Compra marcada</span><h3>{{ selectedPurchases[0].doc }}</h3><p>{{ selectedPurchases[0].supplier }} · S/ {{ selectedPurchases[0].total | number:'1.2-2' }}</p></div>
+            <div class="crud-actions">
+              <button class="tool-btn" (click)="showPurchaseDetails(selectedPurchases[0])"><lucide-icon [img]="EyeIcon" [size]="16"></lucide-icon>Ver detalle</button>
+              <button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar</button>
+              <button class="tool-btn danger"><lucide-icon [img]="CancelIcon" [size]="16"></lucide-icon>Anular</button>
+            </div>
+          </div>
+          <div class="selection-summary-panel bulk" *ngIf="selectedPurchases.length > 1">
+            <div><span class="section-kicker">Selección múltiple</span><h3>{{ selectedPurchases.length }} compras seleccionadas</h3><p>Acciones generales para órdenes marcadas.</p></div>
+            <div class="crud-actions">
+              <button class="tool-btn" (click)="clearSelection()"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon>Limpiar</button>
+              <button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar lote</button>
+            </div>
           </div>
         </div>
-        <div class="selection-summary-panel bulk" *ngIf="selectedPurchases.length > 1">
-          <div><span class="section-kicker">Selección múltiple</span><h3>{{ selectedPurchases.length }} compras seleccionadas</h3><p>Acciones generales para órdenes marcadas.</p></div>
-          <div class="crud-actions">
-            <button class="tool-btn" (click)="clearSelection()"><lucide-icon [img]="EraserIcon" [size]="16"></lucide-icon>Limpiar</button>
-            <button class="tool-btn primary"><lucide-icon [img]="ConfirmIcon" [size]="16"></lucide-icon>Confirmar lote</button>
-          </div>
-        </div>
-        <div class="pagination">
-          <div class="page-summary"><span class="page-info">Mostrando <strong>1-4</strong> de <strong>42</strong> compras</span><label class="page-size"><span>Por página</span><select><option>5</option><option>10</option><option>25</option></select></label></div>
-          <div class="page-controls"><button class="page-nav" disabled>Anterior</button><button class="page-btn active">1</button><button class="page-btn">2</button><span class="page-dots">...</span><button class="page-btn">9</button><button class="page-nav">Siguiente</button></div>
-        </div>
-      </div>
+      </app-table>
     </div>
 
     <aside class="side-panel">

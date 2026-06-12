@@ -1,0 +1,161 @@
+<div class="table-card">
+  @if (hasHeader) {
+    <div class="table-card-header">
+      <div>
+        @if (title) {
+          <h3>{{ title }}</h3>
+        }
+        @if (description) {
+          <p>{{ description }}</p>
+        }
+      </div>
+
+      @if (countLabel) {
+        <span class="table-count">{{ countLabel }}</span>
+      }
+    </div>
+  }
+
+  <ng-content select="[table-before]"></ng-content>
+
+  <div class="table-responsive">
+    <table class="data-table" [style.min-width]="minWidth">
+      <thead>
+        <tr>
+          @if (selectable) {
+            <th class="col-check">
+              <input
+                type="checkbox"
+                [checked]="areAllSelected()"
+                [indeterminate]="hasPartialSelection()"
+                (change)="toggleAll($event)"
+                aria-label="Seleccionar todos"
+              >
+            </th>
+          }
+
+          @for (column of columns; track column.key) {
+            <th [ngClass]="column.headerClass" [ngStyle]="getColumnStyle(column)">
+              {{ column.label }}
+            </th>
+          }
+        </tr>
+      </thead>
+
+      <tbody>
+        @if (hasRows) {
+          @for (item of items; track trackByItem($index, item); let index = $index) {
+            <tr
+              class="table-row"
+              [class.active]="isActive(item)"
+              [class.checked]="isSelected(item)"
+              [class.row-clickable]="rowClickable"
+              [attr.tabindex]="rowClickable ? 0 : null"
+              (click)="onRowClick(item, index, $event)"
+              (dblclick)="onRowDoubleClick(item, index, $event)"
+              (keydown)="onRowKeydown(item, index, $event)"
+            >
+              @if (selectable) {
+                <td
+                  class="col-check"
+                  role="button"
+                  tabindex="0"
+                  [attr.aria-pressed]="isSelected(item)"
+                  [attr.aria-label]="isSelected(item) ? 'Quitar selección de fila' : 'Seleccionar fila'"
+                  (click)="toggleSelectionFromCell(item, index, $event)"
+                  (keydown)="onSelectionCellKeydown(item, index, $event)"
+                >
+                  <input
+                    #selectionCheckbox
+                    type="checkbox"
+                    [checked]="isSelected(item)"
+                    (click)="$event.stopPropagation()"
+                    (change)="toggleSelection(item, index, $event)"
+                    (keydown)="onSelectionKeydown(item, index, $event)"
+                    aria-label="Seleccionar fila"
+                  >
+                </td>
+              }
+
+              @for (column of columns; track column.key) {
+                <td
+                  [attr.data-label]="column.dataLabel || column.label"
+                  [ngClass]="getCellClass(item, column, index)"
+                  [ngStyle]="getColumnStyle(column)"
+                >
+                  @if (getCellTemplate(column.key); as cellTemplate) {
+                    <ng-container
+                      [ngTemplateOutlet]="cellTemplate.template"
+                      [ngTemplateOutletContext]="getCellContext(item, column, index)"
+                    ></ng-container>
+                  } @else {
+                    {{ getDisplayValue(item, column, index) }}
+                  }
+                </td>
+              }
+            </tr>
+          }
+        } @else if (showEmptyState) {
+          <tr>
+            <td class="empty-cell" [attr.colspan]="columns.length + (selectable ? 1 : 0)">
+              <div class="empty-state">
+                <p>{{ emptyMessage }}</p>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <ng-content select="[table-selection]"></ng-content>
+  <ng-content select="[table-after]"></ng-content>
+
+  @if (showPagination) {
+    <div class="pagination">
+      <div class="page-summary">
+        <span class="page-info">
+          Mostrando <strong>{{ pageStart }}-{{ pageEnd }}</strong> de <strong>{{ resolvedTotalItems }}</strong> {{ itemLabel }}
+        </span>
+
+        @if (showPageSize && pageSizeOptions.length) {
+          <label class="page-size">
+            <span>Por página</span>
+            <select [ngModel]="resolvedPageSize" (ngModelChange)="onPageSizeChange($event)">
+              @for (option of pageSizeOptions; track option) {
+                <option [ngValue]="option">{{ option }}</option>
+              }
+            </select>
+          </label>
+        }
+      </div>
+
+      <div class="page-controls">
+        <button class="page-nav" type="button" [disabled]="safeCurrentPage <= 1" (click)="previousPage()">Anterior</button>
+
+        @for (page of visiblePages; track page + '-' + $index) {
+          @if (page === 'ellipsis') {
+            <span class="page-dots">...</span>
+          } @else {
+            <button
+              class="page-btn"
+              type="button"
+              [class.active]="page === safeCurrentPage"
+              (click)="goToPage(page)"
+            >
+              {{ page }}
+            </button>
+          }
+        }
+
+        @if (showPageStatus) {
+          <span class="page-status">Página {{ safeCurrentPage }} de {{ resolvedTotalPages }}</span>
+        }
+
+        <button class="page-nav" type="button" [disabled]="safeCurrentPage >= resolvedTotalPages" (click)="nextPage()">Siguiente</button>
+      </div>
+    </div>
+  }
+
+  <ng-content select="[table-pagination]"></ng-content>
+</div>

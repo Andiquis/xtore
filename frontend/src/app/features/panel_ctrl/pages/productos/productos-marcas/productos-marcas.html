@@ -21,82 +21,59 @@
     </button>
   </div>
 
-  <div class="table-card">
-    <div class="table-card-header">
-      <div>
-        <h3>Directorio de marcas</h3>
-        <p>Selecciona una fila para ver detalles o usa los checks para acciones masivas.</p>
-      </div>
-      <span class="table-count">{{ filteredTotal() }} de {{ total() }} marcas</span>
-    </div>
-
-    <!-- Loading Overlay -->
-    <div class="table-loading" *ngIf="loading()">
+  <app-table
+    title="Directorio de marcas"
+    description="Selecciona una fila para ver detalles o usa los checks para acciones masivas."
+    [countLabel]="filteredTotal() + ' de ' + total() + ' marcas'"
+    [items]="paginatedMarcas()"
+    [columns]="brandColumns"
+    [(selectedItems)]="selectedItems"
+    [(activeItem)]="activeItem"
+    [selectable]="true"
+    [showEmptyState]="false"
+    [showPagination]="true"
+    [totalItems]="filteredTotal()"
+    [currentPage]="safeCurrentPage()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="marcas"
+    keyField="id_marca"
+    (rowClick)="showRowDetails($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+  >
+    <div table-before class="table-loading" *ngIf="loading()">
       <span class="spinner"></span>
       <span>Cargando marcas...</span>
     </div>
 
-    <div class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th class="col-check">
-              <input
-                type="checkbox"
-                [checked]="areAllSelected()"
-                [indeterminate]="hasPartialSelection()"
-                (change)="toggleAll($event)"
-              >
-            </th>
-            <th>Marca</th>
-            <th>ID</th>
-            <th>Estado</th>
-            <th>Productos</th>
-            <th>Actualizado</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let marca of paginatedMarcas()"
-            class="table-row"
-            [class.active]="activeItem?.id_marca === marca.id_marca"
-            [class.checked]="isSelected(marca)"
-            (click)="showDetails(marca)"
-          >
-            <td class="col-check" (click)="$event.stopPropagation()">
-              <input
-                type="checkbox"
-                [checked]="isSelected(marca)"
-                (change)="toggleSelection(marca, $event)"
-              >
-            </td>
-            <td data-label="Marca">
-              <div class="product-cell">
-                <div class="product-copy">
-                  <span class="product-name font-bold text-dark">{{ marca.nombre_marca }}</span>
-                  <span class="product-meta">ID {{ marca.id_marca }} · {{ marca.estado_marca }}</span>
-                </div>
-              </div>
-            </td>
-            <td class="font-mono text-gray" data-label="ID">{{ marca.id_marca }}</td>
-            <td data-label="Estado">
-              <span class="status-pill" [class.status-success]="marca.estado_marca === 'activo'" [class.status-danger]="marca.estado_marca === 'inactivo'">
-                {{ marca.estado_marca }}
-              </span>
-            </td>
-            <td data-label="Productos"><span class="category-badge">{{ getProductCountLabel(marca) }}</span></td>
-            <td class="text-gray font-medium" data-label="Actualizado">
-              {{ marca.fecha_modificacion ? (marca.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
-            </td>
-            <td class="text-gray font-medium" data-label="Descripción">{{ marca.descripcion_marca || '—' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ng-template appTableCell="nombre_marca" let-marca>
+      <div class="product-cell">
+        <div class="product-copy">
+          <span class="product-name font-bold text-dark">{{ marca.nombre_marca }}</span>
+          <span class="product-meta">ID {{ marca.id_marca }} · {{ marca.estado_marca }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template appTableCell="estado_marca" let-marca>
+      <span class="status-pill" [class.status-success]="marca.estado_marca === 'activo'" [class.status-danger]="marca.estado_marca === 'inactivo'">
+        {{ marca.estado_marca }}
+      </span>
+    </ng-template>
+
+    <ng-template appTableCell="productos" let-marca>
+      <span class="category-badge">{{ getProductCountLabel(marca) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="fecha_modificacion" let-marca>
+      {{ marca.fecha_modificacion ? (marca.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
+    </ng-template>
 
     <!-- Empty state -->
-    <div class="empty-state" *ngIf="!loading() && filteredMarcas().length === 0">
+    <div table-after class="empty-state" *ngIf="!loading() && filteredMarcas().length === 0">
       <p>{{ searchTerm() ? 'No encontramos marcas para esa búsqueda.' : 'No hay marcas registradas.' }}</p>
       <button class="btn btn-primary" type="button" (click)="openForm()">
         <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
@@ -104,75 +81,49 @@
       </button>
     </div>
 
-    <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
-      <div>
-        <span class="detail-eyebrow">Marca seleccionada</span>
-        <h3>{{ selectedItems[0].nombre_marca }}</h3>
-        <p>ID {{ selectedItems[0].id_marca }} · Estado: {{ selectedItems[0].estado_marca }}</p>
-      </div>
-      <div class="detail-actions">
-        <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
-          <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Ver detalle
-        </button>
-        <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])">
-          <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Editar
-        </button>
-        <button class="detail-btn detail-btn--danger" (click)="requestDeleteMarca(selectedItems[0])" [disabled]="loading()">
-          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Eliminar
-        </button>
-      </div>
-    </div>
-
-    <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
-      <div>
-        <span class="detail-eyebrow">Selección múltiple</span>
-        <h3>{{ selectedItems.length }} marcas seleccionadas</h3>
-        <p>Acciones masivas para los registros marcados con checklist.</p>
-      </div>
-      <div class="detail-actions">
-        <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
-          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Limpiar
-        </button>
-        <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
-          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Eliminar marcas
-        </button>
-      </div>
-    </div>
-
-    <div class="pagination">
-      <div class="page-summary">
-        <span class="page-info">Mostrando <strong>{{ getRangeText() }}</strong> de <strong>{{ filteredTotal() }}</strong> marcas</span>
-        <label class="page-size">
-          <span>Por página</span>
-          <select [ngModel]="pageSize()" (ngModelChange)="setPageSize($event)">
-            <option *ngFor="let option of pageSizeOptions" [ngValue]="option">{{ option }}</option>
-          </select>
-        </label>
-      </div>
-      <div class="page-controls">
-        <button class="page-nav" type="button" [disabled]="isFirstPage()" (click)="previousPage()">Anterior</button>
-        <ng-container *ngFor="let page of visiblePages()">
-          <span class="page-dots" *ngIf="page === 'ellipsis'">...</span>
-          <button
-            *ngIf="page !== 'ellipsis'"
-            class="page-btn"
-            type="button"
-            [class.active]="page === safeCurrentPage()"
-            (click)="goToPage(page)"
-          >
-            {{ page }}
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+        <div>
+          <span class="detail-eyebrow">Marca seleccionada</span>
+          <h3>{{ selectedItems[0].nombre_marca }}</h3>
+          <p>ID {{ selectedItems[0].id_marca }} · Estado: {{ selectedItems[0].estado_marca }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
+            <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Ver detalle
           </button>
-        </ng-container>
-        <span class="page-status">Página {{ safeCurrentPage() }} de {{ totalPages() }}</span>
-        <button class="page-nav" type="button" [disabled]="isLastPage()" (click)="nextPage()">Siguiente</button>
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteMarca(selectedItems[0])" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedItems.length }} marcas seleccionadas</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar marcas
+          </button>
+        </div>
       </div>
     </div>
-  </div>
+
+  </app-table>
 
   <div class="product-modal-backdrop" *ngIf="activeItem as marca" (click)="closeDetails()">
     <section class="product-modal" (click)="$event.stopPropagation()">

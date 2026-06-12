@@ -1,135 +1,94 @@
 <div class="fade-in">
-  <div class="top-bar">
-    <div class="search-section">
-      <div class="search-box">
-        <lucide-icon [img]="SearchIcon" [size]="18" [strokeWidth]="2" class="icon-gray"></lucide-icon>
-        <input type="text" placeholder="Buscar por nombre de categoría">
+  <app-barra-filtros
+    [config]="categoryFilterConfig"
+    (stateChange)="setCategoryFilterState($event)"
+    (actionClick)="openForm()"
+  ></app-barra-filtros>
+
+  <app-table
+    title="Catálogo de categorías"
+    description="Selecciona una fila para ver detalles o usa los checks para acciones masivas."
+    [countLabel]="filteredCategorias.length + ' de ' + categorias.length + ' categorías'"
+    [items]="paginatedCategorias"
+    [columns]="categoryColumns"
+    [(selectedItems)]="selectedItems"
+    [(activeItem)]="activeItem"
+    [selectable]="true"
+    [showPagination]="true"
+    [totalItems]="filteredCategorias.length"
+    [currentPage]="safeCurrentPage"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="categorías"
+    keyField="id"
+    (rowClick)="showRowDetails($event)"
+    (pageChange)="setPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+  >
+    <ng-template appTableCell="name" let-cat>
+      <div class="product-cell">
+        <div class="product-copy">
+          <span class="product-name font-bold text-dark">{{ cat.name }}</span>
+          <span class="product-meta">{{ cat.id }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template appTableCell="count" let-cat>
+      <span class="category-badge">{{ cat.count }} productos</span>
+    </ng-template>
+
+    <ng-template appTableCell="status" let-cat>
+      <span class="status-pill" [ngClass]="cat.status === 'Visible' ? 'status-success' : 'status-danger'">
+        {{ cat.status }}
+      </span>
+    </ng-template>
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+        <div>
+          <span class="detail-eyebrow">Categoría seleccionada</span>
+          <h3>{{ selectedItems[0].name }}</h3>
+          <p>{{ selectedItems[0].id }} · {{ selectedItems[0].count }} productos · {{ selectedItems[0].status }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
+            <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Ver detalle
+          </button>
+          <button class="detail-btn detail-btn--primary">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar
+          </button>
+          <button class="detail-btn detail-btn--danger">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedItems.length }} categorías seleccionadas</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar categorías
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="actions-section">
-      <button class="btn btn-primary" type="button" (click)="openForm()">
-        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
-        Nueva Categoría
-      </button>
-    </div>
-  </div>
-
-  <div class="table-card">
-    <div class="table-card-header">
-      <div>
-        <h3>Catálogo de categorías</h3>
-        <p>Selecciona una fila para ver detalles o usa los checks para acciones masivas.</p>
-      </div>
-      <span class="table-count">{{ categorias.length }} categorías</span>
-    </div>
-
-    <div class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th class="col-check">
-              <input
-                type="checkbox"
-                [checked]="areAllSelected()"
-                [indeterminate]="hasPartialSelection()"
-                (change)="toggleAll($event)"
-              >
-            </th>
-            <th>Categoría</th>
-            <th>ID</th>
-            <th>Productos</th>
-            <th>Estado</th>
-            <th>Descripción</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let cat of categorias"
-            class="table-row"
-            [class.active]="activeItem?.id === cat.id"
-            [class.checked]="isSelected(cat)"
-            (click)="showDetails(cat)"
-          >
-            <td class="col-check" (click)="$event.stopPropagation()">
-              <input
-                type="checkbox"
-                [checked]="isSelected(cat)"
-                (change)="toggleSelection(cat, $event)"
-              >
-            </td>
-            <td data-label="Categoría">
-              <div class="product-cell">
-                <div class="product-copy">
-                  <span class="product-name font-bold text-dark">{{ cat.name }}</span>
-                  <span class="product-meta">{{ cat.id }}</span>
-                </div>
-              </div>
-            </td>
-            <td class="font-mono text-gray" data-label="ID">{{ cat.id }}</td>
-            <td data-label="Productos"><span class="category-badge">{{ cat.count }} productos</span></td>
-            <td data-label="Estado">
-              <span class="status-pill" [ngClass]="cat.status === 'Visible' ? 'status-success' : 'status-danger'">
-                {{ cat.status }}
-              </span>
-            </td>
-            <td class="text-gray font-medium" data-label="Descripción">{{ cat.description || '—' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
-      <div>
-        <span class="detail-eyebrow">Categoría seleccionada</span>
-        <h3>{{ selectedItems[0].name }}</h3>
-        <p>{{ selectedItems[0].id }} · {{ selectedItems[0].count }} productos · {{ selectedItems[0].status }}</p>
-      </div>
-      <div class="detail-actions">
-        <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
-          <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Ver detalle
-        </button>
-        <button class="detail-btn detail-btn--primary">
-          <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Editar
-        </button>
-        <button class="detail-btn detail-btn--danger">
-          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Eliminar
-        </button>
-      </div>
-    </div>
-
-    <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
-      <div>
-        <span class="detail-eyebrow">Selección múltiple</span>
-        <h3>{{ selectedItems.length }} categorías seleccionadas</h3>
-        <p>Acciones masivas para los registros marcados con checklist.</p>
-      </div>
-      <div class="detail-actions">
-        <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
-          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Limpiar
-        </button>
-        <button class="detail-btn detail-btn--danger">
-          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Eliminar categorías
-        </button>
-      </div>
-    </div>
-
-    <div class="pagination">
-      <div class="page-summary">
-        <span class="page-info">Mostrando <strong>1-{{ categorias.length }}</strong> de <strong>{{ categorias.length }}</strong> categorías</span>
-      </div>
-      <div class="page-controls">
-        <button class="page-nav" disabled>Anterior</button>
-        <button class="page-btn active">1</button>
-        <button class="page-nav" disabled>Siguiente</button>
-      </div>
-    </div>
-  </div>
+  </app-table>
 
   <div class="product-modal-backdrop" *ngIf="activeItem as cat" (click)="closeDetails()">
     <section class="product-modal" (click)="$event.stopPropagation()" style="grid-template-columns: 1fr;">

@@ -5,131 +5,89 @@
     (actionClick)="openProductForm()"
   ></app-barra-filtros>
 
-  <div class="table-card">
-    <div class="table-card-header">
-      <div>
-        <h3>Inventario de productos</h3>
-        <p>Selecciona una fila para ver detalles o usa los checks para acciones masivas.</p>
+  <app-table
+    title="Inventario de productos"
+    description="Selecciona una fila para ver detalles o usa los checks para acciones masivas."
+    [countLabel]="filteredProducts.length + ' de ' + products.length + ' productos'"
+    [items]="paginatedProducts"
+    [columns]="productColumns"
+    [(selectedItems)]="selectedProducts"
+    [(activeItem)]="activeProduct"
+    [selectable]="true"
+    [showPagination]="true"
+    [totalItems]="filteredProducts.length"
+    [currentPage]="safeCurrentPage"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="productos"
+    keyField="id"
+    (rowClick)="showProductRowDetails($event)"
+    (pageChange)="setPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+  >
+    <ng-template appTableCell="name" let-product>
+      <div class="product-cell">
+        <div class="product-copy">
+          <span class="product-name font-bold text-dark">{{ product.name }}</span>
+          <span class="product-meta">{{ product.id }}</span>
+        </div>
       </div>
-      <span class="table-count">{{ filteredProducts.length }} de {{ products.length }} productos</span>
-    </div>
+    </ng-template>
 
-    <div class="table-responsive">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th class="col-check">
-              <input
-                type="checkbox"
-                [checked]="areAllProductsSelected()"
-                [indeterminate]="hasPartialSelection()"
-                (change)="toggleAllProducts($event)"
-              >
-            </th>
-            <th>Producto</th>
-            <th>Código (SKU)</th>
-            <th>Categoría</th>
-            <th>Marca</th>
-            <th>Presentación</th>
-            <th class="text-right">Precio</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr
-            *ngFor="let product of filteredProducts"
-            class="table-row"
-            [class.active]="activeProduct?.id === product.id"
-            [class.checked]="isProductSelected(product)"
-            (click)="showProductDetails(product)"
-          >
-            <td class="col-check" (click)="$event.stopPropagation()">
-              <input
-                type="checkbox"
-                [checked]="isProductSelected(product)"
-                (change)="toggleProductSelection(product, $event)"
-              >
-            </td>
-            <td data-label="Producto">
-              <div class="product-cell">
-                <div class="product-copy">
-                  <span class="product-name font-bold text-dark">{{ product.name }}</span>
-                  <span class="product-meta">{{ product.id }}</span>
-                </div>
-              </div>
-            </td>
-            <td class="font-mono text-gray" data-label="Código (SKU)">{{ product.codigo }}</td>
-            <td data-label="Categoría"><span class="category-badge">{{ product.category }}</span></td>
-            <td class="font-medium text-dark" data-label="Marca">{{ product.marca }}</td>
-            <td class="text-gray font-medium" data-label="Presentación">{{ product.presentacion }}</td>
-            <td class="text-right font-medium text-dark" data-label="Precio">S/ {{ product.price | number:'1.2-2' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <ng-template appTableCell="category" let-product>
+      <span class="category-badge">{{ product.category }}</span>
+    </ng-template>
 
-    <div class="selection-summary-panel" *ngIf="selectedProducts.length === 1">
-      <div>
-        <span class="detail-eyebrow">Producto marcado</span>
-        <h3>{{ selectedProducts[0].name }}</h3>
-        <p>{{ selectedProducts[0].codigo }} · {{ selectedProducts[0].category }} · S/ {{ selectedProducts[0].price | number:'1.2-2' }}</p>
+    <ng-template appTableCell="price" let-product>
+      S/ {{ product.price | number:'1.2-2' }}
+    </ng-template>
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedProducts.length === 1">
+        <div>
+          <span class="detail-eyebrow">Producto marcado</span>
+          <h3>{{ selectedProducts[0].name }}</h3>
+          <p>{{ selectedProducts[0].codigo }} · {{ selectedProducts[0].category }} · S/ {{ selectedProducts[0].price | number:'1.2-2' }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="showProductDetails(selectedProducts[0])">
+            <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Ver detalle
+          </button>
+          <button class="detail-btn detail-btn--primary">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar
+          </button>
+          <button class="detail-btn detail-btn--danger">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
       </div>
-      <div class="detail-actions">
-        <button class="detail-btn detail-btn--ghost" (click)="showProductDetails(selectedProducts[0])">
-          <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Ver detalle
-        </button>
-        <button class="detail-btn detail-btn--primary">
-          <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Editar
-        </button>
-        <button class="detail-btn detail-btn--danger">
-          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Eliminar
-        </button>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedProducts.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedProducts.length }} productos seleccionados</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearProductSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--primary">Cambiar estado</button>
+          <button class="detail-btn detail-btn--danger">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar productos
+          </button>
+        </div>
       </div>
     </div>
 
-    <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedProducts.length > 1">
-      <div>
-        <span class="detail-eyebrow">Selección múltiple</span>
-        <h3>{{ selectedProducts.length }} productos seleccionados</h3>
-        <p>Acciones masivas para los registros marcados con checklist.</p>
-      </div>
-      <div class="detail-actions">
-        <button class="detail-btn detail-btn--ghost" (click)="clearProductSelection()">
-          <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Limpiar
-        </button>
-        <button class="detail-btn detail-btn--primary">Cambiar estado</button>
-        <button class="detail-btn detail-btn--danger">
-          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
-          Eliminar productos
-        </button>
-      </div>
-    </div>
-
-    <div class="pagination">
-      <div class="page-summary">
-        <span class="page-info">Mostrando <strong>1-6</strong> de <strong>142</strong> productos</span>
-        <label class="page-size">
-          <span>Por página</span>
-          <select>
-            <option>6</option>
-            <option>12</option>
-            <option>24</option>
-          </select>
-        </label>
-      </div>
-      <div class="page-controls">
-        <button class="page-nav" disabled>Anterior</button>
-        <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <span class="page-dots">...</span>
-        <button class="page-btn">24</button>
-        <button class="page-nav">Siguiente</button>
-      </div>
-    </div>
-  </div>
+  </app-table>
 
   <div class="product-modal-backdrop" *ngIf="activeProduct as product" (click)="closeProductDetails()">
     <section class="product-modal" (click)="$event.stopPropagation()">

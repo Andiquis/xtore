@@ -18,6 +18,12 @@ import {
   BarraFiltros,
   BarraFiltrosState,
 } from '../../../components/barra-filtros/barra-filtros';
+import {
+  Table,
+  TableCellTemplate,
+  TableColumn,
+  TableRowEvent,
+} from '../../../components/table/table';
 import { MarcaForm, MarcaFormValue } from './marca-form/marca-form';
 import { MarcasService, Marca, CreateMarcaDto, UpdateMarcaDto } from './marcas.service';
 import { environment } from '../../../../../../environment/environment';
@@ -40,7 +46,7 @@ const BRAND_FILTERS = [
 @Component({
   selector: 'app-productos-marcas',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule, MarcaForm, BarraFiltros],
+  imports: [CommonModule, FormsModule, LucideAngularModule, MarcaForm, BarraFiltros, Table, TableCellTemplate],
   templateUrl: './productos-marcas.html',
   styleUrl: '../productos.scss',
 })
@@ -64,6 +70,14 @@ export class ProductosMarcas implements OnInit {
   deleteDialog: { mode: 'single' | 'bulk'; marcas: Marca[] } | null = null;
   logoLoadErrors = new Set<number>();
   readonly pageSizeOptions = [5, 10, 20, 50];
+  readonly brandColumns: TableColumn<Marca>[] = [
+    { key: 'nombre_marca', label: 'Marca' },
+    { key: 'id_marca', label: 'ID', cellClass: 'font-mono text-gray', width: '100px' },
+    { key: 'estado_marca', label: 'Estado', width: '120px' },
+    { key: 'productos', label: 'Productos', value: (marca) => this.getProductCountLabel(marca), width: '130px' },
+    { key: 'fecha_modificacion', label: 'Actualizado', cellClass: 'text-gray font-medium', width: '170px' },
+    { key: 'descripcion_marca', label: 'Descripción', cellClass: 'text-gray font-medium', emptyText: '-' },
+  ];
   readonly searchTerm = signal('');
   readonly estadoFilter = signal<EstadoFilter>('todos');
   readonly currentPage = signal(1);
@@ -282,6 +296,10 @@ export class ProductosMarcas implements OnInit {
 
   showDetails(item: Marca): void {
     this.activeItem = item;
+  }
+
+  showRowDetails(event: TableRowEvent<Marca>): void {
+    this.showDetails(event.item);
   }
 
   closeDetails(): void {

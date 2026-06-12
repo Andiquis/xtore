@@ -1,53 +1,475 @@
-<div class="background">
-  <!-- Animated particles -->
-  <div class="particles">
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-  </div>
+<!-- =========================================================================
+   SAMINCHAY — Luxury Natural Cosmetics Landing Page
+   ========================================================================= -->
 
-  <!-- Floating orbs -->
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
+<div class="landing-page" id="landing-page">
 
-  <!-- Central content -->
-  <div class="hero-container">
-    <div class="logo-glow">
-      <span class="logo-icon">⚡</span>
+  <!-- ===== FLOATING TOAST NOTIFICATION ===== -->
+  <div class="toast-notification" [class.show]="showToast()">
+    <div class="toast-content">
+      <i class="fa-solid fa-circle-check toast-icon"></i>
+      <div class="toast-details">
+        <span class="toast-title">Añadido con éxito</span>
+        <p class="toast-desc">{{ toastMessage() }}</p>
+      </div>
     </div>
-    <h1 class="title">
-      <span class="letter" style="--i:0">X</span>
-      <span class="letter" style="--i:1">T</span>
-      <span class="letter" style="--i:2">O</span>
-      <span class="letter" style="--i:3">R</span>
-      <span class="letter" style="--i:4">E</span>
-    </h1>
-    <p class="subtitle">F VBA ESTAS HACKEADO</p>
-    <div class="divider"></div>
-    <p class="tagline">{{ motivationalQuote }}</p>
-
-    <!-- Pulse ring -->
-    <div class="pulse-ring"></div>
+    <div class="toast-progress"></div>
   </div>
 
-  <!-- Bottom decorative bar -->
-  <div class="bottom-bar">
-    <div class="bar-segment"></div>
-    <div class="bar-segment"></div>
-    <div class="bar-segment"></div>
-    <div class="bar-segment"></div>
-    <div class="bar-segment"></div>
-  </div>
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" [class.scrolled]="isScrolled" id="main-navbar">
+    <div class="nav-container">
+      <a class="nav-logo" href="#hero-section">
+        <span class="logo-leaf"><i class="fa-solid fa-leaf"></i></span>
+        <span class="logo-text">SAMINCHAY</span>
+      </a>
 
-  <!--router-outlet></router-outlet-->
+      <ul class="nav-links" [class.active]="menuOpen">
+        <li><a href="#hero-section" (click)="closeMenu()">Inicio</a></li>
+        <li><a href="#benefits-section" (click)="closeMenu()">Filosofía</a></li>
+        <li><a href="#ingredients-section" (click)="closeMenu()">Ingredientes</a></li>
+        <li><a href="#products-section" (click)="closeMenu()">Colección</a></li>
+        <li><a href="#routine-section" (click)="closeMenu()">Rutina</a></li>
+        <li><a href="#about-section" (click)="closeMenu()">Historia</a></li>
+        <li><a href="#newsletter-section" class="nav-cta" (click)="closeMenu()">Contacto</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-cart-btn" aria-label="Ver carrito" id="nav-cart-btn-trigger">
+          <i class="fa-solid fa-bag-shopping"></i>
+          <span class="cart-badge" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
+        </button>
+
+        <button class="nav-toggle" (click)="toggleMenu()" id="nav-toggle-btn" aria-label="Toggle menu">
+          <span [class.open]="menuOpen"></span>
+          <span [class.open]="menuOpen"></span>
+          <span [class.open]="menuOpen"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero" id="hero-section">
+    <div class="hero-bg-overlay"></div>
+    <div class="hero-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+    <div class="hero-particles">
+      <div class="h-particle" *ngFor="let p of heroParticles"></div>
+    </div>
+
+    <div class="hero-grid">
+      <div class="hero-content">
+        <span class="hero-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> 100% Orgánico & Cruelty Free</span>
+        <h1 class="hero-title">
+          <span class="title-line">Revela tu belleza</span>
+          <span class="title-line accent">más pura y natural</span>
+        </h1>
+        <p class="hero-description">
+          Cosmética artesanal inspirada en la biodiversidad andina. Fórmulas botánicas diseñadas para nutrir y equilibrar tu piel de forma consciente.
+        </p>
+        <div class="hero-actions">
+          <a href="#products-section" class="btn btn-primary" id="hero-cta-shop">
+            <span>Comprar Colección</span>
+            <i class="fa-solid fa-chevron-right btn-arrow"></i>
+          </a>
+          <a href="#routine-section" class="btn btn-secondary" id="hero-cta-routine">
+            <span>Explorar Rutinas</span>
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">25+</span>
+            <span class="stat-label">Botánicos activos</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">10K+</span>
+            <span class="stat-label">Pieles felices</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">4.9 ★</span>
+            <span class="stat-label">Calificación promedio</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="visual-wrapper">
+          <div class="visual-glow"></div>
+          <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=1000&q=85" alt="SAMINCHAY cosméticos orgánicos prémium" class="hero-main-image" loading="eager"/>
+          <div class="floating-card card-top">
+            <div class="card-icon"><i class="fa-solid fa-seedling"></i></div>
+            <div class="card-text">
+              <span>Bio-Ingredientes</span>
+              <p>Extractos crudos</p>
+            </div>
+          </div>
+          <div class="floating-card card-bottom">
+            <div class="card-icon"><i class="fa-solid fa-shield-heart"></i></div>
+            <div class="card-text">
+              <span>Hipoalergénico</span>
+              <p>Probado clínicamente</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CATEGORIES SECTION ===== -->
+  <section class="categories-section" id="categories-section">
+    <div class="section-container">
+      <div class="categories-grid">
+        <a [href]="cat.anchor" class="category-card" *ngFor="let cat of categories">
+          <div class="category-icon-box">
+            <i [class]="cat.icon"></i>
+          </div>
+          <div class="category-info">
+            <h3 class="category-name">{{ cat.name }}</h3>
+            <p class="category-desc">{{ cat.desc }}</p>
+          </div>
+          <i class="fa-solid fa-arrow-right category-arrow"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PHILOSOPHY / BENEFITS SECTION ===== -->
+  <section class="benefits" id="benefits-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Nuestra Filosofía</span>
+        <h2 class="section-title">El poder de la tierra en tu piel</h2>
+        <p class="section-subtitle">Volvemos a lo esencial. Prescindimos de colorantes artificiales, fragancias sintéticas y derivados del petróleo.</p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card" *ngFor="let benefit of benefits; let i = index" [style.--delay]="i * 0.08 + 's'">
+          <div class="benefit-icon-wrapper">
+            <i [class]="benefit.icon"></i>
+          </div>
+          <h3 class="benefit-title">{{ benefit.title }}</h3>
+          <p class="benefit-description">{{ benefit.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INGREDIENTS SPOTLIGHT ===== -->
+  <section class="ingredients-section" id="ingredients-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Pureza Activa</span>
+        <h2 class="section-title">Ingredientes que hacen la diferencia</h2>
+        <p class="section-subtitle">Seleccionamos cuidadosamente cada semilla y flor para garantizar un aporte biológico real.</p>
+      </div>
+
+      <div class="ingredients-grid">
+        <div class="ingredient-card" *ngFor="let ing of ingredients">
+          <div class="ingredient-header">
+            <div class="ingredient-icon-box" [style.background-color]="ing.color + '33'" [style.color]="ing.color">
+              <i [class]="ing.icon"></i>
+            </div>
+            <div class="ingredient-title-meta">
+              <h3 class="ingredient-name">{{ ing.name }}</h3>
+              <span class="ingredient-scientific">{{ ing.scientific }}</span>
+            </div>
+          </div>
+          <p class="ingredient-desc">{{ ing.desc }}</p>
+          <div class="ingredient-footer">
+            <span class="ing-badge">100% Ecológico</span>
+            <span class="ing-badge">Prensado en frío</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PRODUCTS FEATURED COLLECTION ===== -->
+  <section class="products" id="products-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Nuestros Bestsellers</span>
+        <h2 class="section-title">La colección de cuidado prémium</h2>
+        <p class="section-subtitle">Descubre los productos más aclamados por nuestra comunidad para restaurar el brillo y vitalidad natural.</p>
+      </div>
+
+      <div class="products-grid">
+        <div class="product-card" *ngFor="let product of products; let i = index" [style.--delay]="i * 0.1 + 's'">
+          <div class="product-image-wrapper">
+            <img [src]="product.image" [alt]="product.name" class="product-image" loading="lazy"/>
+            <span class="product-badge" *ngIf="product.badge">{{ product.badge }}</span>
+            <div class="product-overlay">
+              <button class="product-quick-view" id="quick-view-{{ i }}"><i class="fa-solid fa-eye"></i> Vista rápida</button>
+            </div>
+          </div>
+          <div class="product-info">
+            <div class="product-category-row">
+              <span class="product-category">{{ product.category }}</span>
+              <div class="product-rating">
+                <i class="fa-solid fa-star"></i>
+                <span>{{ product.rating }} ({{ product.reviews }})</span>
+              </div>
+            </div>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <p class="product-desc">{{ product.description }}</p>
+            <div class="product-footer">
+              <span class="product-price">S/. {{ product.price }}</span>
+              <button class="product-add-btn" (click)="addToCart(product.name)" id="add-btn-{{ i }}">
+                <i class="fa-solid fa-cart-plus"></i>
+                <span>Añadir</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="products-cta">
+        <a href="#newsletter-section" class="btn btn-outline" id="view-all-products-trigger">
+          <span>Ver catálogo completo</span>
+          <i class="fa-solid fa-arrow-right-long"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== INTERACTIVE ROUTINE SECTION ===== -->
+  <section class="routine-section" id="routine-section">
+    <div class="section-container">
+      <div class="routine-wrapper">
+        <div class="routine-left">
+          <span class="section-tag">Tu Cuidado Diario</span>
+          <h2 class="section-title left-align">Crea tu rutina ideal de belleza orgánica</h2>
+          <p class="routine-intro">
+            Diseñamos un sistema simple de tres pasos para que tu piel absorba la máxima cantidad de bioactivos sin saturarse.
+          </p>
+
+          <div class="routine-tabs">
+            <button 
+              *ngFor="let step of routineSteps" 
+              class="routine-tab-btn" 
+              [class.active]="activeStep() === step.id"
+              (click)="setRoutineStep(step.id)"
+              id="routine-tab-{{ step.id }}">
+              <span class="tab-num">{{ step.num }}</span>
+              <span class="tab-title">{{ step.title }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="routine-right">
+          <div class="routine-card" *ngFor="let step of routineSteps" [class.show]="activeStep() === step.id">
+            <div class="routine-card-header">
+              <div class="routine-card-icon"><i [class]="step.icon"></i></div>
+              <div class="routine-card-meta">
+                <span class="routine-card-subtitle">{{ step.subtitle }}</span>
+                <h3 class="routine-card-title">{{ step.title }}</h3>
+              </div>
+            </div>
+            
+            <p class="routine-card-desc">{{ step.desc }}</p>
+            
+            <div class="routine-tip-box">
+              <i class="fa-solid fa-circle-info tip-icon"></i>
+              <div class="tip-content">
+                <strong>Consejo de experta:</strong>
+                <p>{{ step.tip }}</p>
+              </div>
+            </div>
+
+            <div class="routine-product-link">
+              <span class="link-label">Producto sugerido:</span>
+              <div class="suggested-product">
+                <i class="fa-solid fa-bottle-droplet"></i>
+                <span>{{ step.product }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT / STORY SECTION ===== -->
+  <section class="about" id="about-section">
+    <div class="section-container">
+      <div class="about-grid">
+        <div class="about-visuals">
+          <div class="about-glow"></div>
+          <div class="about-accent-box"></div>
+          <img src="https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=900&q=85" alt="SAMINCHAY belleza natural y saludable" class="about-img" loading="lazy"/>
+          <div class="about-experience-badge">
+            <span class="exp-years">8+</span>
+            <span class="exp-label">Años creando belleza consciente</span>
+          </div>
+        </div>
+
+        <div class="about-content">
+          <span class="section-tag">Nuestra Historia</span>
+          <h2 class="section-title left-align">Nacidos del respeto a la sabiduría de la tierra</h2>
+          <p class="about-paragraph">
+            SAMINCHAY nace en el corazón de los Andes. Inspirados por la profunda conexión de las culturas nativas con la Pachamama, decidimos investigar y revalorizar los principios activos de plantas autóctonas que han cuidado la salud y la piel por siglos.
+          </p>
+          <p class="about-paragraph">
+            Combinamos esta sabiduría botánica ancestral con biotecnología limpia para ofrecerte productos que nutren verdaderamente sin agredir a tu organismo ni al ecosistema.
+          </p>
+
+          <ul class="about-features-list">
+            <li *ngFor="let feat of aboutFeatures">
+              <i class="fa-solid fa-circle-check check-icon"></i>
+              <span>{{ feat }}</span>
+            </li>
+          </ul>
+
+          <a href="#products-section" class="btn btn-primary" id="about-cta-shop-now">
+            <span>Comenzar el cambio</span>
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS SECTION ===== -->
+  <section class="testimonials" id="testimonials-section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Comunidad SAMINCHAY</span>
+        <h2 class="section-title">Lo que dicen sobre nuestra cosmética</h2>
+        <p class="section-subtitle">Historias reales de personas que transformaron su rutina facial con nuestras fórmulas.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card" *ngFor="let t of testimonials; let i = index" [style.--delay]="i * 0.12 + 's'">
+          <div class="stars-row">
+            <i class="fa-solid fa-star" *ngFor="let star of [1,2,3,4,5]"></i>
+          </div>
+          <p class="testimonial-text">
+            "{{ t.text }}"
+          </p>
+          <div class="testimonial-user">
+            <div class="user-avatar-circle">
+              <span>{{ t.initials }}</span>
+            </div>
+            <div class="user-meta">
+              <span class="user-name">{{ t.name }}</span>
+              <span class="user-loc">{{ t.location }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== NEWSLETTER SECTION ===== -->
+  <section class="newsletter" id="newsletter-section">
+    <div class="section-container">
+      <div class="newsletter-card-wrapper">
+        <div class="newsletter-bg-glow"></div>
+        <div class="newsletter-grid">
+          <div class="newsletter-info">
+            <span class="section-tag light">Boletín Orgánico</span>
+            <h2 class="newsletter-title">Únete a nuestra lista de cuidado consciente</h2>
+            <p class="newsletter-desc">
+              Suscríbete para recibir consejos semanales sobre cosmética natural, lanzamientos exclusivos y un <strong>15% de descuento</strong> en tu primer pedido.
+            </p>
+          </div>
+          <div class="newsletter-action-box">
+            <form class="newsletter-form-element" (submit)="$event.preventDefault()">
+              <div class="input-wrapper">
+                <i class="fa-regular fa-envelope input-icon"></i>
+                <input type="email" placeholder="Tu correo electrónico" class="newsletter-input" required id="newsletter-email"/>
+              </div>
+              <button class="btn btn-primary btn-newsletter-submit" type="submit" id="newsletter-submit-btn">
+                <span>Suscribirme</span>
+                <i class="fa-solid fa-paper-plane"></i>
+              </button>
+            </form>
+            <p class="newsletter-privacy"><i class="fa-solid fa-lock"></i> Tu correo está seguro. Sin spam.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer" id="main-footer">
+    <div class="footer-container">
+      <div class="footer-top-grid">
+        <div class="footer-brand-col">
+          <a class="footer-logo" href="#hero-section">
+            <span class="logo-leaf"><i class="fa-solid fa-leaf"></i></span>
+            <span class="logo-text">SAMINCHAY</span>
+          </a>
+          <p class="footer-desc">
+            Cosmética botánica artesanal. Creada bajo estándares ecológicos, respetando el ciclo natural de la tierra y nutriendo tu piel con elixires puros.
+          </p>
+          <div class="footer-social-icons">
+            <a href="#" class="social-icon-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" class="social-icon-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#" class="social-icon-btn" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
+            <a href="#" class="social-icon-btn" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Explorar</h4>
+          <ul class="footer-links-list">
+            <li><a href="#hero-section">Inicio</a></li>
+            <li><a href="#benefits-section">Filosofía</a></li>
+            <li><a href="#ingredients-section">Ingredientes</a></li>
+            <li><a href="#products-section">Productos</a></li>
+            <li><a href="#routine-section">Rutina</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Servicio</h4>
+          <ul class="footer-links-list">
+            <li><a href="#">Preguntas Frecuentes</a></li>
+            <li><a href="#">Políticas de Envío</a></li>
+            <li><a href="#">Garantía de Devolución</a></li>
+            <li><a href="#">Puntos de Venta</a></li>
+            <li><a href="#">Contacto Directo</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Ubicación & Soporte</h4>
+          <ul class="footer-contact-info">
+            <li>
+              <i class="fa-solid fa-location-dot"></i>
+              <span>Cusco & Lima, Perú</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-phone"></i>
+              <span>+51 987 654 321</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-envelope"></i>
+              <span>hola@saminchay.com</span>
+            </li>
+            <li>
+              <i class="fa-solid fa-clock"></i>
+              <span>Lun - Sáb: 9:00 AM - 7:00 PM</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <p class="copyright">&copy; 2026 SAMINCHAY Cosmética Natural. Todos los derechos reservados.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Términos y Condiciones</a>
+          <a href="#">Políticas de Privacidad</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
 </div>
