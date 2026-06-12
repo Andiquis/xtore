@@ -20,19 +20,39 @@
    SIDEBAR
    ══════════════════════════════════════════ */
 .sidebar {
-  width: 276px;
-  min-width: 276px;
-  background: linear-gradient(180deg, #0f172a 0%, #111827 52%, #0b1120 100%);
+  width: 180px;
+  min-width: 180px;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(56, 189, 248, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(99, 102, 241, 0.05) 0%, transparent 60%),
+    linear-gradient(180deg, #0c1527 0%, #0f172a 40%, #0e1424 100%);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  border-right: 1px solid rgba(148, 163, 184, 0.16);
-  box-shadow: 18px 0 40px rgba(15, 23, 42, 0.08);
+  border-right: none;
+  box-shadow: 18px 0 40px rgba(15, 23, 42, 0.10);
   z-index: 10;
   transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1),
               min-width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 
+  /* ── Línea gradiente vertical en el borde derecho ── */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      rgba(56, 189, 248, 0.40) 0%,
+      rgba(99, 102, 241, 0.35) 50%,
+      rgba(56, 189, 248, 0.40) 100%
+    );
+    z-index: 2;
+    pointer-events: none;
+  }
 }
 
 .sidebar-header {
@@ -644,8 +664,8 @@
     }
 
     &.collapsed {
-      width: 276px;
-      min-width: 276px;
+      width: 224px;
+      min-width: 224px;
 
       .sidebar-header {
         padding: 20px 16px 16px;
@@ -733,5 +753,15 @@
   .user-profile {
     margin-left: 0;
     padding: 0;
+  }
+}
+
+/* ══════════════════════════════════════════
+   DESKTOP / LAPTOP (pantallas grandes)
+   ══════════════════════════════════════════ */
+@media (min-width: 1200px) {
+  .sidebar:not(.collapsed) {
+    width: 228px;
+    min-width: 228px;
   }
 }
