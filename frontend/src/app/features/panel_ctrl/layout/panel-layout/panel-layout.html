@@ -12,7 +12,8 @@
           </svg>
         </div>
         <div class="logo-text-wrapper">
-          <span class="logo-text">Samin<span class="logo-accent">chay</span></span>
+          <span class="logo-text">Samin<span>chay</span></span>
+          <span class="logo-subtitle">Panel comercial</span>
         </div>
       </div>
     </div>
@@ -22,10 +23,20 @@
         <svg viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
         <span class="nav-label">Dashboard</span>
       </a>
+      <span class="nav-section">Operación</span>
       <a routerLink="/panel/ventas" routerLinkActive="active">
         <svg viewBox="0 0 16 16" fill="none"><path d="M2.5 3h1.5l1.5 7.5h6l1.5-6h-8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="13" r="1.5" fill="currentColor"/><circle cx="11" cy="13" r="1.5" fill="currentColor"/></svg>
         <span class="nav-label">Ventas</span>
       </a>
+      <a routerLink="/panel/caja" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 6h.01M12 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="nav-label">Caja</span>
+      </a>
+      <a routerLink="/panel/compras" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 4V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+        <span class="nav-label">Compras</span>
+      </a>
+      <span class="nav-section">Catálogo</span>
       <a routerLink="/panel/productos" routerLinkActive="active">
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="2" rx="1" fill="currentColor"/><rect x="2" y="7" width="8" height="2" rx="1" fill="currentColor"/><rect x="2" y="11" width="10" height="2" rx="1" fill="currentColor"/></svg>
         <span class="nav-label">Productos</span>
@@ -34,21 +45,14 @@
         <svg viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         <span class="nav-label">Inventario</span>
       </a>
-      <a routerLink="/panel/compras" routerLinkActive="active">
-        <svg viewBox="0 0 16 16" fill="none"><path d="M2 4h12M4 4V3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v1M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><rect x="2" y="4" width="12" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
-        <span class="nav-label">Compras</span>
-      </a>
-      <a routerLink="/panel/usuarios" routerLinkActive="active">
-        <svg viewBox="0 0 16 16" fill="none"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
-        <span class="nav-label">Usuarios</span>
-      </a>
-      <a routerLink="/panel/caja" routerLinkActive="active">
-        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="3.5" width="13" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M4 6h.01M12 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        <span class="nav-label">Caja</span>
-      </a>
       <a routerLink="/panel/promociones" routerLinkActive="active">
         <svg viewBox="0 0 16 16" fill="none"><path d="M8 2l2.5 2.5L14 4l-1.5 3.5L14 11l-3.5-.5L8 14l-2.5-3.5L2 11l1.5-3.5L2 4l3.5.5L8 2z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/></svg>
         <span class="nav-label">Promociones</span>
+      </a>
+      <span class="nav-section">Administración</span>
+      <a routerLink="/panel/usuarios" routerLinkActive="active">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
+        <span class="nav-label">Usuarios</span>
       </a>
       <a routerLink="/panel/reportes" routerLinkActive="active">
         <svg viewBox="0 0 16 16" fill="none"><path d="M3 14V2a1 1 0 0 1 1-1h5.5L14 5.5V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M9.5 1V5.5H14" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" fill="none"/><path d="M6 11v-2M9 11V7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" fill="none"/></svg>
