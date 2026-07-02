@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/1.png" alt="xtore Banner" width="100%" style="border-radius: 10px; max-width: 800px;">
+  <img src="assets/5.png" alt="xtore Banner" width="100%" style="border-radius: 10px; max-width: 800px;">
   <br/>
   <h1>🚀 xtore - Sistema Administrativo Integral</h1>
   <p>
