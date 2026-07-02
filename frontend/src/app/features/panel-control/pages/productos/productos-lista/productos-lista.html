@@ -1,0 +1,221 @@
+<div class="fade-in">
+  <app-barra-filtros
+    [config]="productFilterConfig()"
+    (stateChange)="setProductFilterState($event)"
+    (actionClick)="openProductForm()"
+  ></app-barra-filtros>
+
+  <div
+    class="notice-banner"
+    *ngIf="notice() as currentNotice"
+    [class.notice-banner--success]="currentNotice.type === 'success'"
+    [class.notice-banner--error]="currentNotice.type === 'error'"
+  >
+    <lucide-icon [img]="currentNotice.icon" [size]="20" [strokeWidth]="2.4"></lucide-icon>
+    <div>
+      <strong>{{ currentNotice.title }}</strong>
+      <span>{{ currentNotice.message }}</span>
+    </div>
+    <button type="button" (click)="clearMessages()" aria-label="Cerrar mensaje">
+      <lucide-icon [img]="CloseIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+    </button>
+  </div>
+
+  <app-table
+    title="Inventario de productos"
+    description="Selecciona una fila para ver detalles o usa los checks para acciones masivas."
+    [countLabel]="filteredTotal() + ' de ' + total() + ' productos'"
+    [items]="paginatedProducts()"
+    [columns]="productColumns"
+    [(selectedItems)]="selectedProducts"
+    [(activeItem)]="activeProduct"
+    [selectable]="true"
+    [showEmptyState]="false"
+    [showDataActions]="true"
+    [showPagination]="true"
+    [totalItems]="filteredTotal()"
+    [currentPage]="safeCurrentPage()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="productos"
+    keyField="id_producto"
+    (rowClick)="showProductRowDetails($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+    (importClick)="openProductImport()"
+    (exportClick)="exportProducts()"
+  >
+    <div table-before class="table-loading" *ngIf="loading()">
+      <span class="spinner"></span>
+      <span>Cargando productos...</span>
+    </div>
+
+    <ng-template appTableCell="nombre_producto" let-product>
+      <div class="product-cell">
+        <div class="product-copy">
+          <span class="product-name font-bold text-dark">{{ product.nombre_producto }}</span>
+          <span class="product-meta">ID {{ product.id_producto }} · {{ product.tipo_producto }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template appTableCell="categoria" let-product>
+      <span class="category-badge">{{ getCategoryName(product) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="marca" let-product>
+      {{ getBrandName(product) }}
+    </ng-template>
+
+    <ng-template appTableCell="presentaciones" let-product>
+      <span class="category-badge">{{ getPresentationCountLabel(product) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="estado_producto" let-product>
+      <span
+        class="status-pill"
+        [class.status-success]="product.estado_producto === 'activo'"
+        [class.status-danger]="product.estado_producto !== 'activo'"
+      >
+        {{ product.estado_producto }}
+      </span>
+    </ng-template>
+
+    <!-- <ng-template appTableCell="fecha_modificacion" let-product>
+      {{ product.fecha_modificacion ? (product.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
+    </ng-template> -->
+
+    <div table-after class="empty-state" *ngIf="!loading() && filteredProducts().length === 0">
+      <p>{{ searchTerm() ? 'No encontramos productos para esa búsqueda.' : 'No hay productos registrados.' }}</p>
+      <button class="btn btn-primary" type="button" (click)="openProductForm()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        {{ searchTerm() ? 'Crear producto' : 'Crear primer producto' }}
+      </button>
+    </div>
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedProducts.length === 1">
+        <div>
+          <span class="detail-eyebrow">Producto marcado</span>
+          <h3>{{ selectedProducts[0].nombre_producto }}</h3>
+          <p>ID {{ selectedProducts[0].id_producto }} · {{ getCategoryName(selectedProducts[0]) }} · {{ selectedProducts[0].estado_producto }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="showProductDetails(selectedProducts[0])">
+            <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Ver detalle
+          </button>
+          <button class="detail-btn detail-btn--primary" (click)="openEditProductForm(selectedProducts[0])">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteProduct(selectedProducts[0])" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedProducts.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedProducts.length }} productos seleccionados</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearProductSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar productos
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-table>
+
+  <div class="product-modal-backdrop" *ngIf="activeProduct as product" (click)="closeProductDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeProductDetails()">×</button>
+      <div class="modal-media">
+        <img *ngIf="product.imagen_url" [src]="product.imagen_url" [alt]="product.nombre_producto">
+        <lucide-icon *ngIf="!product.imagen_url" [img]="ImageIcon" [size]="40" class="icon-gray"></lucide-icon>
+      </div>
+      <div class="modal-content">
+        <span class="detail-eyebrow">Detalle de producto</span>
+        <h2>{{ product.nombre_producto }}</h2>
+        <p class="modal-subtitle">ID {{ product.id_producto }} · {{ getCategoryName(product) }} · {{ getBrandName(product) }}</p>
+        <div class="modal-detail-grid">
+          <span><strong>ID</strong>{{ product.id_producto }}</span>
+          <span><strong>Tipo</strong>{{ product.tipo_producto }}</span>
+          <span><strong>Categoría</strong>{{ getCategoryName(product) }}</span>
+          <span><strong>Marca</strong>{{ getBrandName(product) }}</span>
+          <span><strong>Presentaciones</strong>{{ getPresentationCountLabel(product) }}</span>
+          <span><strong>Estado</strong>{{ product.estado_producto }}</span>
+          <span><strong>Controles</strong>{{ getFeatureLabel(product) }}</span>
+          <span><strong>Descripción</strong>{{ product.descripcion_producto || 'Sin descripción' }}</span>
+          <span><strong>Fecha registro</strong>{{ product.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span><strong>Última modificación</strong>{{ product.fecha_modificacion ? (product.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary" (click)="openEditProductForm(product); closeProductDetails()">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar producto
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteProduct(product); closeProductDetails()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-producto-form
+    *ngIf="isProductFormOpen"
+    [mode]="editingProduct ? 'edit' : 'create'"
+    [producto]="editingProduct"
+    [categorias]="categorias()"
+    [marcas]="marcas()"
+    (close)="closeProductForm()"
+    (save)="saveProduct($event)"
+  ></app-producto-form>
+
+  <app-excel-data-manager
+    #productExcelManager
+    [config]="productExcelConfig"
+    [records]="products()"
+    (commitImport)="handleProductExcelImport($event)"
+  ></app-excel-data-manager>
+
+  <div class="confirm-modal-backdrop" *ngIf="deleteDialog as dialog" (click)="closeDeleteDialog()">
+    <section class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger">
+        <lucide-icon [img]="TrashIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+      </div>
+      <div class="confirm-content">
+        <span class="detail-eyebrow">Confirmar eliminación</span>
+        <h2>{{ dialog.mode === 'single' ? 'Eliminar producto' : 'Eliminar productos seleccionados' }}</h2>
+        <p *ngIf="dialog.mode === 'single'">
+          Esta acción eliminará <strong>{{ dialog.productos[0].nombre_producto }}</strong> del inventario de productos.
+        </p>
+        <p *ngIf="dialog.mode === 'bulk'">
+          Esta acción eliminará <strong>{{ dialog.productos.length }}</strong> productos seleccionados del inventario.
+        </p>
+      </div>
+      <div class="confirm-actions">
+        <button class="detail-btn detail-btn--ghost" type="button" (click)="closeDeleteDialog()" [disabled]="loading()">
+          Cancelar
+        </button>
+        <button class="detail-btn detail-btn--danger" type="button" (click)="confirmDelete()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

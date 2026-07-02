@@ -20,9 +20,11 @@ export class PresentacionesService {
     await this.checkProducto(createPresentacionDto.id_producto);
 
     try {
-      return await this.prisma.t_producto_presentaciones.create({
+      const presentacion = await this.prisma.t_producto_presentaciones.create({
         data: createPresentacionDto,
       });
+
+      return this.findOne(Number(presentacion.id_presentacion));
     } catch (error) {
       if (error.code === 'P2002') {
         throw new ConflictException(`El SKU ${createPresentacionDto.sku} ya está en uso.`);
@@ -35,8 +37,16 @@ export class PresentacionesService {
     return await this.prisma.t_producto_presentaciones.findMany({
       include: {
         t_productos: {
-          select: { nombre_producto: true }
-        }
+          select: {
+            id_producto: true,
+            nombre_producto: true,
+            estado_producto: true,
+          },
+        },
+        precio: true,
+        _count: {
+          select: { codigos_alternativos: true },
+        },
       },
       orderBy: { nombre_presentacion: 'asc' },
     });
@@ -67,10 +77,15 @@ export class PresentacionesService {
     }
 
     try {
-      return await this.prisma.t_producto_presentaciones.update({
+      await this.prisma.t_producto_presentaciones.update({
         where: { id_presentacion: id },
-        data: updatePresentacionDto,
+        data: {
+          ...updatePresentacionDto,
+          fecha_modificacion: new Date(),
+        },
       });
+
+      return this.findOne(id);
     } catch (error) {
       if (error.code === 'P2002') {
         throw new ConflictException(`El SKU ${updatePresentacionDto.sku} ya está en uso.`);

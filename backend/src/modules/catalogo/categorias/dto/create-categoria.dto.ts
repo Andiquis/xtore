@@ -11,7 +11,7 @@ export class CreateCategoriaDto {
   @ApiPropertyOptional({ description: 'ID de la categoría padre (si aplica)', example: 1 })
   @IsNumber()
   @IsOptional()
-  id_categoria_padre?: number;
+  id_categoria_padre?: number | null;
 
   @ApiPropertyOptional({ description: 'Estado de la categoría', enum: t_estado_generico, default: t_estado_generico.activo })
   @IsEnum(t_estado_generico)

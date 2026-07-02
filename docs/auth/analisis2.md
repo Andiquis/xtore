@@ -1,0 +1,1 @@
+para el asesor y franquiciado o admin de frnaquicia deberia de haber solo 1 login

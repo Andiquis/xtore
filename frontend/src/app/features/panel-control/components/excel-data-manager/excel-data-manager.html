@@ -1,0 +1,182 @@
+<input
+  #excelInput
+  type="file"
+  accept=".xlsx,.xls"
+  class="excel-file-input"
+  (change)="onFileSelected($event)"
+>
+
+@if (isOpen()) {
+  <div class="excel-modal-backdrop" (click)="close()">
+    <section class="excel-modal" (click)="$event.stopPropagation()">
+      <header class="excel-modal-header">
+        <div class="excel-title">
+          <span class="excel-icon">
+            <lucide-icon [img]="UploadIcon" [size]="20" [strokeWidth]="2.5"></lucide-icon>
+          </span>
+          <div>
+            <h2>Importar {{ config.entityLabel }}</h2>
+            <p>Analiza duplicados, campos incompletos y acciones antes de guardar.</p>
+          </div>
+        </div>
+
+        <button class="excel-close" type="button" (click)="close()" aria-label="Cerrar importación">
+          <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+        </button>
+      </header>
+
+      <div class="excel-toolbar">
+        <button class="excel-upload-btn" type="button" (click)="excelInput.click()">
+          <lucide-icon [img]="UploadIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Seleccionar Excel
+        </button>
+
+        <button class="excel-download-btn" type="button" (click)="exportData()">
+          <lucide-icon [img]="DownloadIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Exportar datos actuales
+        </button>
+
+        <button class="excel-add-row-btn" type="button" (click)="addManualRow()">
+          <lucide-icon [img]="PlusIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Añadir fila
+        </button>
+
+        @if (fileName()) {
+          <span class="excel-file-name">{{ fileName() }}</span>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <div class="excel-message excel-message--error">
+          <lucide-icon [img]="AlertIcon" [size]="17" [strokeWidth]="2.4"></lucide-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+      }
+
+      @if (reviewRows().length) {
+        <div class="excel-summary">
+          <span><strong>{{ validActionCount }}</strong> listos</span>
+          <span><strong>{{ invalidCount }}</strong> por completar</span>
+          <span><strong>{{ skippedCount }}</strong> omitidos</span>
+        </div>
+
+        <div class="excel-review">
+          <table>
+            <thead>
+              <tr>
+                <th>Fila</th>
+                @for (column of config.columns; track column.key) {
+                  <th>{{ column.header }}</th>
+                }
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of reviewRows(); track row.rowNumber) {
+                <tr [class.row-invalid]="row.status === 'invalid'" [class.row-duplicate]="row.status === 'duplicate'">
+                  <td class="excel-row-number">{{ row.rowNumber }}</td>
+
+                  @for (column of config.columns; track column.key) {
+                    <td [attr.data-label]="column.header">
+                      @if (isEditableCell(row, column)) {
+                        <input
+                          class="excel-cell-input"
+                          type="text"
+                          [ngModel]="row.data[column.key]"
+                          (ngModelChange)="updateCell(row, column, $event)"
+                        >
+                      } @else {
+                        <span class="excel-cell-value">{{ row.data[column.key] || '-' }}</span>
+                      }
+                    </td>
+                  }
+
+                  <td class="excel-status-cell" data-label="Estado">
+                    @if (row.status === 'new') {
+                      <span class="excel-status excel-status--new">
+                        <lucide-icon [img]="SuccessIcon" [size]="14" [strokeWidth]="2.4"></lucide-icon>
+                        Nuevo
+                      </span>
+                    } @else if (row.status === 'duplicate') {
+                      <span class="excel-status excel-status--duplicate">Duplicado backend</span>
+                    } @else {
+                      <span class="excel-status excel-status--invalid">Revisar</span>
+                      <small>{{ row.errors.join(' ') }}</small>
+                    }
+                  </td>
+
+                  <td class="excel-action-cell" data-label="Acción">
+                    @if (row.status === 'new') {
+                      <select [ngModel]="row.action" (ngModelChange)="setAction(row, $event)">
+                        <option value="insert">Insertar</option>
+                        <option value="skip">Omitir</option>
+                      </select>
+                    } @else if (row.status === 'duplicate') {
+                      <select [ngModel]="row.action" (ngModelChange)="setAction(row, $event)">
+                        <option value="skip">No insertar</option>
+                        <option value="update">Actualizar</option>
+                        <option value="replace">Reemplazar</option>
+                      </select>
+                    } @else {
+                      <select [ngModel]="row.action" (ngModelChange)="setAction(row, $event)">
+                        <option value="skip">Omitir</option>
+                        <option value="insert">Completar e insertar</option>
+                      </select>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <div class="excel-format-preview">
+          <div class="excel-preview-copy">
+            <lucide-icon [img]="FileIcon" [size]="24" [strokeWidth]="2.2"></lucide-icon>
+            <div>
+              <h3>Formato esperado del Excel</h3>
+              <p>La primera fila debe contener estos encabezados. Las columnas marcadas como obligatorias no pueden estar vacías.</p>
+            </div>
+          </div>
+
+          <div class="excel-template-table">
+            <table>
+              <thead>
+                <tr>
+                  @for (column of config.columns; track column.key) {
+                    <th>
+                      {{ column.header }}
+                      @if (column.required) {
+                        <span>Obligatorio</span>
+                      }
+                    </th>
+                  }
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  @for (column of config.columns; track column.key) {
+                    <td [attr.data-label]="column.header">{{ exampleRow[column.key] || '-' }}</td>
+                  }
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="excel-format-notes">
+            <span>Duplicados: {{ config.uniqueLabel }}</span>
+            <span>Archivo permitido: .xlsx o .xls</span>
+          </div>
+        </div>
+      }
+
+      <footer class="excel-actions">
+        <button class="excel-secondary" type="button" (click)="close()">Cancelar</button>
+        <button class="excel-primary" type="button" [disabled]="!reviewRows().length || invalidCount > 0" (click)="commit()">
+          Confirmar importación
+        </button>
+      </footer>
+    </section>
+  </div>
+}

@@ -1,0 +1,62 @@
+<div class="product-form-backdrop" (click)="close.emit()">
+  <section class="product-form-modal" (click)="$event.stopPropagation()">
+    <header class="form-header">
+      <div>
+        <span class="form-eyebrow">{{ mode === 'create' ? 'Nuevo código' : 'Editar código' }}</span>
+        <h2>{{ mode === 'create' ? 'Agregar código' : 'Editar código' }}</h2>
+        <p>Registra códigos alternativos para ubicar una presentación en venta.</p>
+      </div>
+      <button class="close-btn" type="button" (click)="close.emit()" aria-label="Cerrar formulario">
+        <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+      </button>
+    </header>
+
+    <form class="product-form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label class="form-field full">
+          <span>Presentación</span>
+          <select name="presentacion" [(ngModel)]="form.id_presentacion" required>
+            <option [ngValue]="0" disabled>Selecciona una presentación</option>
+            <option *ngFor="let presentacion of presentaciones" [ngValue]="presentacion.id_presentacion">
+              {{ getPresentationLabel(presentacion) }}
+            </option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Tipo</span>
+          <select name="tipo_codigo" [(ngModel)]="form.tipo_codigo">
+            <option value="EAN">EAN</option>
+            <option value="UPC">UPC</option>
+            <option value="proveedor">Proveedor</option>
+            <option value="interno">Interno</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Código</span>
+          <input name="valor_codigo" type="text" maxlength="100" [(ngModel)]="form.valor_codigo" required>
+        </label>
+        <label class="form-field">
+          <span>Estado</span>
+          <select name="estado_codigo" [(ngModel)]="form.estado_codigo">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+        </label>
+        <label class="form-field checkbox-field">
+          <span>Principal</span>
+          <label class="form-check">
+            <input name="es_principal" type="checkbox" [(ngModel)]="form.es_principal">
+            <span>Código principal</span>
+          </label>
+        </label>
+      </div>
+      <footer class="form-actions">
+        <button class="form-btn ghost" type="button" (click)="close.emit()">Cancelar</button>
+        <button class="form-btn primary" type="submit" [disabled]="!form.id_presentacion">
+          <lucide-icon [img]="SaveIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Guardar código
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

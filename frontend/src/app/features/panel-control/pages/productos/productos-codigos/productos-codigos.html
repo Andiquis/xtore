@@ -1,0 +1,119 @@
+<div class="fade-in">
+  <app-barra-filtros [config]="filterConfig()" (stateChange)="setFilterState($event)" (actionClick)="openForm()"></app-barra-filtros>
+
+  <div class="notice-banner" *ngIf="notice() as currentNotice" [class.notice-banner--success]="currentNotice.type === 'success'" [class.notice-banner--error]="currentNotice.type === 'error'">
+    <lucide-icon [img]="currentNotice.icon" [size]="20" [strokeWidth]="2.4"></lucide-icon>
+    <div><strong>{{ currentNotice.title }}</strong><span>{{ currentNotice.message }}</span></div>
+    <button type="button" (click)="clearMessages()" aria-label="Cerrar mensaje"><lucide-icon [img]="CloseIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon></button>
+  </div>
+
+  <app-table
+    title="Códigos alternativos"
+    description="Códigos EAN, UPC, internos o de proveedor asociados a presentaciones."
+    [countLabel]="filteredTotal() + ' de ' + total() + ' códigos'"
+    [items]="paginatedCodigos()"
+    [columns]="columns"
+    [(selectedItems)]="selectedItems"
+    [(activeItem)]="activeItem"
+    [selectable]="true"
+    [showEmptyState]="false"
+    [showPagination]="true"
+    [totalItems]="filteredTotal()"
+    [currentPage]="safeCurrentPage()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="códigos"
+    keyField="id_codigo"
+    (rowClick)="showDetails($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+  >
+    <div table-before class="table-loading" *ngIf="loading()"><span class="spinner"></span><span>Cargando códigos...</span></div>
+
+    <ng-template appTableCell="valor_codigo" let-codigo>
+      <div class="product-cell"><div class="product-copy"><span class="product-name font-bold text-dark">{{ codigo.valor_codigo }}</span><span class="product-meta">ID {{ codigo.id_codigo }} · {{ codigo.tipo_codigo }}</span></div></div>
+    </ng-template>
+    <ng-template appTableCell="presentacion" let-codigo><span class="font-bold text-dark">{{ getPresentationLabel(codigo) }}</span></ng-template>
+    <ng-template appTableCell="es_principal" let-codigo>{{ codigo.es_principal ? 'Sí' : 'No' }}</ng-template>
+    <ng-template appTableCell="estado_codigo" let-codigo><span class="status-pill" [class.status-success]="codigo.estado_codigo === 'activo'" [class.status-danger]="codigo.estado_codigo === 'inactivo'">{{ codigo.estado_codigo }}</span></ng-template>
+    <!-- <ng-template appTableCell="fecha_modificacion" let-codigo>{{ codigo.fecha_modificacion ? (codigo.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}</ng-template> -->
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+        <div><span class="detail-eyebrow">Código seleccionado</span><h3>{{ selectedItems[0].valor_codigo }}</h3><p>{{ selectedItems[0].tipo_codigo }} · {{ getPresentationLabel(selectedItems[0]) }}</p></div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="activeItem = selectedItems[0]"><lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Ver detalle</button>
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])"><lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Editar</button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDelete(selectedItems[0])"><lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Eliminar</button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedItems.length }} códigos seleccionados</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar códigos
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-table>
+
+  <div class="product-modal-backdrop" *ngIf="activeItem as codigo" (click)="closeDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()" style="grid-template-columns: 1fr;">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <div class="modal-content" style="padding: 8px 42px 4px 0;">
+        <span class="detail-eyebrow">Detalle de código</span>
+        <h2>{{ codigo.valor_codigo }}</h2>
+        <div class="modal-detail-grid">
+          <span><strong>Presentación</strong>{{ getPresentationLabel(codigo) }}</span>
+          <span><strong>Tipo</strong>{{ codigo.tipo_codigo }}</span>
+          <span><strong>Principal</strong>{{ codigo.es_principal ? 'Sí' : 'No' }}</span>
+          <span><strong>Estado</strong>{{ codigo.estado_codigo }}</span>
+          <span><strong>Registro</strong>{{ codigo.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span><strong>Actualizado</strong>{{ codigo.fecha_modificacion ? (codigo.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(codigo); closeDetails()"><lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Editar código</button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDelete(codigo); closeDetails()"><lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Eliminar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-codigo-form *ngIf="isFormOpen" [mode]="editingCodigo ? 'edit' : 'create'" [codigo]="editingCodigo" [presentaciones]="presentaciones()" (close)="closeForm()" (save)="saveCodigo($event)"></app-codigo-form>
+
+  <div class="confirm-modal-backdrop" *ngIf="deleteDialog as dialog" (click)="closeDeleteDialog()">
+    <section class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger"><lucide-icon [img]="TrashIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon></div>
+      <div class="confirm-content">
+        <span class="detail-eyebrow">Confirmar eliminación</span>
+        <h2>{{ dialog.mode === 'single' ? 'Eliminar código' : 'Eliminar códigos seleccionados' }}</h2>
+        <p *ngIf="dialog.mode === 'single'">
+          Esta acción eliminará <strong>{{ dialog.codigos[0].valor_codigo }}</strong> del catálogo de códigos alternativos.
+        </p>
+        <p *ngIf="dialog.mode === 'bulk'">
+          Esta acción eliminará <strong>{{ dialog.codigos.length }}</strong> códigos seleccionados del catálogo.
+        </p>
+      </div>
+      <div class="confirm-actions">
+        <button class="detail-btn detail-btn--ghost" type="button" (click)="closeDeleteDialog()" [disabled]="loading()">Cancelar</button>
+        <button class="detail-btn detail-btn--danger" type="button" (click)="confirmDelete()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

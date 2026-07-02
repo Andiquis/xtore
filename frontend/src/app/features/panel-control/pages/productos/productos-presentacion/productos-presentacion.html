@@ -1,0 +1,222 @@
+<div class="fade-in">
+  <app-barra-filtros
+    [config]="presentationFilterConfig()"
+    (stateChange)="setPresentationFilterState($event)"
+    (actionClick)="openForm()"
+  ></app-barra-filtros>
+
+  <div
+    class="notice-banner"
+    *ngIf="notice() as currentNotice"
+    [class.notice-banner--success]="currentNotice.type === 'success'"
+    [class.notice-banner--error]="currentNotice.type === 'error'"
+  >
+    <lucide-icon [img]="currentNotice.icon" [size]="20" [strokeWidth]="2.4"></lucide-icon>
+    <div>
+      <strong>{{ currentNotice.title }}</strong>
+      <span>{{ currentNotice.message }}</span>
+    </div>
+    <button type="button" (click)="clearMessages()" aria-label="Cerrar mensaje">
+      <lucide-icon [img]="CloseIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+    </button>
+  </div>
+
+  <app-table
+    title="Unidades de venta"
+    description="Selecciona una fila para ver detalles o usa los checks para acciones masivas."
+    [countLabel]="filteredTotal() + ' de ' + total() + ' unidades de venta'"
+    [items]="paginatedPresentaciones()"
+    [columns]="presentationColumns"
+    [(selectedItems)]="selectedItems"
+    [(activeItem)]="activeItem"
+    [selectable]="true"
+    [showEmptyState]="false"
+    [showDataActions]="true"
+    [showPagination]="true"
+    [totalItems]="filteredTotal()"
+    [currentPage]="safeCurrentPage()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="unidades de venta"
+    keyField="id_presentacion"
+    (rowClick)="showRowDetails($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+    (importClick)="openPresentationImport()"
+    (exportClick)="exportPresentations()"
+  >
+    <div table-before class="table-loading" *ngIf="loading()">
+      <span class="spinner"></span>
+      <span>Cargando unidades de venta...</span>
+    </div>
+
+    <ng-template appTableCell="nombre_presentacion" let-presentacion>
+      <div class="product-cell">
+        <div class="product-copy">
+          <span class="product-name font-bold text-dark">{{ presentacion.nombre_presentacion }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template appTableCell="producto" let-presentacion>
+      <span class="product-name font-bold text-dark">{{ getProductName(presentacion) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="factor_conversion" let-presentacion>
+      {{ getFactorLabel(presentacion) }}
+    </ng-template>
+
+    <ng-template appTableCell="stock" let-presentacion>
+      <span class="category-badge">{{ getStockLabel(presentacion) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="estado_presentacion" let-presentacion>
+      <span
+        class="status-pill"
+        [class.status-success]="presentacion.estado_presentacion === 'activo'"
+        [class.status-danger]="presentacion.estado_presentacion !== 'activo'"
+      >
+        {{ presentacion.estado_presentacion }}
+      </span>
+    </ng-template>
+
+    <!-- <ng-template appTableCell="fecha_modificacion" let-presentacion>
+      {{ presentacion.fecha_modificacion ? (presentacion.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
+    </ng-template> -->
+
+    <div table-after class="empty-state" *ngIf="!loading() && filteredPresentaciones().length === 0">
+      <p>{{ searchTerm() ? 'No encontramos unidades de venta para esa búsqueda.' : 'No hay unidades de venta registradas.' }}</p>
+      <button class="btn btn-primary" type="button" (click)="openForm()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        {{ searchTerm() ? 'Crear unidad' : 'Crear primera unidad' }}
+      </button>
+    </div>
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+        <div>
+          <span class="detail-eyebrow">Unidad de venta seleccionada</span>
+          <h3>{{ selectedItems[0].nombre_presentacion }}</h3>
+          <p>{{ selectedItems[0].sku }} · {{ getProductName(selectedItems[0]) }} · {{ selectedItems[0].estado_presentacion }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
+            <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Ver detalle
+          </button>
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeletePresentacion(selectedItems[0])" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedItems.length }} unidades de venta seleccionadas</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar unidades
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-table>
+
+  <div class="product-modal-backdrop" *ngIf="activeItem as presentacion" (click)="closeDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <div class="modal-media">
+        <div class="brand-logo brand-logo--large">
+          <lucide-icon [img]="PackageIcon" [size]="34" [strokeWidth]="2.4"></lucide-icon>
+          <span>{{ presentacion.unidad_medida }}</span>
+        </div>
+      </div>
+      <div class="modal-content">
+        <span class="detail-eyebrow">Detalle de unidad de venta</span>
+        <h2>{{ presentacion.nombre_presentacion }}</h2>
+        <p class="modal-subtitle">{{ presentacion.sku }} · {{ getProductName(presentacion) }} · {{ presentacion.estado_presentacion }}</p>
+        <div class="modal-detail-grid">
+          <span><strong>ID</strong>{{ presentacion.id_presentacion }}</span>
+          <span><strong>Producto</strong>{{ getProductName(presentacion) }}</span>
+          <span><strong>SKU</strong>{{ presentacion.sku }}</span>
+          <span><strong>Unidad</strong>{{ presentacion.unidad_medida }}</span>
+          <span><strong>Equivalencia base</strong>{{ getFactorLabel(presentacion) }}</span>
+          <span><strong>Stock</strong>{{ getStockLabel(presentacion) }}</span>
+          <span><strong>Estado</strong>{{ presentacion.estado_presentacion }}</span>
+          <span><strong>Fecha registro</strong>{{ presentacion.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span><strong>Última modificación</strong>{{ presentacion.fecha_modificacion ? (presentacion.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(presentacion); closeDetails()">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar unidad
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeletePresentacion(presentacion); closeDetails()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-presentacion-form
+    *ngIf="isFormOpen"
+    [mode]="editingPresentacion ? 'edit' : 'create'"
+    [presentacion]="editingPresentacion"
+    [productos]="productos()"
+    [presentaciones]="presentaciones()"
+    [errorMessage]="error()"
+    (close)="closeForm()"
+    (save)="savePresentacion($event)"
+  ></app-presentacion-form>
+
+  <app-excel-data-manager
+    #presentationExcelManager
+    [config]="presentationExcelConfig"
+    [records]="presentaciones()"
+    (commitImport)="handlePresentationExcelImport($event)"
+  ></app-excel-data-manager>
+
+  <div class="confirm-modal-backdrop" *ngIf="deleteDialog as dialog" (click)="closeDeleteDialog()">
+    <section class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger">
+        <lucide-icon [img]="TrashIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+      </div>
+      <div class="confirm-content">
+        <span class="detail-eyebrow">Confirmar eliminación</span>
+        <h2>{{ dialog.mode === 'single' ? 'Eliminar unidad de venta' : 'Eliminar unidades de venta seleccionadas' }}</h2>
+        <p *ngIf="dialog.mode === 'single'">
+          Esta acción eliminará <strong>{{ dialog.presentaciones[0].nombre_presentacion }}</strong> del catálogo de unidades de venta.
+        </p>
+        <p *ngIf="dialog.mode === 'bulk'">
+          Esta acción eliminará <strong>{{ dialog.presentaciones.length }}</strong> unidades de venta seleccionadas del catálogo.
+        </p>
+      </div>
+      <div class="confirm-actions">
+        <button class="detail-btn detail-btn--ghost" type="button" (click)="closeDeleteDialog()" [disabled]="loading()">
+          Cancelar
+        </button>
+        <button class="detail-btn detail-btn--danger" type="button" (click)="confirmDelete()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

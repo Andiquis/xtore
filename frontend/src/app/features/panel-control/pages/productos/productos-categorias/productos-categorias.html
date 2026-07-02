@@ -1,0 +1,216 @@
+<div class="fade-in">
+  <app-barra-filtros
+    [config]="categoryFilterConfig()"
+    (stateChange)="setCategoryFilterState($event)"
+    (actionClick)="openForm()"
+  ></app-barra-filtros>
+
+  <div
+    class="notice-banner"
+    *ngIf="notice() as currentNotice"
+    [class.notice-banner--success]="currentNotice.type === 'success'"
+    [class.notice-banner--error]="currentNotice.type === 'error'"
+  >
+    <lucide-icon [img]="currentNotice.icon" [size]="20" [strokeWidth]="2.4"></lucide-icon>
+    <div>
+      <strong>{{ currentNotice.title }}</strong>
+      <span>{{ currentNotice.message }}</span>
+    </div>
+    <button type="button" (click)="clearMessages()" aria-label="Cerrar mensaje">
+      <lucide-icon [img]="CloseIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+    </button>
+  </div>
+
+  <app-table
+    title="Catálogo de categorías"
+    description="Selecciona una fila para ver detalles o usa los checks para acciones masivas."
+    [countLabel]="filteredTotal() + ' de ' + total() + ' categorías'"
+    [items]="paginatedCategorias()"
+    [columns]="categoryColumns"
+    [(selectedItems)]="selectedItems"
+    [(activeItem)]="activeItem"
+    [selectable]="true"
+    [showEmptyState]="false"
+    [showDataActions]="true"
+    [showPagination]="true"
+    [totalItems]="filteredTotal()"
+    [currentPage]="safeCurrentPage()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="categorías"
+    keyField="id_categoria"
+    (rowClick)="showRowDetails($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+    (importClick)="openCategoryImport()"
+    (exportClick)="exportCategories()"
+  >
+    <div table-before class="table-loading" *ngIf="loading()">
+      <span class="spinner"></span>
+      <span>Cargando categorías...</span>
+    </div>
+
+    <ng-template appTableCell="nombre_categoria" let-categoria>
+      <div class="product-cell">
+        <div class="product-copy">
+          <span class="product-name font-bold text-dark">{{ categoria.nombre_categoria }}</span>
+          <span class="product-meta">ID {{ categoria.id_categoria }} · {{ getHierarchyLabel(categoria) }}</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template appTableCell="padre" let-categoria>
+      <span class="category-badge">{{ getParentName(categoria) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="productos" let-categoria>
+      <span class="category-badge">{{ getProductCountLabel(categoria) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="subcategorias" let-categoria>
+      <span class="category-badge">{{ getSubcategoryCountLabel(categoria) }}</span>
+    </ng-template>
+
+    <ng-template appTableCell="estado_categoria" let-categoria>
+      <span class="status-pill" [class.status-success]="categoria.estado_categoria === 'activo'" [class.status-danger]="categoria.estado_categoria === 'inactivo'">
+        {{ categoria.estado_categoria }}
+      </span>
+    </ng-template>
+
+    <!-- <ng-template appTableCell="fecha_modificacion" let-categoria>
+      {{ categoria.fecha_modificacion ? (categoria.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}
+    </ng-template> -->
+
+    <div table-after class="empty-state" *ngIf="!loading() && filteredCategorias().length === 0">
+      <p>{{ searchTerm() ? 'No encontramos categorías para esa búsqueda.' : 'No hay categorías registradas.' }}</p>
+      <button class="btn btn-primary" type="button" (click)="openForm()">
+        <lucide-icon [img]="PlusIcon" [size]="18" [strokeWidth]="2.5"></lucide-icon>
+        {{ searchTerm() ? 'Crear categoría' : 'Crear primera categoría' }}
+      </button>
+    </div>
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+        <div>
+          <span class="detail-eyebrow">Categoría seleccionada</span>
+          <h3>{{ selectedItems[0].nombre_categoria }}</h3>
+          <p>ID {{ selectedItems[0].id_categoria }} · {{ getHierarchyLabel(selectedItems[0]) }} · Estado: {{ selectedItems[0].estado_categoria }}</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="showDetails(selectedItems[0])">
+            <lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Ver detalle
+          </button>
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteCategoria(selectedItems[0])" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedItems.length }} categorías seleccionadas</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar categorías
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-table>
+
+  <div class="product-modal-backdrop" *ngIf="activeItem as categoria" (click)="closeDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <div class="modal-media">
+        <div class="brand-logo brand-logo--large">
+          <lucide-icon [img]="FolderTreeIcon" [size]="34" [strokeWidth]="2.4"></lucide-icon>
+          <span>{{ getSubcategoryCount(categoria) }}</span>
+        </div>
+      </div>
+      <div class="modal-content">
+        <span class="detail-eyebrow">Detalle de categoría</span>
+        <h2>{{ categoria.nombre_categoria }}</h2>
+        <p class="modal-subtitle">ID {{ categoria.id_categoria }} · {{ getHierarchyLabel(categoria) }} · {{ categoria.estado_categoria }}</p>
+        <div class="modal-detail-grid">
+          <span><strong>ID</strong>{{ categoria.id_categoria }}</span>
+          <span><strong>Nombre</strong>{{ categoria.nombre_categoria }}</span>
+          <span><strong>Estado</strong>{{ categoria.estado_categoria }}</span>
+          <span><strong>Categoría padre</strong>{{ getParentName(categoria) }}</span>
+          <span><strong>Productos asociados</strong>{{ getProductCountLabel(categoria) }}</span>
+          <span><strong>Subcategorías</strong>{{ getSubcategoryCountLabel(categoria) }}</span>
+          <span><strong>Fecha registro</strong>{{ categoria.fecha_registro | date:'dd/MM/yyyy HH:mm' }}</span>
+          <span><strong>Última modificación</strong>{{ categoria.fecha_modificacion ? (categoria.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(categoria); closeDetails()">
+            <lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Editar categoría
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteCategoria(categoria); closeDetails()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-categoria-form
+    *ngIf="isFormOpen"
+    [mode]="editingCategoria ? 'edit' : 'create'"
+    [categoria]="editingCategoria"
+    [categorias]="categorias()"
+    (close)="closeForm()"
+    (save)="saveCategoria($event)"
+  ></app-categoria-form>
+
+  <app-excel-data-manager
+    #categoryExcelManager
+    [config]="categoryExcelConfig"
+    [records]="categorias()"
+    (commitImport)="handleCategoryExcelImport($event)"
+  ></app-excel-data-manager>
+
+  <div class="confirm-modal-backdrop" *ngIf="deleteDialog as dialog" (click)="closeDeleteDialog()">
+    <section class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger">
+        <lucide-icon [img]="TrashIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon>
+      </div>
+      <div class="confirm-content">
+        <span class="detail-eyebrow">Confirmar eliminación</span>
+        <h2>{{ dialog.mode === 'single' ? 'Eliminar categoría' : 'Eliminar categorías seleccionadas' }}</h2>
+        <p *ngIf="dialog.mode === 'single'">
+          Esta acción eliminará <strong>{{ dialog.categorias[0].nombre_categoria }}</strong> del catálogo de categorías.
+        </p>
+        <p *ngIf="dialog.mode === 'bulk'">
+          Esta acción eliminará <strong>{{ dialog.categorias.length }}</strong> categorías seleccionadas del catálogo.
+        </p>
+      </div>
+      <div class="confirm-actions">
+        <button class="detail-btn detail-btn--ghost" type="button" (click)="closeDeleteDialog()" [disabled]="loading()">
+          Cancelar
+        </button>
+        <button class="detail-btn detail-btn--danger" type="button" (click)="confirmDelete()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

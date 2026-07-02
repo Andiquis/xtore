@@ -1,0 +1,120 @@
+<div class="fade-in">
+  <app-barra-filtros [config]="filterConfig()" (stateChange)="setFilterState($event)" (actionClick)="openForm()"></app-barra-filtros>
+
+  <div class="notice-banner" *ngIf="notice() as currentNotice" [class.notice-banner--success]="currentNotice.type === 'success'" [class.notice-banner--error]="currentNotice.type === 'error'">
+    <lucide-icon [img]="currentNotice.icon" [size]="20" [strokeWidth]="2.4"></lucide-icon>
+    <div><strong>{{ currentNotice.title }}</strong><span>{{ currentNotice.message }}</span></div>
+    <button type="button" (click)="clearMessages()" aria-label="Cerrar mensaje"><lucide-icon [img]="CloseIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon></button>
+  </div>
+
+  <app-table
+    title="Precios por presentación"
+    description="Cada precio pertenece a una presentación vendible."
+    [countLabel]="filteredTotal() + ' de ' + total() + ' precios'"
+    [items]="paginatedPrecios()"
+    [columns]="columns"
+    [(selectedItems)]="selectedItems"
+    [(activeItem)]="activeItem"
+    [selectable]="true"
+    [showEmptyState]="false"
+    [showPagination]="true"
+    [totalItems]="filteredTotal()"
+    [currentPage]="safeCurrentPage()"
+    [pageSize]="pageSize()"
+    [pageSizeOptions]="pageSizeOptions"
+    [showPageSize]="true"
+    [showPageStatus]="true"
+    itemLabel="precios"
+    keyField="id_precio"
+    (rowClick)="showDetails($event)"
+    (pageChange)="goToPage($event)"
+    (pageSizeChange)="setPageSize($event)"
+  >
+    <div table-before class="table-loading" *ngIf="loading()"><span class="spinner"></span><span>Cargando precios...</span></div>
+
+    <ng-template appTableCell="presentacion" let-precio>
+      <div class="product-cell"><div class="product-copy"><span class="product-name font-bold text-dark">{{ getPresentationLabel(precio) }}</span><span class="product-meta">ID {{ precio.id_precio }}</span></div></div>
+    </ng-template>
+    <ng-template appTableCell="precio_venta" let-precio>{{ formatMoney(precio.precio_venta, precio.moneda) }}</ng-template>
+    <ng-template appTableCell="precio_compra" let-precio>{{ formatMoney(precio.precio_compra, precio.moneda) }}</ng-template>
+    <ng-template appTableCell="precio_mayorista" let-precio>{{ formatMoney(precio.precio_mayorista, precio.moneda) }}</ng-template>
+    <ng-template appTableCell="incluye_igv" let-precio><span class="status-pill" [class.status-success]="precio.incluye_igv">{{ precio.incluye_igv ? 'Incluye' : 'No incluye' }}</span></ng-template>
+    <!-- <ng-template appTableCell="fecha_modificacion" let-precio>{{ precio.fecha_modificacion ? (precio.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'Sin cambios' }}</ng-template> -->
+
+    <div table-selection>
+      <div class="selection-summary-panel" *ngIf="selectedItems.length === 1">
+        <div><span class="detail-eyebrow">Precio seleccionado</span>   <h3>{{ getPresentationLabel(selectedItems[0]) }}</h3><p>{{ formatMoney(selectedItems[0].precio_venta, selectedItems[0].moneda) }}</p></div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="activeItem = selectedItems[0]"><lucide-icon [img]="EyeIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Ver detalle</button>
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(selectedItems[0])"><lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Editar</button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDelete(selectedItems[0])"><lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Eliminar</button>
+        </div>
+      </div>
+
+      <div class="selection-summary-panel bulk-selection-panel" *ngIf="selectedItems.length > 1">
+        <div>
+          <span class="detail-eyebrow">Selección múltiple</span>
+          <h3>{{ selectedItems.length }} precios seleccionados</h3>
+          <p>Acciones masivas para los registros marcados con checklist.</p>
+        </div>
+        <div class="detail-actions">
+          <button class="detail-btn detail-btn--ghost" (click)="clearSelection()">
+            <lucide-icon [img]="EraserIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Limpiar
+          </button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDeleteSelected()" [disabled]="loading()">
+            <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+            Eliminar precios
+          </button>
+        </div>
+      </div>
+    </div>
+  </app-table>
+
+  <div class="product-modal-backdrop" *ngIf="activeItem as precio" (click)="closeDetails()">
+    <section class="product-modal" (click)="$event.stopPropagation()" style="grid-template-columns: 1fr;">
+      <button class="modal-close" type="button" (click)="closeDetails()">×</button>
+      <div class="modal-content" style="padding: 8px 42px 4px 0;">
+        <span class="detail-eyebrow">Detalle de precio</span>
+        <h2>{{ getPresentationLabel(precio) }}</h2>
+        <div class="modal-detail-grid">
+          <span><strong>Venta</strong>{{ formatMoney(precio.precio_venta, precio.moneda) }}</span>
+          <span><strong>Compra</strong>{{ formatMoney(precio.precio_compra, precio.moneda) }}</span>
+          <span><strong>Mayorista</strong>{{ formatMoney(precio.precio_mayorista, precio.moneda) }}</span>
+          <span><strong>Mínimo mayorista</strong>{{ precio.cantidad_minima_mayorista || '-' }}</span>
+          <span><strong>IGV</strong>{{ precio.incluye_igv ? 'Incluye IGV' : 'No incluye IGV' }}</span>
+          <span><strong>Actualizado</strong>{{ precio.fecha_modificacion ? (precio.fecha_modificacion | date:'dd/MM/yyyy HH:mm') : 'N/A' }}</span>
+        </div>
+        <div class="modal-actions">
+          <button class="detail-btn detail-btn--primary" (click)="openEditForm(precio); closeDetails()"><lucide-icon [img]="EditIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Editar precio</button>
+          <button class="detail-btn detail-btn--danger" (click)="requestDelete(precio); closeDetails()"><lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>Eliminar</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <app-precio-form *ngIf="isFormOpen" [mode]="editingPrecio ? 'edit' : 'create'" [precio]="editingPrecio" [presentaciones]="presentaciones()" (close)="closeForm()" (save)="savePrecio($event)"></app-precio-form>
+
+  <div class="confirm-modal-backdrop" *ngIf="deleteDialog as dialog" (click)="closeDeleteDialog()">
+    <section class="confirm-modal" (click)="$event.stopPropagation()">
+      <div class="confirm-icon confirm-icon--danger"><lucide-icon [img]="TrashIcon" [size]="24" [strokeWidth]="2.5"></lucide-icon></div>
+      <div class="confirm-content">
+        <span class="detail-eyebrow">Confirmar eliminación</span>
+        <h2>{{ dialog.mode === 'single' ? 'Eliminar precio' : 'Eliminar precios seleccionados' }}</h2>
+        <p *ngIf="dialog.mode === 'single'">
+          Esta acción eliminará el precio de <strong>{{ getPresentationLabel(dialog.precios[0]) }}</strong>.
+        </p>
+        <p *ngIf="dialog.mode === 'bulk'">
+          Esta acción eliminará <strong>{{ dialog.precios.length }}</strong> precios seleccionados del catálogo.
+        </p>
+      </div>
+      <div class="confirm-actions">
+        <button class="detail-btn detail-btn--ghost" type="button" (click)="closeDeleteDialog()" [disabled]="loading()">Cancelar</button>
+        <button class="detail-btn detail-btn--danger" type="button" (click)="confirmDelete()" [disabled]="loading()">
+          <lucide-icon [img]="TrashIcon" [size]="16" [strokeWidth]="2"></lucide-icon>
+          {{ loading() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

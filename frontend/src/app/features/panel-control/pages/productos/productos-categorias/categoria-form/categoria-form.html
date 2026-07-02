@@ -1,0 +1,50 @@
+<div class="product-form-backdrop" (click)="close.emit()">
+  <section class="product-form-modal" (click)="$event.stopPropagation()">
+    <header class="form-header">
+      <div>
+        <span class="form-eyebrow">{{ mode === 'create' ? 'Nueva categoría' : 'Editar categoría' }}</span>
+        <h2>{{ mode === 'create' ? 'Añadir categoría' : 'Editar categoría' }}</h2>
+        <p>Registra la categoría y su ubicación dentro de la jerarquía.</p>
+      </div>
+
+      <button class="close-btn" type="button" (click)="close.emit()" aria-label="Cerrar formulario">
+        <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+      </button>
+    </header>
+
+    <form class="product-form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label class="form-field">
+          <span>Nombre</span>
+          <input name="name" type="text" [(ngModel)]="form.name" placeholder="Nombre de la categoría" required>
+        </label>
+
+        <label class="form-field">
+          <span>Estado de registro</span>
+          <select name="estado" [(ngModel)]="form.estado_categoria">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+          </select>
+        </label>
+
+        <label class="form-field full">
+          <span>Categoría padre</span>
+          <select name="parent" [(ngModel)]="form.id_categoria_padre">
+            <option [ngValue]="null">Sin categoría padre</option>
+            <option *ngFor="let parent of parentOptions" [ngValue]="parent.id_categoria">
+              {{ parent.nombre_categoria }}
+            </option>
+          </select>
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <button class="form-btn ghost" type="button" (click)="close.emit()">Cancelar</button>
+        <button class="form-btn primary" type="submit">
+          <lucide-icon [img]="SaveIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Guardar categoría
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

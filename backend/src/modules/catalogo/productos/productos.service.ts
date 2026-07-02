@@ -7,7 +7,7 @@ import { UpdateProductoDto } from './dto/update-producto.dto';
 export class ProductosService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async checkRelaciones(id_categoria: number, id_marca?: number) {
+  private async checkRelaciones(id_categoria: number, id_marca?: number | null) {
     // Validar categoría
     const categoria = await this.prisma.t_categorias.findUnique({
       where: { id_categoria },
@@ -30,9 +30,11 @@ export class ProductosService {
   async create(createProductoDto: CreateProductoDto) {
     await this.checkRelaciones(createProductoDto.id_categoria, createProductoDto.id_marca);
 
-    return await this.prisma.t_productos.create({
+    const producto = await this.prisma.t_productos.create({
       data: createProductoDto,
     });
+
+    return this.findOne(Number(producto.id_producto));
   }
 
   async findAll() {
@@ -40,6 +42,9 @@ export class ProductosService {
       include: {
         t_marcas: true,
         t_categorias: true,
+        _count: {
+          select: { presentaciones: true },
+        },
       },
       orderBy: { nombre_producto: 'asc' },
     });
@@ -52,6 +57,9 @@ export class ProductosService {
         t_marcas: true,
         t_categorias: true,
         presentaciones: true, // Incluimos sus presentaciones para dar una vista completa
+        _count: {
+          select: { presentaciones: true },
+        },
       },
     });
 
@@ -73,10 +81,15 @@ export class ProductosService {
       await this.checkRelaciones(id_categoria, id_marca);
     }
 
-    return await this.prisma.t_productos.update({
+    await this.prisma.t_productos.update({
       where: { id_producto: id },
-      data: updateProductoDto,
+      data: {
+        ...updateProductoDto,
+        fecha_modificacion: new Date(),
+      },
     });
+
+    return this.findOne(id);
   }
 
   async remove(id: number) {

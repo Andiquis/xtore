@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { LandingLayout } from '../landing-layout/landing-layout';
+import { LandingLayout } from '../landing-publico/landing-layout';
 
 export const LANDING_ROUTES: Routes = [
   {
@@ -9,7 +9,7 @@ export const LANDING_ROUTES: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('../landing-layout/landing-layout')
+          import('../landing-publico/landing-layout')
             .then((m) => m.LandingLayout),
       }
     ],

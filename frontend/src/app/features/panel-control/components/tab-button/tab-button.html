@@ -1,0 +1,22 @@
+<nav class="product-tabs" [attr.aria-label]="ariaLabel">
+  @for (tab of tabs; track tab.id) {
+    @if (tab.separator) {
+      <div class="tab-divider"></div>
+    }
+    <button
+      type="button"
+      class="tab-trigger"
+      [class.active]="activeTab === tab.id"
+      [attr.aria-current]="activeTab === tab.id ? 'page' : null"
+      (click)="selectTab(tab)"
+    >
+      @if (tab.icon) {
+        <span class="tab-icon">
+          <lucide-icon [img]="tab.icon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+        </span>
+      }
+
+      <span class="tab-label">{{ tab.label }}</span>
+    </button>
+  }
+</nav>

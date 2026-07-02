@@ -7,7 +7,7 @@ const FEATURE_ROUTES = [
   {
     path: 'panel',
     loadChildren: () =>
-      import('./features/panel_ctrl/routes/panel_ctrl.routes').then((m) => m.PANEL_CTRL_ROUTES),
+      import('./features/panel-control/routes/panel_ctrl.routes').then((m) => m.PANEL_CTRL_ROUTES),
   },
   {
     path: 'landing',

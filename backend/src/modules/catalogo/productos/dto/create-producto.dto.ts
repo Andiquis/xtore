@@ -16,7 +16,7 @@ export class CreateProductoDto {
   @ApiPropertyOptional({ description: 'ID de la marca', example: 1 })
   @IsNumber()
   @IsOptional()
-  id_marca?: number;
+  id_marca?: number | null;
 
   @ApiProperty({ description: 'ID de la categoría a la que pertenece', example: 5 })
   @IsNumber()

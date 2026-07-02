@@ -1,0 +1,97 @@
+<div class="product-form-backdrop" (click)="close.emit()">
+  <section class="product-form-modal" (click)="$event.stopPropagation()">
+    <header class="form-header">
+      <div>
+        <span class="form-eyebrow">{{ mode === 'create' ? 'Nuevo producto' : 'Editar producto' }}</span>
+        <h2>{{ mode === 'create' ? 'Añadir producto' : 'Editar producto' }}</h2>
+        <p>Registra el producto base; sus SKU, precios y unidades se gestionan en presentaciones.</p>
+      </div>
+
+      <button class="close-btn" type="button" (click)="close.emit()" aria-label="Cerrar formulario">
+        <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+      </button>
+    </header>
+
+    <form class="product-form" (ngSubmit)="submit()">
+      <div class="form-grid">
+        <label class="form-field">
+          <span>Nombre</span>
+          <input name="name" type="text" [(ngModel)]="form.name" placeholder="Nombre del producto" required>
+        </label>
+
+        <label class="form-field">
+          <span>Tipo</span>
+          <select name="tipo_producto" [(ngModel)]="form.tipo_producto">
+            <option value="producto">Producto</option>
+            <option value="servicio">Servicio</option>
+            <option value="insumo">Insumo</option>
+            <option value="combo">Combo</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>Categoría</span>
+          <select name="categoria" [(ngModel)]="form.id_categoria" required>
+            <option [ngValue]="0" disabled>Selecciona una categoría</option>
+            <option *ngFor="let categoria of categorias" [ngValue]="categoria.id_categoria">
+              {{ categoria.nombre_categoria }}
+            </option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>Marca</span>
+          <select name="marca" [(ngModel)]="form.id_marca">
+            <option [ngValue]="null">Sin marca</option>
+            <option *ngFor="let marca of marcas" [ngValue]="marca.id_marca">
+              {{ marca.nombre_marca }}
+            </option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span>Estado</span>
+          <select name="estado" [(ngModel)]="form.estado_producto">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+            <option value="descontinuado">Descontinuado</option>
+          </select>
+        </label>
+
+        <label class="form-field checkbox-field">
+          <span>Inventario</span>
+          <label class="form-check">
+            <input name="perecible" type="checkbox" [(ngModel)]="form.es_perecible">
+            <span>Perecible</span>
+          </label>
+        </label>
+
+        <label class="form-field checkbox-field">
+          <span>Lotes</span>
+          <label class="form-check">
+            <input name="requiere_lote" type="checkbox" [(ngModel)]="form.requiere_lote">
+            <span>Requiere lote</span>
+          </label>
+        </label>
+
+        <label class="form-field">
+          <span>Imagen URL</span>
+          <input name="imagen_url" type="url" [(ngModel)]="form.imagen_url" placeholder="https://...">
+        </label>
+
+        <label class="form-field full">
+          <span>Descripción</span>
+          <input name="description" type="text" [(ngModel)]="form.description" placeholder="Descripción breve del producto">
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <button class="form-btn ghost" type="button" (click)="close.emit()">Cancelar</button>
+        <button class="form-btn primary" type="submit" [disabled]="!form.id_categoria">
+          <lucide-icon [img]="SaveIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Guardar producto
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

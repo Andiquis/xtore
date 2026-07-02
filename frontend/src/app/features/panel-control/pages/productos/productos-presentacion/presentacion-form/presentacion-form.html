@@ -1,0 +1,110 @@
+<div class="product-form-backdrop" (click)="close.emit()">
+  <section class="product-form-modal" (click)="$event.stopPropagation()">
+    <header class="form-header">
+      <div>
+        <span class="form-eyebrow">{{ mode === 'create' ? 'Nueva unidad de venta' : 'Editar unidad de venta' }}</span>
+        <h2>{{ mode === 'create' ? 'Añadir unidad de venta' : 'Editar unidad de venta' }}</h2>
+        <p>Registra cómo se vende o controla una variante física del producto.</p>
+      </div>
+
+      <button class="close-btn" type="button" (click)="close.emit()" aria-label="Cerrar formulario">
+        <lucide-icon [img]="CloseIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+      </button>
+    </header>
+
+    <form class="product-form" (ngSubmit)="submit()">
+      <div class="form-error-banner" *ngIf="errorMessage">
+        <lucide-icon [img]="AlertIcon" [size]="18" [strokeWidth]="2.4"></lucide-icon>
+        <div>
+          <strong>No se pudo guardar la unidad</strong>
+          <span>{{ errorMessage }}</span>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <label class="form-field full" [class.has-error]="hasError('producto')">
+          <span>Producto</span>
+          <input
+            name="producto"
+            type="text"
+            [(ngModel)]="productSearch"
+            (ngModelChange)="onProductSearchChange($event)"
+            placeholder="Busca y selecciona un producto"
+            list="producto-options"
+            required
+          >
+          <datalist id="producto-options">
+            <option *ngFor="let producto of productos" [value]="getProductOptionLabel(producto)"></option>
+          </datalist>
+          <small class="field-error" *ngIf="hasError('producto')">Busca y selecciona un producto de la lista.</small>
+        </label>
+
+        <label class="form-field" [class.has-error]="hasError('name')">
+          <span>Nombre</span>
+          <input name="name" type="text" [(ngModel)]="form.name" (ngModelChange)="clearFieldError('name')" placeholder="Botella 500ml" list="unidad-venta-name-options" required>
+          <datalist id="unidad-venta-name-options">
+            <option *ngFor="let option of nameSuggestions" [value]="option"></option>
+          </datalist>
+          <small class="field-error" *ngIf="hasError('name')">Ingresa el nombre de la unidad, por ejemplo Botella 500ml.</small>
+        </label>
+
+        <label class="form-field" [class.has-error]="hasError('sku')">
+          <span>SKU</span>
+          <input name="sku" type="text" [(ngModel)]="form.sku" (ngModelChange)="clearFieldError('sku')" placeholder="SKU-001" required>
+          <small class="field-error" *ngIf="hasError('sku')">Ingresa un SKU único para identificar esta unidad de venta.</small>
+        </label>
+
+        <label class="form-field">
+          <span>Unidad de medida</span>
+          <input name="unidad_medida" type="text" [(ngModel)]="form.unidad_medida" placeholder="NIU" maxlength="20" list="unidad-medida-options">
+          <datalist id="unidad-medida-options">
+            <option *ngFor="let option of unitSuggestions" [value]="option"></option>
+          </datalist>
+        </label>
+
+        <div class="form-field" [class.has-error]="hasError('factor_conversion')">
+          <span class="field-label-row">
+            Factor conversión
+            <button
+              class="field-help-btn"
+              type="button"
+              aria-label="Qué es el factor de conversión"
+            >
+              <lucide-icon [img]="HelpIcon" [size]="15" [strokeWidth]="2.4"></lucide-icon>
+              <small class="field-help-text">
+                Indica cuántas unidades base mueve esta unidad de venta. Ejemplo: pack x6 = factor 6.
+              </small>
+            </button>
+          </span>
+          <input name="factor_conversion" type="number" [(ngModel)]="form.factor_conversion" (ngModelChange)="clearFieldError('factor_conversion')" min="0.0001" step="0.0001" required>
+          <small class="field-error" *ngIf="hasError('factor_conversion')">Ingresa un factor mayor a 0.</small>
+        </div>
+
+        <label class="form-field">
+          <span>Estado</span>
+          <select name="estado" [(ngModel)]="form.estado_presentacion">
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+            <option value="descontinuado">Descontinuado</option>
+          </select>
+        </label>
+
+        <label class="form-field checkbox-field">
+          <span>Control de stock</span>
+          <label class="form-check">
+            <input name="controla_stock" type="checkbox" [(ngModel)]="form.controla_stock">
+            <span>Controla inventario</span>
+          </label>
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <button class="form-btn ghost" type="button" (click)="close.emit()">Cancelar</button>
+        <button class="form-btn primary" type="submit">
+          <lucide-icon [img]="SaveIcon" [size]="16" [strokeWidth]="2.4"></lucide-icon>
+          Guardar unidad
+        </button>
+      </footer>
+    </form>
+  </section>
+</div>

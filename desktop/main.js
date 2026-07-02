@@ -21,6 +21,7 @@ function createWindow() {
 
   // Cargamos la app de angular mediante el protocolo custom
   mainWindow.loadURL('app://localhost/index.html');
+  mainWindow.webContents.setZoomFactor(1.25);
 
   // Maximizar correctamente y mostrar cuando esté lista (Linux seguro)
   mainWindow.once('ready-to-show', () => {
