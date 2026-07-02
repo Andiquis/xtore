@@ -46,6 +46,13 @@ Nuestro panel de control ofrece una suite completa de herramientas empresariales
 *   📈 **Reportes y Analítica:** Toma decisiones basadas en datos con reportes generados al instante.
 *   🤖 **Integración con IA:** Módulos inteligentes para potenciar y automatizar la operación.
 
+## 📸 Vista Previa
+
+<div align="center" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+  <img src="assets/3.png" alt="xtore Captura 3" width="48%" style="border-radius: 8px; border: 1px solid #d7e8f4; max-width: 400px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);">
+  <img src="assets/4.png" alt="xtore Captura 4" width="48%" style="border-radius: 8px; border: 1px solid #d7e8f4; max-width: 400px; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);">
+</div>
+
 ## 🏗️ Arquitectura del Sistema
 
 El ecosistema de **xtore** está estructurado en módulos independientes para garantizar flexibilidad y mantenimiento continuo:
