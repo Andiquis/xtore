@@ -22,6 +22,19 @@
 
 El proyecto está dividido en múltiples plataformas (Web, Móvil, Escritorio) respaldadas por un backend robusto y un diseño orientado a la escalabilidad.
 
+## 💼 Clasificación y Nombre en el Mercado
+
+En el sector tecnológico y empresarial, **xtore** se clasifica dentro de las siguientes categorías clave:
+
+1. **ERP Modular (Enterprise Resource Planning - *Planificación de Recursos Empresariales*):** Integra de forma cohesionada los flujos de inventarios (marcas, categorías, productos y presentaciones), gestión de ventas, control de flujos de caja y analítica integrada.
+2. **POS Omnicanal (Point of Sale - *Punto de Venta*) & PMS (Product Management System - *Sistema de Gestión de Productos*):** Diseñado específicamente para optimizar la experiencia de venta presencial y en línea, gestionando de forma sincronizada múltiples canales (Web, Aplicación Móvil y Escritorio) desde una única base de datos centralizada.
+3. **SaaS (Software as a Service - *Software como Servicio*) de Gestión Comercial:** Listo para su despliegue y distribución en la nube bajo esquemas de suscripción, gracias a su arquitectura moderna basada en microservicios, seguridad integrada y modularidad flexible.
+
+### Detalles de Valor Comercial:
+* **Arquitectura Omnicanal Real:** Sincronización transparente entre la web, dispositivos móviles y terminales de escritorio mediante una API RESTful construida con NestJS.
+* **Control Multidimensional de Productos:** Gestión flexible de inventario no solo por producto, sino a nivel de marcas, categorías y múltiples unidades de venta (presentaciones) con conversión de stock e ID dinámicos.
+* **Toma de Decisiones basada en Datos:** Analítica en tiempo real (Ingresos vs. Egresos) y control de flujo de caja para la optimización financiera del negocio.
+
 ## ✨ Características Principales
 
 Nuestro panel de control ofrece una suite completa de herramientas empresariales:
